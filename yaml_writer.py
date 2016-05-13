@@ -9,17 +9,11 @@ def create_directory(app):
     ensuredir(app.env.yaml_dir)
 
 
-class YamlData:
-    ''' Stores data to write into a yaml file. '''
-
-    def __init__(self, env, file_name, data_dict):
-        self.file = os.path.join(
-            env.yaml_dir,
-            file_name if file_name.endswith('.yaml') else (file_name + '.yaml')
-        )
-        self.data = data_dict
-
-    def write(self):
-        ''' Writes dictionary into a yaml file '''
-        with open(self.file, 'w') as f:
-            f.write(yaml.dump(self.data, default_flow_style=False))
+def write(env, name, data_dict):
+    ''' Writes dictionary into a yaml file '''
+    path = os.path.join(
+        env.yaml_dir,
+        name if name.endswith('.yaml') else (name + '.yaml')
+    )
+    with open(path, 'w') as f:
+        f.write(yaml.dump(data_dict, default_flow_style=False))

@@ -8,8 +8,8 @@ class html(nodes.General, nodes.Element):
         self.tagname = tagname
         super().__init__(rawsource='', **attributes)
 
-    def write_yaml(self, env, name, data_dict):
-        self.yaml_data = yaml_writer.YamlData(env, name, data_dict)
+    def has_yaml_data(self):
+        return hasattr(self, 'yaml_data')
 
 
 def visit_html(self, node):
