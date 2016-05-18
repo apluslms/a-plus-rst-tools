@@ -9,11 +9,15 @@ def create_directory(app):
     ensuredir(app.env.yaml_dir)
 
 
-def write(env, name, data_dict):
-    ''' Writes dictionary into a yaml file '''
-    path = os.path.join(
+def file_path(env, name):
+    ''' Creates complete yaml file path for a name '''
+    return os.path.join(
         env.yaml_dir,
         name if name.endswith('.yaml') else (name + '.yaml')
     )
-    with open(path, 'w') as f:
+
+
+def write(file_path, data_dict):
+    ''' Writes dictionary into a yaml file '''
+    with open(file_path, 'w') as f:
         f.write(yaml.dump(data_dict, default_flow_style=False))
