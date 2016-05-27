@@ -7,7 +7,7 @@ If necessary, edit this setup to change the loaded directives.
 '''
 import yaml_writer
 import aplus_nodes
-from questionnaire2 import Questionnaire, SingleChoice, MultipleChoice
+from questionnaire2 import Questionnaire, SingleChoice, MultipleChoice, FreeText
 
 
 def prepare_env(app):

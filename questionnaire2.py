@@ -3,6 +3,7 @@ Adds support for directives that define automatically assessed questionnaires.
 '''
 from docutils.parsers.rst import directives
 from docutils import nodes
+from sphinx.errors import SphinxError
 from sphinx.util.compat import Directive
 from sphinx.util.nodes import nested_parse_with_titles
 import itertools
@@ -44,8 +45,24 @@ class Questionnaire(Directive):
         # Parse arguments and options.
         key = self.arguments[0] if len(self.arguments) > 0 else 'unknown'
         category, points = extract_points(self.arguments[1] if len(self.arguments) > 1 else None)
-        is_feedback = 'chapter-feedback' in self.options or 'weekly-feedback' in self.options or 'course-feedback' in self.options or 'feedback' in self.options
-        if is_feedback:
+
+        is_feedback = False
+        classes = ['exercise']
+        if 'chapter-feedback' in self.options:
+            is_feedback = True
+            classes.extend(['feedback', 'chapter-feedback'])
+            key = 'feedback'
+        if 'weekly-feedback' in self.options:
+            is_feedback = True
+            classes.extend(['feedback', 'weekly-feedback'])
+            key = 'feedback'
+        if 'course-feedback' in self.options:
+            is_feedback = True
+            classes.extend(['feedback', 'course-feedback-questionnaire'])
+            key = 'feedback'
+        if 'feedback' in self.options:
+            is_feedback = True
+            classes.extend('feedback')
             key = 'feedback'
 
         env = self.state.document.settings.env
@@ -57,7 +74,7 @@ class Questionnaire(Directive):
 
         # Create document elements.
         node = aplus_nodes.html('div', {
-            'class': 'exercise',
+            'class': ' '.join(classes),
             'data-aplus-exercise': 'yes',
             'data-aplus-quiz': 'yes',
         })
@@ -90,7 +107,7 @@ class Questionnaire(Directive):
             'instructions': ('#!html', '<form[^>]*>(.*?)<div class="form-group'),
             'fieldgroups': [{
                 'title': '',
-                'fields': ('#!children', True),
+                'fields': ('#!children', None),
             }],
         }
         node.write_yaml(env, name, data)
@@ -111,7 +128,8 @@ def slicer(string_list):
 class QuestionMixin:
     ''' Common functions for all question directives. '''
     option_spec = {
-        'class' : directives.class_option
+        'class' : directives.class_option,
+        'required': directives.flag,
     }
 
     def create_question(self):
@@ -122,7 +140,6 @@ class QuestionMixin:
         node = aplus_nodes.html('div', {
             'class': ' '.join(self.get_classes()),
         })
-
         title = aplus_nodes.html('label', {})
         title.append(nodes.Text('Kysymys {:d}'.format(env.question_count)))
         node.append(title)
@@ -137,18 +154,58 @@ class QuestionMixin:
         }
         if len(self.arguments) > 0:
             data['points'] = int(self.arguments[0])
+        if 'required' in self.options:
+            data['required'] = True
         node.set_yaml(data)
 
         return env, node, data
 
     def add_instructions(self, node, data, plain_content):
-        if not plain_content is None:
+        if not plain_content:
+            return
 
-            parent = aplus_nodes.html('p', {'class':'help-block'})
-            nested_parse_with_titles(self.state, plain_content, parent)
-            node.append(parent)
+        parent = aplus_nodes.html('p', {'class':'help-block'})
+        nested_parse_with_titles(self.state, plain_content, parent)
+        node.append(parent)
 
-            data['more'] = ('#!html', '<p class="help-block">(.*?)</p>')
+        data['more'] = ('#!html', '<p class="help-block">(.*?)</p>')
+
+    def add_feedback(self, node, data, paragraph):
+        if not paragraph:
+            return
+
+        # Add feedback node for rendering without writing to file.
+        data['feedback'] = ('#!children', 'feedback')
+        feedbacks = aplus_nodes.html('p', {'class':'feedback-holder'}, no_write=True)
+
+        for i,line in slicer(paragraph):
+            if not '§' in line[0]:
+                raise SphinxError('Feedback separator § exptected: {}'.format(line[0]))
+            value,content = line[0].split('§', 1)
+            value = value.strip()
+            line[0] = content.strip()
+            isnot = False
+            if value.startswith('!'):
+                isnot = True
+                value = value[1:]
+
+            # Create document elements.
+            parent = nodes.paragraph()
+            nested_parse_with_titles(self.state, line, parent)
+            text = aplus_nodes.html('span', {'class':'text'})
+            text.extend(parent.children)
+            feedbacks.append(text)
+
+            # Add configuration data.
+            fbdata = {
+                'value': value,
+                'label': ('#!html', '<span class="text">(.*?)</span>'),
+            }
+            if isnot:
+                fbdata['not'] = True
+            text.set_yaml(fbdata, 'feedback')
+
+        node.append(feedbacks)
 
     def get_classes(self):
         classes = ['form-group']
@@ -193,10 +250,23 @@ class Choice(QuestionMixin, Directive):
         # Create question.
         env, node, data = self.create_question()
         self.add_instructions(node, data, plain_content)
-        data['options'] = ('#!children', True)
+        data['options'] = ('#!children', 'option')
 
         # Travel all answer options.
         for i,line in slicer(choices):
+
+            # Split choice key off.
+            key,content = line[0].split(' ', 1)
+            key = key.strip()
+            line[0] = content.strip()
+
+            # Trim the key.
+            correct = False
+            if key.startswith('*'):
+                correct = True
+                key = key[1:]
+            if key.endswith('.'):
+                key = key[:-1]
 
             # Create document elements.
             choice = aplus_nodes.html('div', {'class':'radio'})
@@ -204,14 +274,10 @@ class Choice(QuestionMixin, Directive):
             label.append(aplus_nodes.html('input', {
                 'type': self.input_type(),
                 'name': 'field_{:d}'.format(env.question_count - 1),
-                'value': 'option_{:d}'.format(i),
+                'value': key,
             }))
             choice.append(label)
             node.append(choice)
-
-            # Split choice id off.
-            cid,text = line[0].split(' ', 1)
-            line[0] = text.strip()
 
             parent = nodes.paragraph()
             nested_parse_with_titles(self.state, line, parent)
@@ -220,15 +286,15 @@ class Choice(QuestionMixin, Directive):
             label.append(text)
 
             # Add configuration data.
-            optdata = { 'label': ('#!html', '<span class="text">(.*?)</span>') }
-            if cid.startswith('*'):
+            optdata = {
+                'value': key,
+                'label': ('#!html', '<span class="text">(.*?)</span>'),
+            }
+            if correct:
                 optdata['correct'] = True
-            choice.set_yaml(optdata)
+            choice.set_yaml(optdata, 'option')
 
-        # Travel all feedbacks.
-        for i,line in slicer(feedback):
-            # TODO
-            pass
+        self.add_feedback(node, data, feedback)
 
         return [node]
 
@@ -259,7 +325,7 @@ class MultipleChoice(Choice):
         return 'checkbox'
 
 
-class FreeText(Directive):
+class FreeText(QuestionMixin, Directive):
     ''' A free text answer. '''
     has_content = True
     required_arguments = 0
@@ -277,13 +343,14 @@ class FreeText(Directive):
     }
 
     def run(self):
-        length = self.options.get('length', 50)
-        height = self.options.get('height', 1)
-        position = 'place-on-own-line' if height > 1 or 'own-line' in self.options else 'place-inline'
+        self.length = self.options.get('length', 50)
+        self.height = self.options.get('height', 1)
+        position = 'place-on-own-line' if self.height > 1 or 'own-line' in self.options else 'place-inline'
 
         # Detect paragraphs: any number of plain content and correct answer including optional feedback
         plain_content = None
         config_content = []
+        env = self.state.document.settings.env
         if env.questionnaire_is_feedback:
             plain_content = self.content
         else:
@@ -299,18 +366,46 @@ class FreeText(Directive):
         self.add_instructions(node, data, plain_content)
 
         # Create input element.
-        if height > 1:
+        if self.height > 1:
             element = aplus_nodes.html('textarea', {
-                'rows': height,
-                'cols': length,
+                'rows': self.height,
+                'cols': self.length,
                 'class': position,
             })
         else:
             element = aplus_nodes.html('input', {
                 'type': 'text',
-                'size': length,
+                'size': self.length,
                 'class': position,
             })
         node.append(element)
 
-        # TODO add correct answer and feedback to data
+        # Add configuration.
+        if len(self.arguments) > 1:
+            data['compare_method'] = self.arguments[1]
+        if config_content:
+            if '§' in config_content[0]:
+                data['correct'] = config_content[0].split('§', 1)[0].strip()
+            else:
+                data['correct'] = config_content[0].strip()
+                config_content = config_content[1:]
+            self.add_feedback(node, data, config_content)
+
+        return [node]
+
+    def grader_field_type(self):
+        return 'textarea' if self.height > 1 else 'text'
+
+    def get_classes(self):
+        classes = super().get_classes()
+        if 'main-feedback' in self.options:
+            classes.append('main-feedback-question')
+        if 'required' in self.options:
+            classes.append('required')
+        else:
+            classes.append('voluntary')
+        if not 'no-standard-prompt' in self.options:
+            classes.append('standard')
+        if 'shorter-prompt' in self.options:
+            classes.append('shorter')
+        return classes
