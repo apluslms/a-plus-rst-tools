@@ -5,21 +5,16 @@ The bundling was motivated by the shared node types and other shared modules.
 Having unused directives will not have a significant performance impact.
 If necessary, edit this setup to change the loaded directives.
 '''
-import yaml_writer
+import toc_config
 import aplus_nodes
 from questionnaire2 import Questionnaire, SingleChoice, MultipleChoice, FreeText
 
 
-def prepare_env(app):
-    app.env.aplus = {}
-    app.env.aplus['exercises'] = {}
-
-
 def setup(app):
 
-    # Ensure the output directory for generated mooc-grader configuration.
-    app.connect('builder-inited', yaml_writer.create_directory)
-    app.connect('builder-inited', prepare_env)
+    # Connect configuration generation to events.
+    app.connect('builder-inited', toc_config.prepare)
+    app.connect('build-finished', toc_config.write)
 
     # Add node type that can describe HTML elements and store configurations.
     app.add_node(

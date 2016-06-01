@@ -8,10 +8,7 @@ from sphinx.util.compat import Directive
 from sphinx.util.nodes import nested_parse_with_titles
 import itertools
 import aplus_nodes
-
-
-def get_doc_name(env):
-    return env.docname.replace('/', '_')
+import toc_config
 
 
 def extract_points(arg):
@@ -66,8 +63,7 @@ class Questionnaire(Directive):
             key = 'feedback'
 
         env = self.state.document.settings.env
-        doc_name = get_doc_name(env)
-        name = doc_name + '_' + key
+        name = env.docname.replace('/', '_') + '_' + key
 
         env.questionnaire_is_feedback = is_feedback
         env.question_count = 0
@@ -111,12 +107,7 @@ class Questionnaire(Directive):
             }],
         }
         node.write_yaml(env, name, data)
-
-        # Store same data in environment.
-        if not doc_name in env.aplus['exercises']:
-            env.aplus['exercises'][doc_name] = []
-        env.aplus['exercises'][doc_name].append(data)
-
+        toc_config.store_exercise(env, env.docname, data)
         return [node]
 
 
