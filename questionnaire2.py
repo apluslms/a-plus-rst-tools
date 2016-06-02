@@ -34,6 +34,7 @@ class Questionnaire(Directive):
         'weekly-feedback': directives.flag,
         'course-feedback': directives.flag,
         'feedback': directives.flag,
+        'submissions': directives.nonnegative_int,
     }
 
     def run(self):
@@ -91,6 +92,7 @@ class Questionnaire(Directive):
             'key': name,
             'category': category,
             'max_points': points,
+            'max_submissions': self.options['submissions'] if 'submissions' in self.options else env.config.questionnaire_default_submissions,
             'feedback': is_feedback,
             'view_type': 'access.types.stdsync.createForm',
             'title|i18n': {

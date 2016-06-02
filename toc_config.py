@@ -21,8 +21,12 @@ def write(app, exception):
     ''' Writes the table of contents level configuration. '''
     if exception:
         return
+
+    course_open = app.config.course_open_date
+    course_close = app.config.course_close_date
+
     modules = []
-    categories = []
+    category_keys = []
 
     def traverse_tocs(doc):
         names = []
@@ -43,38 +47,46 @@ def write(app, exception):
                 exercise = {
                     'key': config['key'],
                     'config': config['key'] + '.yaml',
-                    'max_submissions': 100, # TODO option
+                    'max_submissions': config['max_submissions'],
                     'max_points': config['max_points'],
-                    'allow_assistant_grading': True, # TODO config
+                    'allow_assistant_grading': True,
                     'status': 'unlisted',
-                    'category': config['category'], # TODO the category
+                    'category': config['category'],
                 }
                 parent.append(exercise)
+                if not config['category'] in category_keys:
+                    category_keys.append(config['category'])
 
         for name,child in traverse_tocs(doc):
             chapter = {
                 'key': name.split('/')[-1],
                 'name': first_title(child),
                 'static_content': name + '.html',
-                'category': 'chapter', # TODO the category
+                'category': 'chapter',
                 'children': [],
             }
             parent.append(chapter)
+            if not 'chapter' in category_keys:
+                category_keys.append('chapter')
             parse_chapter(name, child, chapter['children'])
 
     # Traverse the documents using toctree directives.
     root = app.env.get_doctree(app.config.master_doc)
     for docname,doc in traverse_tocs(root):
         title = first_title(doc)
+        # regexp to match: title (dl)
         module = {
             'key': docname.split('/')[0],
             'name': title,
-            'open': None, # TODO from config
-            'close': None, # TODO from title
+            'open': course_open,
+            'close': course_close, # TODO from title
             'children': [],
         }
         modules.append(module)
         parse_chapter(docname, doc, module['children'])
+
+    # Create categories.
+    categories = {key: {'name': key} for key in category_keys}
 
     # Get relative out dir.
     i = 0
@@ -89,8 +101,8 @@ def write(app, exception):
         yaml_writer.file_path(app.env, 'index'),
         {
             'static_dir': outdir,
-            'start': None, # TODO from config
-            'end': None, # TODO from config
+            'start': course_open,
+            'end': course_close,
             'modules': modules,
             'categories': categories,
         }

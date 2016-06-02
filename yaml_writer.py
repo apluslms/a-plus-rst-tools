@@ -5,7 +5,7 @@ from sphinx.util.osutil import ensuredir
 
 def create_directory(app):
     ''' Creates the yaml directory if necessary '''
-    app.env.yaml_dir = os.path.join(app.builder.outdir, '_yaml')
+    app.env.yaml_dir = os.path.join(app.builder.confdir, '_build', 'yaml')
     ensuredir(app.env.yaml_dir)
 
 
