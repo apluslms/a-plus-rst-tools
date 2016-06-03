@@ -12,7 +12,7 @@ import toc_config
 
 
 def extract_points(arg):
-    category = 'exercise'
+    category = None
     points = 0
     if not arg is None:
         for is_number, chars in itertools.groupby(arg, key=str.isdigit):
@@ -44,24 +44,25 @@ class Questionnaire(Directive):
         key = self.arguments[0] if len(self.arguments) > 0 else 'unknown'
         category, points = extract_points(self.arguments[1] if len(self.arguments) > 1 else None)
 
-        is_feedback = False
         classes = ['exercise']
+        is_feedback = False
         if 'chapter-feedback' in self.options:
+            classes.append('chapter-feedback')
             is_feedback = True
-            classes.extend(['feedback', 'chapter-feedback'])
-            key = 'feedback'
         if 'weekly-feedback' in self.options:
+            classes.append('weekly-feedback')
             is_feedback = True
-            classes.extend(['feedback', 'weekly-feedback'])
-            key = 'feedback'
         if 'course-feedback' in self.options:
+            classes.append('course-feedback-questionnaire')
             is_feedback = True
-            classes.extend(['feedback', 'course-feedback-questionnaire'])
-            key = 'feedback'
         if 'feedback' in self.options:
             is_feedback = True
-            classes.extend('feedback')
+        if is_feedback:
             key = 'feedback'
+            category = category or 'feedback'
+            classes.append('feedback')
+        else:
+            category = category or 'exercise'
 
         env = self.state.document.settings.env
         name = env.docname.replace('/', '_') + '_' + key

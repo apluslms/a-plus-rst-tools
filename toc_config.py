@@ -1,6 +1,7 @@
 from sphinx import addnodes
 from docutils import nodes
 import yaml_writer
+import re
 
 
 def prepare(app):
@@ -39,6 +40,18 @@ def write(app, exception):
         titles = doc.traverse(nodes.title)
         return titles[0].astext() if titles else 'Unnamed'
 
+    # Tries to parse date from natural text.
+    def parse_date(src):
+        d,t = src.split(' ', 1)
+        if re.match('^\d\d.\d\d.\d\d\d\d$', d):
+            ds = d.split('.')
+            d = ds[2] + '-' + ds[1] + '-' + ds[0]
+        elif not re.match('^\d\d-\d\d-\d\d\d\d$', d):
+            return None
+        if not re.match('^\d\d(:\d\d(:\d\d)?)?$', t):
+            t = '12:00'
+        return d + ' ' + t
+
     # Recursive chapter parsing.
     def parse_chapter(docname, doc, parent):
 
@@ -72,14 +85,16 @@ def write(app, exception):
 
     # Traverse the documents using toctree directives.
     root = app.env.get_doctree(app.config.master_doc)
+    title_date_re = re.compile('.*\(DL (.+)\)')
     for docname,doc in traverse_tocs(root):
         title = first_title(doc)
-        # regexp to match: title (dl)
+        match = title_date_re.match(title)
+        module_close = parse_date(match.group(1)) if match else None
         module = {
             'key': docname.split('/')[0],
             'name': title,
             'open': course_open,
-            'close': course_close, # TODO from title
+            'close': module_close or course_close,
             'children': [],
         }
         modules.append(module)
