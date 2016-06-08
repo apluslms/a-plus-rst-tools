@@ -83,8 +83,10 @@ def write(app, exception):
                 category_keys.append('chapter')
             parse_chapter(name, child, chapter['children'])
 
-    # Traverse the documents using toctree directives.
     root = app.env.get_doctree(app.config.master_doc)
+    course_title = first_title(root)
+
+    # Traverse the documents using toctree directives.
     title_date_re = re.compile('.*\(DL (.+)\)')
     for docname,doc in traverse_tocs(root):
         title = first_title(doc)
@@ -115,6 +117,7 @@ def write(app, exception):
     yaml_writer.write(
         yaml_writer.file_path(app.env, 'index'),
         {
+            'name': course_title,
             'static_dir': outdir,
             'start': course_open,
             'end': course_close,
