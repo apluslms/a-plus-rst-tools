@@ -62,7 +62,8 @@ def write(app, exception):
                     'config': config['key'] + '.yaml',
                     'max_submissions': config['max_submissions'],
                     'max_points': config['max_points'],
-                    'allow_assistant_grading': True,
+                    'points_to_pass': config['points_to_pass'],
+                    'allow_assistant_grading': False,
                     'status': 'unlisted',
                     'category': config['category'],
                 }
@@ -118,6 +119,7 @@ def write(app, exception):
         yaml_writer.file_path(app.env, 'index'),
         {
             'name': course_title,
+            'language': app.config.language,
             'static_dir': outdir,
             'start': course_open,
             'end': course_close,

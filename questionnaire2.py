@@ -35,6 +35,7 @@ class Questionnaire(Directive):
         'course-feedback': directives.flag,
         'feedback': directives.flag,
         'submissions': directives.nonnegative_int,
+        'points-to-pass': directives.nonnegative_int,
     }
 
     def run(self):
@@ -93,7 +94,8 @@ class Questionnaire(Directive):
             'key': name,
             'category': category,
             'max_points': points,
-            'max_submissions': self.options['submissions'] if 'submissions' in self.options else env.config.questionnaire_default_submissions,
+            'max_submissions': self.options.get('submissions', env.config.questionnaire_default_submissions),
+            'points_to_pass': self.options.get('points-to-pass', 0),
             'feedback': is_feedback,
             'view_type': 'access.types.stdsync.createForm',
             'title|i18n': {
@@ -141,7 +143,7 @@ class QuestionMixin:
         # Add configuration data.
         data = {
             'type': self.grader_field_type(),
-            'title': {
+            'title|i18n': {
                 'fi': 'Kysymys {:d}'.format(env.question_count),
                 'en': 'Question {:d}'.format(env.question_count),
             },
