@@ -82,11 +82,12 @@ class Questionnaire(Directive):
             'method': 'post',
         })
         nested_parse_with_titles(self.state, self.content, form)
-        form.append(aplus_nodes.html('input', {
+        submit = aplus_nodes.html('input', {
             'type': 'submit',
             'value': 'L&auml;het&auml;',
             'class': 'btn btn-primary',
-        }))
+        })
+        form.append(submit)
         node.append(form)
 
         # Write configuration file.
@@ -105,13 +106,12 @@ class Questionnaire(Directive):
                 'fi': u'Tehtävä ' + key,
                 'en': 'Exercise ' + key,
             },
-            'instructions': ('#!html', '<form[^>]*>(.*?)<div class="form-group'),
             'fieldgroups': [{
                 'title': '',
                 'fields': ('#!children', None),
             }],
         }
-        node.write_yaml(env, name, data)
+        form.write_yaml(env, name, data)
         toc_config.store_exercise(env, env.docname, data)
         return [node]
 
