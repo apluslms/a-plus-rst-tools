@@ -11,8 +11,8 @@ class html(nodes.General, nodes.Element):
         self.no_write = no_write
         super().__init__(rawsource='', **attributes)
 
-    def write_yaml(self, env, name, data_dict):
-        self.yaml_data = data_dict
+    def write_yaml(self, env, name, data_dict, data_type=None):
+        self.set_yaml(data_dict, data_type)
         self.yaml_write = yaml_writer.file_path(env, name)
 
     def set_yaml(self, data_dict, data_type=None):
@@ -22,7 +22,8 @@ class html(nodes.General, nodes.Element):
 
     def has_yaml(self, data_type=None):
         if hasattr(self, 'yaml_data'):
-            if not data_type or ('_type' in self.yaml_data and self.yaml_data['_type'] == data_type):
+            types = data_type if isinstance(data_type, list) else [data_type]
+            if not data_type or ('_type' in self.yaml_data and self.yaml_data['_type'] in types):
                 return True
         return False
 

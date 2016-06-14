@@ -111,7 +111,7 @@ class Questionnaire(Directive):
                 'fields': ('#!children', None),
             }],
         }
-        form.write_yaml(env, name, data)
+        form.write_yaml(env, name, data, 'questionnaire')
         toc_config.store_exercise(env, env.docname, data)
         return [node]
 
@@ -152,7 +152,7 @@ class QuestionMixin:
             data['points'] = int(self.arguments[0])
         if 'required' in self.options:
             data['required'] = True
-        node.set_yaml(data)
+        node.set_yaml(data, 'question')
 
         return env, node, data
 

@@ -21,3 +21,9 @@ def write(file_path, data_dict):
     ''' Writes dictionary into a yaml file '''
     with open(file_path, 'w') as f:
         f.write(yaml.dump(data_dict, default_flow_style=False))
+
+
+def read(file_path):
+    ''' Reads dictionary from a yaml file '''
+    with open(file_path, 'r') as f:
+        return yaml.load(f.read())

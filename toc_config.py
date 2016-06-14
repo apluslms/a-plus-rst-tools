@@ -1,5 +1,6 @@
 from sphinx import addnodes
 from docutils import nodes
+import aplus_nodes
 import yaml_writer
 import re
 
@@ -54,22 +55,21 @@ def write(app, exception):
 
     # Recursive chapter parsing.
     def parse_chapter(docname, doc, parent):
-
-        if docname in app.env.aplus['exercises']:
-            for config in app.env.aplus['exercises'][docname]:
-                exercise = {
-                    'key': config['key'],
-                    'config': config['key'] + '.yaml',
-                    'max_submissions': config['max_submissions'],
-                    'max_points': config['max_points'],
-                    'points_to_pass': config['points_to_pass'],
-                    'allow_assistant_grading': False,
-                    'status': 'unlisted',
-                    'category': config['category'],
-                }
-                parent.append(exercise)
-                if not config['category'] in category_keys:
-                    category_keys.append(config['category'])
+        for config_file in [e.yaml_write for e in doc.traverse(aplus_nodes.html) if e.has_yaml('questionnaire')]:
+            config = yaml_writer.read(config_file)
+            exercise = {
+                'key': config['key'],
+                'config': config['key'] + '.yaml',
+                'max_submissions': config['max_submissions'],
+                'max_points': config['max_points'],
+                'points_to_pass': config['points_to_pass'],
+                'allow_assistant_grading': False,
+                'status': 'unlisted',
+                'category': config['category'],
+            }
+            parent.append(exercise)
+            if not config['category'] in category_keys:
+                category_keys.append(config['category'])
 
         for name,child in traverse_tocs(doc):
             chapter = {
