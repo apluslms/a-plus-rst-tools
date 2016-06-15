@@ -84,6 +84,7 @@ class Questionnaire(Directive):
         nested_parse_with_titles(self.state, self.content, form)
         submit = aplus_nodes.html('input', {
             'type': 'submit',
+            # TODO select by language
             'value': 'L&auml;het&auml;',
             'class': 'btn btn-primary',
         })
@@ -128,27 +129,37 @@ class QuestionMixin:
         'required': directives.flag,
     }
 
-    def create_question(self):
+    def create_question(self, title_text=None, points=True):
         env = self.state.document.settings.env
         env.question_count += 1
 
-        # Create document elements.
+        # Create base element and data.
         node = aplus_nodes.html('div', {
             'class': ' '.join(self.get_classes()),
         })
-        title = aplus_nodes.html('label', {})
-        title.append(nodes.Text('Kysymys {:d}'.format(env.question_count)))
-        node.append(title)
-
-        # Add configuration data.
         data = {
             'type': self.grader_field_type(),
-            'title|i18n': {
+        }
+
+        # Add title.
+        if not title_text is None:
+            data['title'] = title_text
+        elif env.questionnaire_is_feedback:
+            data['title'] = title_text = ''
+        else:
+            data['title|i18n'] = {
                 'fi': 'Kysymys {:d}'.format(env.question_count),
                 'en': 'Question {:d}'.format(env.question_count),
-            },
-        }
-        if len(self.arguments) > 0:
+            }
+            # TODO select by language
+            title_text = data['title|i18n']['fi']
+        if title_text:
+            title = aplus_nodes.html('label', {})
+            title.append(nodes.Text(title_text))
+            node.append(title)
+
+        # Add configuration.
+        if points and len(self.arguments) > 0:
             data['points'] = int(self.arguments[0])
         if 'required' in self.options:
             data['required'] = True
@@ -405,3 +416,62 @@ class FreeText(QuestionMixin, Directive):
         if 'shorter-prompt' in self.options:
             classes.append('shorter')
         return classes
+
+
+class AgreeGroup(Directive):
+    ''' Groups agree items together. '''
+    has_content = True
+    required_arguments = 0
+    optional_arguments = 0
+    final_argument_whitespace = False
+
+    def run(self):
+        # This directive is actually obsolete, AgreeItems can be placed alone.
+        node = aplus_nodes.html('div', {'class':'agreement-group'})
+        nested_parse_with_titles(self.state, self.content, node)
+        return  [node]
+
+
+class AgreeItem(QuestionMixin, Directive):
+    ''' Question presenting an agreement scale. '''
+    has_content = False
+    required_arguments = 1
+    optional_arguments = 0
+    final_argument_whitespace = True
+
+    def run(self):
+        option_texts = [
+            { 'fi': 'täysin samaa mieltä', 'en': 'strongly agree' },
+            { 'fi': 'jokseenkin samaa mieltä', 'en': 'agree' },
+            { 'fi': 'jokseenkin eri mieltä', 'en': 'disagree' },
+            { 'fi': 'täysin eri mieltä', 'en': 'strongly disagree' },
+            { 'fi': 'en osaa sanoa / en kommentoi', 'en': 'cannot say / no comments' },
+        ]
+
+        # Create question and starndard options.
+        env, node, data = self.create_question(title_text=self.arguments[0], points=False)
+        options = []
+        for i, label_text in enumerate(option_texts):
+
+            options.append({
+                'value': 4 - i,
+                'label|i18n': label_text,
+            })
+
+            choice = aplus_nodes.html('div', {'class':'radio'})
+            label = aplus_nodes.html('label', {})
+            label.append(aplus_nodes.html('input', {
+                'type': 'radio',
+                'name': 'field_{:d}'.format(env.question_count - 1),
+                'value': 4 - i,
+            }))
+            # TODO select by conf language
+            label.append(nodes.Text(label_text['fi']))
+            choice.append(label)
+            node.append(choice)
+
+        data['options'] = options
+        return [node]
+
+    def grader_field_type(self):
+        return 'radio'

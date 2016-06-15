@@ -5,17 +5,35 @@ import yaml_writer
 
 
 class html(nodes.General, nodes.Element):
+    '''
+    Represents HTML tags that have name and attributes. In addition, nodes can
+    store configuration data. Some configurations include HTML rendered from
+    RST so the configuration processing and writing is delayed. Configuration
+    data can include following field values that will be transformed.
+
+    "some_key": ("#!children", "data_type")
+        Collects configuration from children nodes into a list.
+        The type is used to filter the children. None type includes all
+        children data and HTML representations of alien children nodes.
+
+    "some_key": ("#!html", "<p>(.*?)</p>")
+        Matches and captures rendered HTML from the rendered node.
+        The second part is a Python regexp.
+    '''
 
     def __init__(self, tagname, attributes={}, no_write=False):
+        ''' Constructor: no_write option removes node from final document after configuration data is processed. '''
         self.tagname = tagname
         self.no_write = no_write
         super().__init__(rawsource='', **attributes)
 
     def write_yaml(self, env, name, data_dict, data_type=None):
+        ''' Adds configuration data and requests write into a file. '''
         self.set_yaml(data_dict, data_type)
         self.yaml_write = yaml_writer.file_path(env, name)
 
     def set_yaml(self, data_dict, data_type=None):
+        ''' Adds configuration data. '''
         self.yaml_data = data_dict
         if data_type:
             self.yaml_data['_type'] = data_type
@@ -41,12 +59,16 @@ def collect(body, node, data_type=None):
     for i in range(len(node.children)):
         child = node.children[i]
 
-        if hasattr(child, 'has_yaml'):
-            if child.has_yaml(data_type):
-                data.append(child.pop_yaml())
+        def recursive_collect(n):
+            if hasattr(n, 'has_yaml'):
+                if n.has_yaml(data_type):
+                    data.append(n.pop_yaml())
+            for c in n.children:
+                recursive_collect(c)
+        recursive_collect(child)
 
         # Collect body for non data nodes.
-        elif not data_type:
+        if not data_type and not hasattr(child, 'has_yaml'):
             b = i - 1
             while b >= 0 and not hasattr(node.children[b], '_body_end'):
                 b -= 1
@@ -80,6 +102,7 @@ def recursive_fill(body, data_dict, node):
 
 
 def visit_html(self, node):
+    ''' The HTML render begins for the node. '''
     if node.no_write:
         node._real_body = self.body
         self.body = []
@@ -88,6 +111,7 @@ def visit_html(self, node):
 
 
 def depart_html(self, node):
+    ''' The HTML render ends for the node. '''
     self.body.append(node.endtag())
     node._body_end = len(self.body)
     if hasattr(node, 'yaml_data'):

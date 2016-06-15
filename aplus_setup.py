@@ -7,7 +7,7 @@ If necessary, edit this setup to change the loaded directives.
 '''
 import toc_config
 import aplus_nodes
-from questionnaire2 import Questionnaire, SingleChoice, MultipleChoice, FreeText
+from questionnaire2 import Questionnaire, SingleChoice, MultipleChoice, FreeText, AgreeGroup, AgreeItem
 
 
 def setup(app):
@@ -33,5 +33,5 @@ def setup(app):
     app.add_directive('pick-one', SingleChoice)
     app.add_directive('pick-any',  MultipleChoice)
     app.add_directive('freetext',  FreeText)
-    #app.add_directive('agree-group',  AgreeGroup)
-    #app.add_directive('agree-item',  AgreeItem)
+    app.add_directive('agree-group',  AgreeGroup)
+    app.add_directive('agree-item',  AgreeItem)
