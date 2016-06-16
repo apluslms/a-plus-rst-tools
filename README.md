@@ -41,3 +41,10 @@ Then installation of sphinx, creation of RST document root and configuring sphin
     pip install sphinx
     sphinx-quickstart
     cp a-plus-rst-tools/conf.py .
+
+
+
+List of directives and examples
+-------------------------------
+
+See the examples.rst
