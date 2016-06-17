@@ -6,29 +6,14 @@ from docutils import nodes
 from sphinx.errors import SphinxError
 from sphinx.util.compat import Directive
 from sphinx.util.nodes import nested_parse_with_titles
-import itertools
+from directives.abstract_exercise import AbstractExercise
 import aplus_nodes
 import toc_config
 
 
-def extract_points(arg):
-    category = None
-    points = 0
-    if not arg is None:
-        for is_number, chars in itertools.groupby(arg, key=str.isdigit):
-            if is_number:
-                points = int(''.join(chars))
-            else:
-                category = ''.join(chars)
-    return category, points
-
-
-class Questionnaire(Directive):
+class Questionnaire(AbstractExercise):
     ''' Wraps questionnaire configuration. '''
     has_content = True
-    required_arguments = 0
-    optional_arguments = 2
-    final_argument_whitespace = False
     option_spec = {
         'chapter-feedback': directives.flag,
         'weekly-feedback': directives.flag,
@@ -40,11 +25,9 @@ class Questionnaire(Directive):
 
     def run(self):
         self.assert_has_content()
+        key, category, points = self.extract_exercise_arguments()
 
-        # Parse arguments and options.
-        key = self.arguments[0] if len(self.arguments) > 0 else 'unknown'
-        category, points = extract_points(self.arguments[1] if len(self.arguments) > 1 else None)
-
+        # Parse options.
         classes = ['exercise']
         is_feedback = False
         if 'chapter-feedback' in self.options:
@@ -112,8 +95,8 @@ class Questionnaire(Directive):
                 'fields': ('#!children', None),
             }],
         }
-        form.write_yaml(env, name, data, 'questionnaire')
-        toc_config.store_exercise(env, env.docname, data)
+        form.write_yaml(env, name, data, 'exercise')
+
         return [node]
 
 

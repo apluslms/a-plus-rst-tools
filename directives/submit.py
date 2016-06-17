@@ -1,32 +1,62 @@
 '''
 Directive that places exercise submission forms.
 '''
+from docutils.parsers.rst import directives
 from docutils import nodes
-from sphinx.util.compat import Directive
+from directives.abstract_exercise import AbstractExercise
 import aplus_nodes
 
 
-class SubmitForm(Directive):
-    has_content = False
-    required_arguments = 2
-    optional_arguments = 0
-    option_spec = {
+translations = {
+    'placeholder': {
+        'en': 'A+ presents the exercise submission form here.',
+        'fi': 'A+ esittää tässä kohdassa tehtävän palautuslomakkeen.',
+    },
+}
 
+
+class SubmitForm(AbstractExercise):
+    has_content = False
+    option_spec = {
+        'class' : directives.class_option,
+        'submissions': directives.nonnegative_int,
+        'points-to-pass': directives.nonnegative_int,
+        'config': directives.unchanged,
+        'url': directives.unchanged,
+        'lti': directives.unchanged,
+        'lti_context_id': directives.unchanged,
+        'lti_resource_link_id': directives.unchanged,
     }
 
     def run(self):
-        node['exercise_number'] = self.arguments[0]
-        node['points'] = self.arguments[1]
+        key, category, points = self.extract_exercise_arguments()
 
-        classes = []
+        env = self.state.document.settings.env
+        name = env.docname.replace('/', '_') + '_' + key
+
+        classes = ['exercise']
+        if 'class' in self.options:
+            classes.extend(self.options['class'])
+
+        # Add document nodes.
         node = aplus_nodes.html('div', {
             'class': ' '.join(classes),
             'data-aplus-exercise': 'yes',
         })
+        node.append(nodes.Text(translations['placeholder'][env.config['language'] or 'en']))
+
+        # Try to load exercise configuration.
+        if 'config' in self.options:
+            print(self.options)
+
+        # Store configuration.
+        data = {
+            'key': name,
+            'category': category,
+            'max_points': points,
+            'max_submissions': self.options.get('submissions', env.config.program_default_submissions),
+            'points_to_pass': self.options.get('points-to-pass', 0),
+        }
+        node.write_yaml(env, name, data, 'exercise')
+
         return [node]
-
-def visit_submit_node(self, node):
-    self.body.append('<div class="submit-exercise" data-id="%s" points="%s">' % (node['exercise_number'],node['points']))
-
-def depart_submit_node(self, node):
-    self.body.append("</div>\n")

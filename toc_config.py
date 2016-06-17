@@ -8,16 +8,7 @@ import re
 def prepare(app):
     ''' Prepares environment for configuration values. '''
     yaml_writer.create_directory(app)
-    app.env.aplus = {}
-    app.env.aplus['exercises'] = {}
-
-
-def store_exercise(env, docname, data_dict):
-    ''' Stores exercise data for higher level configuration. '''
-    if not docname in env.aplus['exercises']:
-        env.aplus['exercises'][docname] = []
-    env.aplus['exercises'][docname].append(data_dict)
-
+    print('srcdir ' + app.srcdir)
 
 def write(app, exception):
     ''' Writes the table of contents level configuration. '''
@@ -55,7 +46,7 @@ def write(app, exception):
 
     # Recursive chapter parsing.
     def parse_chapter(docname, doc, parent):
-        for config_file in [e.yaml_write for e in doc.traverse(aplus_nodes.html) if e.has_yaml('questionnaire')]:
+        for config_file in [e.yaml_write for e in doc.traverse(aplus_nodes.html) if e.has_yaml('exercise')]:
             config = yaml_writer.read(config_file)
             exercise = {
                 'key': config['key'],
@@ -73,7 +64,7 @@ def write(app, exception):
 
         for name,child in traverse_tocs(doc):
             chapter = {
-                'key': name.split('/')[-1],
+                'key': name.replace('/', '_'),#name.split('/')[-1],
                 'name': first_title(child),
                 'static_content': name + '.html',
                 'category': 'chapter',
