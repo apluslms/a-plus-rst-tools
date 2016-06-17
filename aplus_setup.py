@@ -3,12 +3,12 @@ This extension setup bundes the different a-plus custom directives.
 
 The bundling was motivated by the shared node types and other shared modules.
 Having unused directives will not have a significant performance impact.
-If necessary, edit this setup to change the loaded directives.
+If necessary, edit this setup to select the loaded directives.
 '''
 import toc_config
 import aplus_nodes
-from questionnaire import Questionnaire, SingleChoice, MultipleChoice, FreeText, AgreeGroup, AgreeItem
-
+from directives.questionnaire import Questionnaire, SingleChoice, MultipleChoice, FreeText, AgreeGroup, AgreeItem
+from directives.submit import SubmitForm
 
 def setup(app):
 
@@ -36,5 +36,5 @@ def setup(app):
     app.add_directive('agree-group',  AgreeGroup)
     app.add_directive('agree-item',  AgreeItem)
 
-    # Load the submit directives.
-    #TODO
+    # Load the submit directive.
+    app.add_directive('submit', SubmitForm)

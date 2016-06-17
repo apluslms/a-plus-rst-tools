@@ -1,5 +1,5 @@
 '''
-Adds support for directives that define automatically assessed questionnaires.
+Directives that define automatically assessed questionnaires.
 '''
 from docutils.parsers.rst import directives
 from docutils import nodes
