@@ -1,18 +1,15 @@
 '''
 Directive that places exercise submission forms.
 '''
+import os.path
 from docutils.parsers.rst import directives
 from docutils import nodes
-from directives.abstract_exercise import AbstractExercise
+from sphinx.errors import SphinxError
+
 import aplus_nodes
-
-
-translations = {
-    'placeholder': {
-        'en': 'A+ presents the exercise submission form here.',
-        'fi': 'A+ esittää tässä kohdassa tehtävän palautuslomakkeen.',
-    },
-}
+import translations
+import yaml_writer
+from directives.abstract_exercise import AbstractExercise
 
 
 class SubmitForm(AbstractExercise):
@@ -43,20 +40,35 @@ class SubmitForm(AbstractExercise):
             'class': ' '.join(classes),
             'data-aplus-exercise': 'yes',
         })
-        node.append(nodes.Text(translations['placeholder'][env.config['language'] or 'en']))
+        node.append(nodes.Text(translations.get(env, 'submit_placeholder')))
 
-        # Try to load exercise configuration.
+        # Load or create exercise configuration.
         if 'config' in self.options:
-            print(self.options)
+            path = os.path.join(env.app.srcdir, self.options['config'])
+            if not os.path.exists(path):
+                raise SphinxError('Missing config path {}'.format(self.options['config']))
+            data = yaml_writer.read(path)
+        else:
+            data = {
+                '_external': True,
+                'title': translations.get(env, 'exercise') + ' ' + key,
+            }
+            if 'url' in self.options:
+                data['url'] = self.options['url']
+            if 'lti' in self.options:
+                data.update({
+                    'lti': self.options['lti'],
+                    'lti_context_id': self.options.get('lti_context_id', ''),
+                    'lti_resource_link_id': self.options.get('lti_resource_link_id', ''),
+                })
 
-        # Store configuration.
-        data = {
+        data.update({
             'key': name,
             'category': category,
             'max_points': points,
             'max_submissions': self.options.get('submissions', env.config.program_default_submissions),
             'points_to_pass': self.options.get('points-to-pass', 0),
-        }
+        })
         node.write_yaml(env, name, data, 'exercise')
 
         return [node]

@@ -1,6 +1,7 @@
-from docutils import nodes
 import os.path
 import re
+from docutils import nodes
+
 import yaml_writer
 
 
@@ -117,6 +118,6 @@ def depart_html(self, node):
     if hasattr(node, 'yaml_data'):
         recursive_fill(self.body, node.yaml_data, node)
         if hasattr(node, 'yaml_write'):
-            yaml_writer.write(node.yaml_write, node.yaml_data)
+            yaml_writer.write(node.yaml_write, node.pop_yaml())
     if node.no_write:
         self.body = node._real_body

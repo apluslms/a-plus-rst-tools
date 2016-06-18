@@ -6,9 +6,10 @@ from docutils import nodes
 from sphinx.errors import SphinxError
 from sphinx.util.compat import Directive
 from sphinx.util.nodes import nested_parse_with_titles
-from directives.abstract_exercise import AbstractExercise
+
 import aplus_nodes
-import toc_config
+import translations
+from directives.abstract_exercise import AbstractExercise
 
 
 class Questionnaire(AbstractExercise):
@@ -67,8 +68,7 @@ class Questionnaire(AbstractExercise):
         nested_parse_with_titles(self.state, self.content, form)
         submit = aplus_nodes.html('input', {
             'type': 'submit',
-            # TODO select by language
-            'value': 'L&auml;het&auml;',
+            'value': translations.get(env, 'submit'),
             'class': 'btn btn-primary',
         })
         form.append(submit)
@@ -83,13 +83,7 @@ class Questionnaire(AbstractExercise):
             'points_to_pass': self.options.get('points-to-pass', 0),
             'feedback': is_feedback,
             'view_type': 'access.types.stdsync.createForm',
-            'title|i18n': {
-                'fi': 'Palaute',
-                'en': 'Feedback',
-            } if is_feedback else {
-                'fi': u'Tehtävä ' + key,
-                'en': 'Exercise ' + key,
-            },
+            'title|i18n': translations.opt('feedback') if is_feedback else translations.opt('exercise', postfix=(' ' + key)),
             'fieldgroups': [{
                 'title': '',
                 'fields': ('#!children', None),
@@ -130,12 +124,8 @@ class QuestionMixin:
         elif env.questionnaire_is_feedback:
             data['title'] = title_text = ''
         else:
-            data['title|i18n'] = {
-                'fi': 'Kysymys {:d}'.format(env.question_count),
-                'en': 'Question {:d}'.format(env.question_count),
-            }
-            # TODO select by language
-            title_text = data['title|i18n']['fi']
+            data['title|i18n'] = translations.opt('question', postfix=(' ' + str(env.question_count)))
+            title_text = translations.get(env, 'question') + ' ' + str(env.question_count)
         if title_text:
             title = aplus_nodes.html('label', {})
             title.append(nodes.Text(title_text))
@@ -423,24 +413,15 @@ class AgreeItem(QuestionMixin, Directive):
     final_argument_whitespace = True
 
     def run(self):
-        option_texts = [
-            { 'fi': 'täysin samaa mieltä', 'en': 'strongly agree' },
-            { 'fi': 'jokseenkin samaa mieltä', 'en': 'agree' },
-            { 'fi': 'jokseenkin eri mieltä', 'en': 'disagree' },
-            { 'fi': 'täysin eri mieltä', 'en': 'strongly disagree' },
-            { 'fi': 'en osaa sanoa / en kommentoi', 'en': 'cannot say / no comments' },
-        ]
 
-        # Create question and starndard options.
         env, node, data = self.create_question(title_text=self.arguments[0], points=False)
         options = []
-        for i, label_text in enumerate(option_texts):
 
+        for i, key in enumerate(['agreement4', 'agreement3', 'agreement2', 'agreement1', 'agreement0']):
             options.append({
                 'value': 4 - i,
-                'label|i18n': label_text,
+                'label|i18n': translations.opt(key),
             })
-
             choice = aplus_nodes.html('div', {'class':'radio'})
             label = aplus_nodes.html('label', {})
             label.append(aplus_nodes.html('input', {
@@ -448,8 +429,7 @@ class AgreeItem(QuestionMixin, Directive):
                 'name': 'field_{:d}'.format(env.question_count - 1),
                 'value': 4 - i,
             }))
-            # TODO select by conf language
-            label.append(nodes.Text(label_text['fi']))
+            label.append(nodes.Text(translations.get(env, key)))
             choice.append(label)
             node.append(choice)
 

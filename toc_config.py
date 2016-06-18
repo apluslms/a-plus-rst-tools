@@ -1,14 +1,15 @@
-from sphinx import addnodes
+import re
 from docutils import nodes
+from sphinx import addnodes
+
 import aplus_nodes
 import yaml_writer
-import re
 
 
 def prepare(app):
     ''' Prepares environment for configuration values. '''
     yaml_writer.create_directory(app)
-    print('srcdir ' + app.srcdir)
+
 
 def write(app, exception):
     ''' Writes the table of contents level configuration. '''
@@ -48,16 +49,22 @@ def write(app, exception):
     def parse_chapter(docname, doc, parent):
         for config_file in [e.yaml_write for e in doc.traverse(aplus_nodes.html) if e.has_yaml('exercise')]:
             config = yaml_writer.read(config_file)
-            exercise = {
-                'key': config['key'],
-                'config': config['key'] + '.yaml',
-                'max_submissions': config['max_submissions'],
-                'max_points': config['max_points'],
-                'points_to_pass': config['points_to_pass'],
+            if config.get('_external', False):
+                exercise = config.copy()
+                del exercise['_external']
+            else:
+                exercise = {
+                    'key': config['key'],
+                    'config': config['key'] + '.yaml',
+                    'max_submissions': config['max_submissions'],
+                    'max_points': config['max_points'],
+                    'points_to_pass': config['points_to_pass'],
+                    'category': config['category'],
+                }
+            exercise.update({
                 'allow_assistant_grading': False,
                 'status': 'unlisted',
-                'category': config['category'],
-            }
+            })
             parent.append(exercise)
             if not config['category'] in category_keys:
                 category_keys.append(config['category'])
