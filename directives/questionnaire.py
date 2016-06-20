@@ -399,7 +399,7 @@ class AgreeGroup(Directive):
     final_argument_whitespace = False
 
     def run(self):
-        # This directive is actually obsolete, AgreeItems can be placed alone.
+        # This directive is obsolete, AgreeItems can be placed alone.
         node = aplus_nodes.html('div', {'class':'agreement-group'})
         nested_parse_with_titles(self.state, self.content, node)
         return  [node]

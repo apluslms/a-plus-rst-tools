@@ -20,7 +20,7 @@ def file_path(env, name):
 def write(file_path, data_dict):
     ''' Writes dictionary into a yaml file '''
     with open(file_path, 'w') as f:
-        f.write(yaml.dump(data_dict, default_flow_style=False))
+        f.write(yaml.dump(data_dict, default_flow_style=False, allow_unicode=True))
 
 
 def read(file_path):
