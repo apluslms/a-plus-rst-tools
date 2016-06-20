@@ -37,7 +37,9 @@
 
     <link rel="stylesheet" href="https://plus.cs.hut.fi/static/css/main.css" />
 
+    {%- if style %}
     <link rel="stylesheet" href="{{ pathto('_static/' + style, 1) }}" type="text/css" data-aplus="yes" />
+    {%- endif %}
     <link rel="stylesheet" href="{{ pathto('_static/pygments.css', 1) }}" type="text/css" data-aplus="yes" />
 
     {#%- for cssfile in css_files %}
