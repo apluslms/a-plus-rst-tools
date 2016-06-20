@@ -75,6 +75,7 @@ def write(app, exception):
                 'name': first_title(child),
                 'static_content': name + '.html',
                 'category': 'chapter',
+                'use_wide_column': app.config.use_wide_column,
                 'children': [],
             }
             parent.append(chapter)
