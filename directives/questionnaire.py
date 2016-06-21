@@ -144,11 +144,12 @@ class QuestionMixin:
         if not plain_content:
             return
 
-        parent = aplus_nodes.html('p', {'class':'help-block'})
+        parent = aplus_nodes.html('div', {})
+        parent.store_html('more')
         nested_parse_with_titles(self.state, plain_content, parent)
         node.append(parent)
 
-        data['more'] = ('#!html', '<p class="help-block">(.*?)</p>')
+        data['more'] = ('#!html', 'more')
 
     def add_feedback(self, node, data, paragraph):
         if not paragraph:
@@ -170,20 +171,21 @@ class QuestionMixin:
                 value = value[1:]
 
             # Create document elements.
-            parent = nodes.paragraph()
-            nested_parse_with_titles(self.state, line, parent)
-            text = aplus_nodes.html('span', {'class':'text'})
-            text.extend(parent.children)
-            feedbacks.append(text)
+            hint = aplus_nodes.html('div')
+            text = aplus_nodes.html('p', {})
+            text.store_html('hint')
+            nested_parse_with_titles(self.state, line, text)
+            hint.append(text)
+            feedbacks.append(hint)
 
             # Add configuration data.
             fbdata = {
                 'value': value,
-                'label': ('#!html', '<span class="text">(.*?)</span>'),
+                'label': ('#!html', 'hint'),
             }
             if isnot:
                 fbdata['not'] = True
-            text.set_yaml(fbdata, 'feedback')
+            hint.set_yaml(fbdata, 'feedback')
 
         node.append(feedbacks)
 
@@ -259,16 +261,15 @@ class Choice(QuestionMixin, Directive):
             choice.append(label)
             node.append(choice)
 
-            parent = nodes.paragraph()
-            nested_parse_with_titles(self.state, line, parent)
-            text = aplus_nodes.html('span', {'class':'text'})
-            text.extend(parent.children)
+            text = aplus_nodes.html('span', {})
+            text.store_html('label')
+            nested_parse_with_titles(self.state, line, text)
             label.append(text)
 
             # Add configuration data.
             optdata = {
                 'value': key,
-                'label': ('#!html', '<span class="text">(.*?)</span>'),
+                'label': ('#!html', 'label'),
             }
             if correct:
                 optdata['correct'] = True

@@ -17,9 +17,9 @@ class html(nodes.General, nodes.Element):
         The type is used to filter the children. None type includes all
         children data and HTML representations of alien children nodes.
 
-    "some_key": ("#!html", "<p>(.*?)</p>")
-        Matches and captures rendered HTML from the rendered node.
-        The second part is a Python regexp.
+    "some_key": ("#!html", 'by_name')
+        Captures rendered HTML from children nodes that were requested
+        to store HTML.
     '''
 
     def __init__(self, tagname, attributes={}, no_write=False):
@@ -53,8 +53,11 @@ class html(nodes.General, nodes.Element):
         del self.yaml_data
         return data
 
+    def store_html(self, name):
+        self.html_extract = name
 
-def collect(body, node, data_type=None):
+
+def collect_data(body, node, data_type=None):
     data = []
     e = 0
     for i in range(len(node.children)):
@@ -88,14 +91,22 @@ def collect(body, node, data_type=None):
     return data
 
 
+def collect_html(node, name):
+    html = []
+    for n in node.children:
+        if hasattr(n, 'html_extract') and n.html_extract == name:
+            html.append(n._html)
+        html.append(collect_html(n, name))
+    return ''.join(html)
+
+
 def recursive_fill(body, data_dict, node):
     for key,val in data_dict.items():
         if isinstance(val, tuple):
             if val[0] == '#!children':
-                data_dict[key] = collect(body, node, val[1])
+                data_dict[key] = collect_data(body, node, val[1])
             elif val[0] == '#!html':
-                res = re.findall(val[1], ''.join(body[node._body_begin:]), re.DOTALL)
-                data_dict[key] = res[0] if len(res) > 0 else ''
+                data_dict[key] = collect_html(node, val[1])
         elif isinstance(data_dict[key], dict):
             recursive_fill(body, data_dict[key], node)
         elif isinstance(data_dict[key], list):
@@ -116,6 +127,8 @@ def depart_html(self, node):
     ''' The HTML render ends for the node. '''
     self.body.append(node.endtag())
     node._body_end = len(self.body)
+    if hasattr(node, 'html_extract'):
+        node._html = ''.join(self.body[(node._body_begin+1):-1])
     if hasattr(node, 'yaml_data'):
         recursive_fill(self.body, node.yaml_data, node)
         if hasattr(node, 'yaml_write'):
