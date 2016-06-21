@@ -82,6 +82,7 @@ def collect(body, node, data_type=None):
                 e = node.children[e]._body_begin if e < len(node.children) else (node._body_end - 1)
                 data.append({
                     'type': 'static',
+                    'title': '',
                     'more': ''.join(body[b:e]),
                 })
     return data
