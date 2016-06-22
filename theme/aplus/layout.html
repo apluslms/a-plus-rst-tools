@@ -227,7 +227,9 @@
             <div class="row">
               <div class="col-lg-{%- if theme_use_wide_column|tobool %}12{%- else %}9{%- endif %}">
                 <div id="exercise">
-                  {%- block content %} {%- block document %} {% block body %} {% endblock %} {%- endblock %} {%- endblock %}
+                  <div class="content">
+                    {%- block content %} {%- block document %} {%- block body %} {% endblock %} {%- endblock %} {%- endblock %}
+                  </div>
                 </div>
               </div>
               {%- if not theme_use_wide_column|tobool %}
