@@ -210,22 +210,28 @@ class Choice(QuestionMixin, Directive):
         self.assert_has_content()
 
         # Detect paragraphs: any number of plain content, choices and optional feedback.
-        empty_lines = list(loc for loc,line in enumerate(self.content) if line == u'')
+        empty_lines = list(loc for loc,line in enumerate(self.content) if line == '')
         plain_content = None
         choices = []
         feedback = []
         if len(empty_lines) > 0:
             last = self.content[(empty_lines[-1] + 1):]
-            if all('§' in line for line in last):
-                feedback = last
+
+            def split_second_last(empty_lines):
                 if len(empty_lines) > 1:
-                    plain_content = self.content[:empty_lines[-2]]
-                    choices = self.content[(empty_lines[-2] + 1):empty_lines[-1]]
+                    return self.content[:empty_lines[-2]], self.content[(empty_lines[-2] + 1):empty_lines[-1]]
                 else:
-                    choices = self.content[:empty_lines[-1]]
+                    return None, self.content[:empty_lines[-1]]
+
+            # Backwards compatibility for skipping feedback paragraph.
+            if len(last) == 1 and last[0].startswith('I hereby declare that no feedback '):
+                plain_content, choices = split_second_last(empty_lines)
+            elif all('§' in line for line in last):
+                plain_content, choices = split_second_last(empty_lines)
+                feedback = last
             else:
-                choices = last
                 plain_content = self.content[:empty_lines[-1]]
+                choices = last
         else:
             choices = self.content
 
