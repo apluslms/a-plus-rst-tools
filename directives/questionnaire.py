@@ -1,8 +1,8 @@
 '''
 Directives that define automatically assessed questionnaires.
 '''
-from docutils.parsers.rst import directives
 from docutils import nodes
+from docutils.parsers.rst import directives
 from sphinx.errors import SphinxError
 from sphinx.util.compat import Directive
 from sphinx.util.nodes import nested_parse_with_titles

@@ -40,7 +40,9 @@ class SubmitForm(AbstractExercise):
             'class': ' '.join(classes),
             'data-aplus-exercise': 'yes',
         })
-        node.append(nodes.Text(translations.get(env, 'submit_placeholder')))
+        paragraph = aplus_nodes.html('p', {})
+        paragraph.append(nodes.Text(translations.get(env, 'submit_placeholder')))
+        node.append(paragraph)
 
         # Load or create exercise configuration.
         if 'config' in self.options:
@@ -64,8 +66,8 @@ class SubmitForm(AbstractExercise):
 
         data.update({
             'key': name,
-            'category': category,
-            'max_points': points,
+            'category': category or 'exercise',
+            'scale_points': points,
             'max_submissions': self.options.get('submissions', env.config.program_default_submissions),
             'points_to_pass': self.options.get('points-to-pass', 0),
         })

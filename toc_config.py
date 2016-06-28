@@ -1,9 +1,11 @@
 import re
 from docutils import nodes
 from sphinx import addnodes
+from sphinx.errors import SphinxError
 
 import aplus_nodes
 import yaml_writer
+import directives.meta
 
 
 def prepare(app):
@@ -33,14 +35,20 @@ def write(app, exception):
         titles = doc.traverse(nodes.title)
         return titles[0].astext() if titles else 'Unnamed'
 
+    def first_meta(doc):
+        metas = doc.traverse(directives.meta.meta)
+        return metas[0].options if metas else {}
+
     # Tries to parse date from natural text.
     def parse_date(src):
-        d,t = src.split(' ', 1)
+        parts = src.split(' ', 1)
+        d = parts[0]
+        t = parts[1] if len(parts) > 1 else ''
         if re.match('^\d\d.\d\d.\d\d\d\d$', d):
             ds = d.split('.')
             d = ds[2] + '-' + ds[1] + '-' + ds[0]
-        elif not re.match('^\d\d-\d\d-\d\d\d\d$', d):
-            return None
+        elif not re.match('^\d\d\d\d-\d\d-\d\d$', d):
+            raise SphinxError('Invalid date ' + d)
         if not re.match('^\d\d(:\d\d(:\d\d)?)?$', t):
             t = '12:00'
         return d + ' ' + t
@@ -57,7 +65,7 @@ def write(app, exception):
                     'key': config['key'],
                     'config': config['key'] + '.yaml',
                     'max_submissions': config['max_submissions'],
-                    'max_points': config['max_points'],
+                    'max_points': config.get('max_points', 0),
                     'points_to_pass': config['points_to_pass'],
                     'category': config['category'],
                 }
@@ -65,6 +73,8 @@ def write(app, exception):
                 'allow_assistant_grading': False,
                 'status': 'unlisted',
             })
+            if 'scale_points' in config:
+                exercise['max_points'] = config['scale_points']
             parent.append(exercise)
             if not config['category'] in category_keys:
                 category_keys.append(config['category'])
@@ -90,15 +100,19 @@ def write(app, exception):
     title_date_re = re.compile('.*\(DL (.+)\)')
     for docname,doc in traverse_tocs(root):
         title = first_title(doc)
-        match = title_date_re.match(title)
-        module_close = parse_date(match.group(1)) if match else None
+        title_date_match = title_date_re.match(title)
+        meta = first_meta(doc)
+        open_src = meta.get('open-time', course_open)
+        close_src = meta.get('close-time', title_date_match.group(1) if title_date_match else course_close)
         module = {
             'key': docname.split('/')[0],
             'name': title,
-            'open': course_open,
-            'close': module_close or course_close,
             'children': [],
         }
+        if open_src:
+            module['open'] = parse_date(open_src)
+        if close_src:
+            module['close'] = parse_date(close_src)
         modules.append(module)
         parse_chapter(docname, doc, module['children'])
 
@@ -114,15 +128,15 @@ def write(app, exception):
     outdir = app.outdir[i:]
 
     # Write the configuration index.
-    yaml_writer.write(
-        yaml_writer.file_path(app.env, 'index'),
-        {
-            'name': course_title,
-            'language': app.config.language,
-            'static_dir': outdir,
-            'start': course_open,
-            'end': course_close,
-            'modules': modules,
-            'categories': categories,
-        }
-    )
+    config = {
+        'name': course_title,
+        'language': app.config.language,
+        'static_dir': outdir,
+        'modules': modules,
+        'categories': categories,
+    }
+    if course_open:
+        config['start'] = parse_date(course_open)
+    if course_close:
+        config['end'] = parse_date(course_close)
+    yaml_writer.write(yaml_writer.file_path(app.env, 'index'), config)
