@@ -51,7 +51,7 @@ class JSVEE(Directive):
         return [node]
 
 def visit_jsvee_node(self, node):
-    self.body.append('<div class="animation" data-id="%s">' % (node['id']))
+    self.body.append('<div class="jsvee-animation" data-id="%s">' % (node['id']))
 
 def depart_jsvee_node(self, node):
     self.body.append("</div>\n")
@@ -113,8 +113,8 @@ def visit_video_node(self, node):
     self.body += '<source src="../_static/videot/%s.mp4"  type="video/mp4">'  % node['id']
     self.body += '<source src="../_static/videot/%s.webm" type="video/webm">' % node['id']
     self.body += 'Your browser does not support the HTML5 video tag. Please use a browser that does.'
-    self.body += '</video>' 
-    
+    self.body += '</video>'
+
 def depart_video_node(self, node):
     self.body.append("</video>\n")
 
@@ -168,5 +168,3 @@ def setup(app):
 
     app.add_node(iframe_node, html=(visit_iframe_node, depart_iframe_node))
     app.add_directive('embedded-page', IFrame)
-
-
