@@ -6,6 +6,7 @@ from sphinx.errors import SphinxError
 import aplus_nodes
 import yaml_writer
 import directives.meta
+import html_tools
 
 
 def prepare(app):
@@ -81,7 +82,7 @@ def write(app, exception):
 
         for name,child in traverse_tocs(doc):
             chapter = {
-                'key': name.replace('/', '_'),#name.split('/')[-1],
+                'key': name.split('/')[-1],#name.replace('/', '_'),
                 'name': first_title(child),
                 'static_content': name + '.html',
                 'category': 'chapter',
@@ -97,6 +98,7 @@ def write(app, exception):
     course_title = first_title(root)
 
     # Traverse the documents using toctree directives.
+    app.info('Traverse document elements to write configuration index.')
     title_date_re = re.compile('.*\(DL (.+)\)')
     for docname,doc in traverse_tocs(root):
         title = first_title(doc)
@@ -140,3 +142,14 @@ def write(app, exception):
     if course_close:
         config['end'] = parse_date(course_close)
     yaml_writer.write(yaml_writer.file_path(app.env, 'index'), config)
+
+    # Mark links to other modules.
+    app.info('Retouch all HTML files to append chapter link attributes.')
+    keys = [m['key'] for m in modules]
+    for html_file in html_tools.walk(app.outdir):
+        html_tools.annotate_file_links(
+            html_file,
+            ['href'],
+            keys,
+            'data-aplus-chapter="yes" '
+        )

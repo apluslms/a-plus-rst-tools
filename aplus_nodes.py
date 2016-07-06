@@ -3,6 +3,7 @@ import re
 from docutils import nodes
 
 import yaml_writer
+import html_tools
 
 
 class html(nodes.General, nodes.Element):
@@ -57,6 +58,14 @@ class html(nodes.General, nodes.Element):
         self.html_extract = name
 
 
+def annotate_links(html):
+    return html_tools.annotate_links(
+        html,
+        ['href', 'src'],
+        ['_images', '_static'],
+        'data-aplus-path="/static/{course}" '
+    )
+
 def collect_data(body, node, data_type=None):
     data = []
     e = 0
@@ -86,7 +95,7 @@ def collect_data(body, node, data_type=None):
                 data.append({
                     'type': 'static',
                     'title': '',
-                    'more': ''.join(body[b:e]),
+                    'more': annotate_links(''.join(body[b:e])),
                 })
     return data
 
@@ -97,7 +106,7 @@ def collect_html(node, name):
         if hasattr(n, 'html_extract') and n.html_extract == name:
             html.append(n._html)
         html.append(collect_html(n, name))
-    return ''.join(html)
+    return annotate_links(''.join(html))
 
 
 def recursive_fill(body, data_dict, node):
