@@ -16,6 +16,7 @@ class Questionnaire(AbstractExercise):
     ''' Wraps questionnaire configuration. '''
     has_content = True
     option_spec = {
+        'title': directives.unchanged,
         'chapter-feedback': directives.flag,
         'weekly-feedback': directives.flag,
         'course-feedback': directives.flag,
@@ -75,6 +76,13 @@ class Questionnaire(AbstractExercise):
         form.append(submit)
         node.append(form)
 
+        if 'title' in self.options:
+            title = {'fi': self.options['title'], 'en': self.options['title']}
+        elif is_feedback:
+            title = translations.opt('feedback')
+        else:
+            title = translations.opt('exercise', postfix=(' ' + key))
+
         # Write configuration file.
         data = {
             'key': name,
@@ -84,7 +92,7 @@ class Questionnaire(AbstractExercise):
             'points_to_pass': self.options.get('points-to-pass', 0),
             'feedback': is_feedback,
             'view_type': 'access.types.stdsync.createForm',
-            'title|i18n': translations.opt('feedback') if is_feedback else translations.opt('exercise', postfix=(' ' + key)),
+            'title|i18n': title,
             'fieldgroups': [{
                 'title': '',
                 'fields': ('#!children', None),
