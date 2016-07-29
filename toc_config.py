@@ -54,6 +54,9 @@ def write(app, exception):
             t = '12:00'
         return d + ' ' + t
 
+    # 'exercise_docnames' dict is used to check for exercise key uniqueness.
+    exercise_docnames = {}
+
     # Recursive chapter parsing.
     def parse_chapter(docname, doc, parent):
         for config_file in [e.yaml_write for e in doc.traverse(aplus_nodes.html) if e.has_yaml('exercise')]:
@@ -79,6 +82,9 @@ def write(app, exception):
             parent.append(exercise)
             if not config['category'] in category_keys:
                 category_keys.append(config['category'])
+
+            key = exercise['key']
+            exercise_docnames[key] = exercise_docnames.get(key, []) + [docname]
 
         for name,child in traverse_tocs(doc):
             chapter = {
@@ -117,6 +123,18 @@ def write(app, exception):
             module['close'] = parse_date(close_src)
         modules.append(module)
         parse_chapter(docname, doc, module['children'])
+
+    # Check for exercise uniqueness.
+    nonunique_exercises = []
+    for key in exercise_docnames:
+        if len(exercise_docnames[key]) > 1:
+            nonunique_exercises.append(key)
+
+    if nonunique_exercises:
+        violations = "\n"
+        for key in nonunique_exercises:
+            violations += "Exercise with key '{}' found in files {}\n".format(key, exercise_docnames[key])
+        raise SphinxError('Exercise keys must be unique! {}'.format(violations))
 
     # Create categories.
     categories = {key: {'name': key} for key in category_keys}
