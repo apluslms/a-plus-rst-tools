@@ -50,7 +50,8 @@ class Questionnaire(AbstractExercise):
             category = category or 'exercise'
 
         env = self.state.document.settings.env
-        name = env.docname.replace('/', '_') + '_' + key
+        #name = env.docname.replace('/', '_') + '_' + key
+        name = key
 
         env.questionnaire_is_feedback = is_feedback
         env.question_count = 0

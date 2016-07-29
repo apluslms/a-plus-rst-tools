@@ -29,7 +29,8 @@ class SubmitForm(AbstractExercise):
         key, category, points = self.extract_exercise_arguments()
 
         env = self.state.document.settings.env
-        name = env.docname.replace('/', '_') + '_' + key
+        # name = env.docname.replace('/', '_') + '_' + key
+        name = key
 
         classes = ['exercise']
         if 'class' in self.options:
