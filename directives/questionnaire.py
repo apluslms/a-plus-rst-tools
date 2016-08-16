@@ -53,6 +53,9 @@ class Questionnaire(AbstractExercise):
         env = self.state.document.settings.env
         #name = env.docname.replace('/', '_') + '_' + key
         name = key
+        if is_feedback:
+            # Prefix feedback keys with <chapter>_
+            name = env.docname.split('/')[-1] + "_" + name
 
         env.questionnaire_is_feedback = is_feedback
         env.question_count = 0
