@@ -159,6 +159,28 @@ def write(app, exception):
         config['start'] = parse_date(course_open)
     if course_close:
         config['end'] = parse_date(course_close)
+
+    # Append directly configured content.
+    def recursive_merge(config, append):
+        if type(append) == dict:
+            for key,val in append.items():
+                if not key in config:
+                    config[key] = val
+                else:
+                    recursive_merge(config[key], append[key])
+        elif type(append) == list:
+            for entry in append:
+                add = True
+                if 'key' in entry:
+                    for old in config:
+                        if 'key' in old and old['key'] == entry['key']:
+                            recursive_merge(old, entry)
+                            add = False
+                if add:
+                    config.append(entry)
+    for path in app.config.append_content:
+        recursive_merge(config, yaml_writer.read(path))
+
     yaml_writer.write(yaml_writer.file_path(app.env, 'index'), config)
 
     # Mark links to other modules.
