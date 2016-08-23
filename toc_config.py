@@ -19,6 +19,7 @@ def write(app, exception):
     if exception:
         return
 
+    course_title = app.config.course_title
     course_open = app.config.course_open_date
     course_close = app.config.course_close_date
 
@@ -37,7 +38,7 @@ def write(app, exception):
         return titles[0].astext() if titles else 'Unnamed'
 
     def first_meta(doc):
-        metas = doc.traverse(directives.meta.meta)
+        metas = doc.traverse(directives.meta.aplusmeta)
         return metas[0].options if metas else {}
 
     # Tries to parse date from natural text.
@@ -95,7 +96,8 @@ def write(app, exception):
             parse_chapter(name, child, chapter['children'])
 
     root = app.env.get_doctree(app.config.master_doc)
-    course_title = first_title(root)
+    if not course_title:
+        course_title = first_title(root)
 
     # Traverse the documents using toctree directives.
     app.info('Traverse document elements to write configuration index.')

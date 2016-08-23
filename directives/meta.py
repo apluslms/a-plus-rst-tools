@@ -3,7 +3,7 @@ from docutils.parsers.rst import directives
 from sphinx.util.compat import Directive
 
 
-class meta(nodes.General, nodes.Element):
+class aplusmeta(nodes.General, nodes.Element):
     ''' Hidden node that includes meta data. '''
 
     def __init__(self, options={}):
@@ -12,7 +12,7 @@ class meta(nodes.General, nodes.Element):
         super().__init__(rawsource='')
 
 
-class Meta(Directive):
+class AplusMeta(Directive):
     ''' Injects document meta data for A+ configuration. '''
 
     has_content = False
