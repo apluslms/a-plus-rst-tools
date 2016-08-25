@@ -19,6 +19,8 @@ def setup(app):
     app.add_config_value('course_close_date', None, 'html')
     app.add_config_value('questionnaire_default_submissions', 5, 'html')
     app.add_config_value('program_default_submissions', 10, 'html')
+    app.add_config_value('default_min_group_size', 1, 'html')
+    app.add_config_value('default_max_group_size', 1, 'html')
     app.add_config_value('use_wide_column', True, 'html')
     app.add_config_value('append_content', [], 'html')
 

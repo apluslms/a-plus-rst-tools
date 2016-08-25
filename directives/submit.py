@@ -69,6 +69,8 @@ class SubmitForm(AbstractExercise):
             'category': category or 'exercise',
             'scale_points': points,
             'max_submissions': self.options.get('submissions', env.config.program_default_submissions),
+            'min_group_size': env.config.default_min_group_size,
+            'max_group_size': env.config.default_max_group_size,
             'points_to_pass': self.options.get('points-to-pass', 0),
         })
         node.write_yaml(env, name, data, 'exercise')
