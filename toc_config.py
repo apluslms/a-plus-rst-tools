@@ -131,8 +131,10 @@ def make_index(app, root):
                     u'confirm_the_level': config.get(u'confirm_the_level', False),
                     u'allow_assistant_grading': config.get(u'allow_assistant_grading', False),
                 }
+            allow_assistant_viewing = config.get(u'allow_assistant_viewing', app.config.allow_assistant_viewing)
             exercise.update({
                 u'status': u'unlisted',
+                u'allow_assistant_viewing': allow_assistant_viewing,
             })
             if u'scale_points' in config:
                 exercise[u'max_points'] = config.pop(u'scale_points')

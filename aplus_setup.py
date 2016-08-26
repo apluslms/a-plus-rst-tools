@@ -33,6 +33,7 @@ def setup(app):
     app.add_config_value('static_host', None, 'html')
     app.add_config_value('ae_default_submissions', 0, 'html')
     app.add_config_value('skip_language_inconsistencies', False, 'html')
+    app.add_config_value('allow_assistant_viewing', True, 'html')
 
     # Connect configuration generation to events.
     app.connect('builder-inited', toc_config.prepare)
