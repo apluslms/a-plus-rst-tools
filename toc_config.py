@@ -73,8 +73,10 @@ def write(app, exception):
                     'points_to_pass': config['points_to_pass'],
                     'category': config['category'],
                 }
+            allow_assistant_viewing = config.get('allow_assistant_viewing', app.config.allow_assistant_viewing)
             exercise.update({
                 'allow_assistant_grading': False,
+                'allow_assistant_viewing': allow_assistant_viewing,
                 'status': 'unlisted',
             })
             if 'scale_points' in config:

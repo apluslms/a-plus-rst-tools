@@ -20,6 +20,7 @@ def setup(app):
     app.add_config_value('program_default_submissions', 10, 'html')
     app.add_config_value('use_wide_column', True, 'html')
     app.add_config_value('append_content', [], 'html')
+    app.add_config_value('allow_assistant_viewing', True, 'html')
 
     # Connect configuration generation to events.
     app.connect('builder-inited', toc_config.prepare)
