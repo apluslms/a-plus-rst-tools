@@ -173,6 +173,7 @@ def write(app, exception):
     for html_file in html_tools.walk(app.outdir):
         html_tools.annotate_file_links(
             html_file,
+            ['a'],
             ['href'],
             keys,
             'data-aplus-chapter="yes" '

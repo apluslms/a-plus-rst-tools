@@ -61,6 +61,7 @@ class html(nodes.General, nodes.Element):
 def annotate_links(html):
     return html_tools.annotate_links(
         html,
+        ['a', 'img', 'script', 'iframe', 'link'],
         ['href', 'src'],
         ['_images', '_static'],
         'data-aplus-path="/static/{course}" '

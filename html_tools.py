@@ -2,16 +2,18 @@ import fnmatch
 import io, os, re
 
 
-def annotate_links(content, attributes, link_paths, append):
+def annotate_links(content, tags, attributes, link_paths, append):
     out = ""
     p = re.compile(
-        '(' + '|'.join(attributes) +
-        ')="(/?|(../)*)(' + '|'.join(link_paths) + ')'
+        '<(' + '|'.join(tags) + ')[^<>]*'
+        '(?P<attr>' + '|'.join(attributes) + ')="'
+        '(/?|(../)*)(' + '|'.join(link_paths) + ')'
     )
     i = 0
     for m in p.finditer(content):
-        out += content[i:m.start()]
-        i = m.start()
+        j = m.start('attr')
+        out += content[i:j]
+        i = j
         if not out.endswith(append):
             out += append
     out += content[i:]
@@ -36,7 +38,7 @@ def _write_file(file_path, content):
         f.write(content)
 
 
-def annotate_file_links(html_file, attributes, link_paths, append):
+def annotate_file_links(html_file, tags, attributes, link_paths, append):
     content = _read_file(html_file)
-    content = annotate_links(content, attributes, link_paths, append)
+    content = annotate_links(content, tags, attributes, link_paths, append)
     _write_file(html_file, content)
