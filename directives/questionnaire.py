@@ -18,6 +18,7 @@ class Questionnaire(AbstractExercise):
     option_spec = {
         'chapter-feedback': directives.flag,
         'weekly-feedback': directives.flag,
+        'appendix-feedback': directives.flag,
         'course-feedback': directives.flag,
         'feedback': directives.flag,
         'submissions': directives.nonnegative_int,
@@ -36,6 +37,9 @@ class Questionnaire(AbstractExercise):
             is_feedback = True
         if 'weekly-feedback' in self.options:
             classes.append('weekly-feedback')
+            is_feedback = True
+        if 'appendix-feedback' in self.options:
+            classes.append('appendix-feedback')
             is_feedback = True
         if 'course-feedback' in self.options:
             classes.append('course-feedback-questionnaire')
