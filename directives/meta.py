@@ -12,6 +12,14 @@ class aplusmeta(nodes.General, nodes.Element):
         super().__init__(rawsource='')
 
 
+def visit_ignore(self, node):
+    pass
+
+
+def depart_ignore(self, node):
+    pass
+
+
 class AplusMeta(Directive):
     ''' Injects document meta data for A+ configuration. '''
 
@@ -24,4 +32,4 @@ class AplusMeta(Directive):
     }
 
     def run(self):
-        return [meta(options=self.options)]
+        return [aplusmeta(options=self.options)]

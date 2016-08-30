@@ -7,7 +7,7 @@ If necessary, edit this setup to select the loaded directives.
 '''
 import toc_config
 import aplus_nodes
-from directives.meta import aplusmeta, AplusMeta
+import directives.meta as aplus_meta
 from directives.questionnaire import Questionnaire, SingleChoice, MultipleChoice, FreeText, AgreeGroup, AgreeItem
 from directives.submit import SubmitForm
 
@@ -35,8 +35,11 @@ def setup(app):
     )
 
     # The directive for injecting document meta data.
-    app.add_node(aplusmeta)
-    app.add_directive('aplusmeta', AplusMeta)
+    app.add_node(
+        aplus_meta.aplusmeta,
+        html=(aplus_meta.visit_ignore, aplus_meta.depart_ignore)
+    )
+    app.add_directive('aplusmeta', aplus_meta.AplusMeta)
 
     # The questionnaire directives.
     app.add_directive('questionnaire', Questionnaire)
