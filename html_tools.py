@@ -7,7 +7,7 @@ def annotate_links(content, tags, attributes, link_paths, append):
     p = re.compile(
         '<(' + '|'.join(tags) + ')[^<>]*'
         '(?P<attr>' + '|'.join(attributes) + ')="'
-        '(/?|(../)*)(' + '|'.join(link_paths) + ')'
+        '(\/?|(\.\.\/)*)(' + '|'.join(link_paths) + ')\/'
     )
     i = 0
     for m in p.finditer(content):
