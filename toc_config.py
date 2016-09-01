@@ -29,9 +29,10 @@ def write(app, exception):
     def traverse_tocs(doc):
         names = []
         for toc in doc.traverse(addnodes.toctree):
+            hidden = toc.attributes['hidden']
             for _,docname in toc.get('entries', []):
-                names.append(docname)
-        return [(name,app.env.get_doctree(name)) for name in names]
+                names.append((docname,hidden))
+        return [(name,hidden,app.env.get_doctree(name)) for name,hidden in names]
 
     def first_title(doc):
         titles = doc.traverse(nodes.title)
@@ -70,6 +71,8 @@ def write(app, exception):
                     'max_points': config.get('max_points', 0),
                     'points_to_pass': config['points_to_pass'],
                     'category': config['category'],
+                    'min_group_size': config['min_group_size'],
+                    'max_group_size': config['max_group_size'],
                 }
             exercise.update({
                 'allow_assistant_grading': False,
@@ -81,9 +84,10 @@ def write(app, exception):
             if not config['category'] in category_keys:
                 category_keys.append(config['category'])
 
-        for name,child in traverse_tocs(doc):
+        for name,hidden,child in traverse_tocs(doc):
             chapter = {
                 'key': name.split('/')[-1],#name.replace('/', '_'),
+                'status': 'unlisted' if hidden else 'ready',
                 'name': first_title(child),
                 'static_content': name + '.html',
                 'category': 'chapter',
@@ -102,7 +106,7 @@ def write(app, exception):
     # Traverse the documents using toctree directives.
     app.info('Traverse document elements to write configuration index.')
     title_date_re = re.compile('.*\(DL (.+)\)')
-    for docname,doc in traverse_tocs(root):
+    for docname,hidden,doc in traverse_tocs(root):
         title = first_title(doc)
         title_date_match = title_date_re.match(title)
         meta = first_meta(doc)
@@ -110,6 +114,7 @@ def write(app, exception):
         close_src = meta.get('close-time', title_date_match.group(1) if title_date_match else course_close)
         module = {
             'key': docname.split('/')[0],
+            'status': 'unlisted' if hidden else 'ready',
             'name': title,
             'children': [],
         }
@@ -122,6 +127,8 @@ def write(app, exception):
 
     # Create categories.
     categories = {key: {'name': key} for key in category_keys}
+    if 'chapter' in categories:
+        categories['chapter']['status'] = 'hidden'
 
     # Get relative out dir.
     i = 0
