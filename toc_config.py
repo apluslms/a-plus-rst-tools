@@ -177,6 +177,7 @@ def write(app, exception):
     # Mark links to other modules.
     app.info('Retouch all HTML files to append chapter link attributes.')
     keys = [m['key'] for m in modules]
+    keys.extend(['toc', 'user', 'account'])
     for html_file in html_tools.walk(app.outdir):
         html_tools.annotate_file_links(
             html_file,
