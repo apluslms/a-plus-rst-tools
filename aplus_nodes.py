@@ -145,3 +145,20 @@ def depart_html(self, node):
             yaml_writer.write(node.yaml_write, node.pop_yaml())
     if node.no_write:
         self.body = node._real_body
+
+
+class aplusmeta(nodes.General, nodes.Element):
+    ''' Hidden node that includes meta data. '''
+
+    def __init__(self, options={}):
+        self.tagname = 'meta'
+        self.options = options
+        super().__init__(rawsource='')
+
+
+def visit_ignore(self, node):
+    pass
+
+
+def depart_ignore(self, node):
+    pass

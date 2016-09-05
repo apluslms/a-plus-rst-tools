@@ -85,6 +85,7 @@ def write(app, exception):
                 category_keys.append(config['category'])
 
         for name,hidden,child in traverse_tocs(doc):
+            meta = first_meta(child)
             chapter = {
                 'key': name.split('/')[-1],#name.replace('/', '_'),
                 'status': 'unlisted' if hidden else 'ready',
@@ -94,6 +95,10 @@ def write(app, exception):
                 'use_wide_column': app.config.use_wide_column,
                 'children': [],
             }
+            if meta:
+                audience = meta.get('audience')
+                if audience:
+                    chapter['audience'] = audience
             parent.append(chapter)
             if not 'chapter' in category_keys:
                 category_keys.append('chapter')
