@@ -22,6 +22,7 @@ def write(app, exception):
     course_title = app.config.course_title
     course_open = app.config.course_open_date
     course_close = app.config.course_close_date
+    feedback_override = app.config.feedback_override
 
     modules = []
     category_keys = []
@@ -60,6 +61,12 @@ def write(app, exception):
     def parse_chapter(docname, doc, parent):
         for config_file in [e.yaml_write for e in doc.traverse(aplus_nodes.html) if e.has_yaml('exercise')]:
             config = yaml_writer.read(config_file)
+            if config.get('feedback', False):
+                config.update(feedback_override)
+                if 'url' in config:
+                    config['url'] = config['url'].format(key=config['key'])
+                if config.get('view_type', True) is None:
+                    del config['view_type']
             if config.get('_external', False):
                 exercise = config.copy()
                 del exercise['_external']

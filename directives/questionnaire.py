@@ -83,7 +83,7 @@ class Questionnaire(AbstractExercise):
             'key': name,
             'category': category,
             'max_points': points,
-            'max_submissions': self.options.get('submissions', env.config.questionnaire_default_submissions),
+            'max_submissions': self.options.get('submissions', 0 if is_feedback else env.config.questionnaire_default_submissions),
             'min_group_size': 1 if is_feedback else env.config.default_min_group_size,
             'max_group_size': 1 if is_feedback else env.config.default_max_group_size,
             'points_to_pass': self.options.get('points-to-pass', 0),
