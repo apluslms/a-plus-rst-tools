@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 '''
 Directives that define automatically assessed questionnaires.
 '''

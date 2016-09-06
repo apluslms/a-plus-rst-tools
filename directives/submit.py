@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 '''
 Directive that places exercise submission forms.
 '''
