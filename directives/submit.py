@@ -30,18 +30,18 @@ class SubmitForm(AbstractExercise):
         key, category, points = self.extract_exercise_arguments()
 
         env = self.state.document.settings.env
-        name = env.docname.replace('/', '_') + '_' + key
+        name = u"{}_{}".format(env.docname.replace(u'/', u'_'), key)
 
-        classes = ['exercise']
+        classes = [u'exercise']
         if 'class' in self.options:
             classes.extend(self.options['class'])
 
         # Add document nodes.
-        node = aplus_nodes.html('div', {
-            'class': ' '.join(classes),
-            'data-aplus-exercise': 'yes',
+        node = aplus_nodes.html(u'div', {
+            u'class': u' '.join(classes),
+            u'data-aplus-exercise': u'yes',
         })
-        paragraph = aplus_nodes.html('p', {})
+        paragraph = aplus_nodes.html(u'p', {})
         paragraph.append(nodes.Text(translations.get(env, 'submit_placeholder')))
         node.append(paragraph)
 
@@ -53,26 +53,26 @@ class SubmitForm(AbstractExercise):
             data = yaml_writer.read(path)
         else:
             data = {
-                '_external': True,
-                'title': translations.get(env, 'exercise') + ' ' + key,
+                u'_external': True,
+                u'title': u"{} {}".format(translations.get(env, 'exercise'), key),
             }
             if 'url' in self.options:
-                data['url'] = self.options['url']
+                data[u'url'] = self.options['url']
             if 'lti' in self.options:
                 data.update({
-                    'lti': self.options['lti'],
-                    'lti_context_id': self.options.get('lti_context_id', ''),
-                    'lti_resource_link_id': self.options.get('lti_resource_link_id', ''),
+                    u'lti': self.options['lti'],
+                    u'lti_context_id': self.options.get('lti_context_id', u''),
+                    u'lti_resource_link_id': self.options.get('lti_resource_link_id', u''),
                 })
 
         data.update({
-            'key': name,
-            'category': category or 'exercise',
-            'scale_points': points,
-            'max_submissions': self.options.get('submissions', env.config.program_default_submissions),
-            'min_group_size': env.config.default_min_group_size,
-            'max_group_size': env.config.default_max_group_size,
-            'points_to_pass': self.options.get('points-to-pass', 0),
+            u'key': name,
+            u'category': category or u'exercise',
+            u'scale_points': points,
+            u'max_submissions': self.options.get('submissions', env.config.program_default_submissions),
+            u'min_group_size': env.config.default_min_group_size,
+            u'max_group_size': env.config.default_max_group_size,
+            u'points_to_pass': self.options.get('points-to-pass', 0),
         })
         node.write_yaml(env, name, data, 'exercise')
 

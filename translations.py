@@ -1,46 +1,47 @@
+# -*- coding: utf-8 -*-
 from sphinx.errors import SphinxError
 
 
 translations = {
     'submit': {
-        'en': 'Submit',
+        'en': u'Submit',
         'fi': u'Lähetä',
     },
     'submit_placeholder': {
-        'en': 'A+ presents the exercise submission form here.',
+        'en': u'A+ presents the exercise submission form here.',
         'fi': u'A+ esittää tässä kohdassa tehtävän palautuslomakkeen.',
     },
     'feedback': {
-        'en': 'Feedback',
-        'fi': 'Palaute',
+        'en': u'Feedback',
+        'fi': u'Palaute',
     },
     'exercise': {
-        'en': 'Exercise',
+        'en': u'Exercise',
         'fi': u'Tehtävä',
     },
     'question': {
-        'en': 'Question',
-        'fi': 'Kysymys',
+        'en': u'Question',
+        'fi': u'Kysymys',
     },
     'agreement4': {
-        'en': 'strongly agree',
+        'en': u'strongly agree',
         'fi': u'täysin samaa mieltä',
     },
     'agreement3': {
-        'en': 'agree',
+        'en': u'agree',
         'fi': u'jokseenkin samaa mieltä',
     },
     'agreement2': {
-        'en': 'disagree',
+        'en': u'disagree',
         'fi': u'jokseenkin eri mieltä',
     },
     'agreement1': {
-        'en': 'strongly disagree',
+        'en': u'strongly disagree',
         'fi': u'täysin eri mieltä',
     },
     'agreement0': {
-        'en': 'cannot say / no comments',
-        'fi': 'en osaa sanoa / en kommentoi',
+        'en': u'cannot say / no comments',
+        'fi': u'en osaa sanoa / en kommentoi',
     },
 }
 
@@ -63,7 +64,7 @@ def opt(key, postfix=None):
     if postfix:
         d = translations[key].copy()
         for l in d.keys():
-            d[l] += postfix
+            d[l] = u"{} {}".format(d[l], postfix)
         return d
 
     return translations[key]

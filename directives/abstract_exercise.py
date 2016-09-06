@@ -17,9 +17,9 @@ class AbstractExercise(Directive):
         category = None
         points = 0
         if not arg is None:
-            for is_number, chars in itertools.groupby(arg, key=str.isdigit):
+            for is_number, chars in itertools.groupby(arg, key=lambda a: str.isdigit(str(a))):
                 if is_number:
-                    points = int(''.join(chars))
+                    points = int(u''.join(chars))
                 else:
-                    category = ''.join(chars)
+                    category = u''.join(chars)
         return category, points

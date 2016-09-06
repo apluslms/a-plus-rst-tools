@@ -27,7 +27,7 @@ class html(nodes.General, nodes.Element):
         ''' Constructor: no_write option removes node from final document after configuration data is processed. '''
         self.tagname = tagname
         self.no_write = no_write
-        super().__init__(rawsource='', **attributes)
+        super(html, self).__init__(rawsource=u"", **attributes)
 
     def write_yaml(self, env, name, data_dict, data_type=None):
         ''' Adds configuration data and requests write into a file. '''
@@ -61,10 +61,10 @@ class html(nodes.General, nodes.Element):
 def annotate_links(html):
     return html_tools.annotate_links(
         html,
-        ['a', 'img', 'script', 'iframe', 'link'],
-        ['href', 'src'],
-        ['_images', '_static'],
-        'data-aplus-path="/static/{course}" '
+        [u'a', u'img', u'script', u'iframe', u'link'],
+        [u'href', u'src'],
+        [u'_images', u'_static'],
+        u'data-aplus-path="/static/{course}" '
     )
 
 def collect_data(body, node, data_type=None):
@@ -94,9 +94,9 @@ def collect_data(body, node, data_type=None):
                     e += 1
                 e = node.children[e]._body_begin if e < len(node.children) else (node._body_end - 1)
                 data.append({
-                    'type': 'static',
-                    'title': '',
-                    'more': annotate_links(''.join(body[b:e])),
+                    u'type': u'static',
+                    u'title': u"",
+                    u'more': annotate_links(u"".join(body[b:e])),
                 })
     return data
 
@@ -107,15 +107,15 @@ def collect_html(node, name):
         if hasattr(n, 'html_extract') and n.html_extract == name:
             html.append(n._html)
         html.append(collect_html(n, name))
-    return annotate_links(''.join(html))
+    return annotate_links(u"".join(html))
 
 
 def recursive_fill(body, data_dict, node):
     for key,val in data_dict.items():
         if isinstance(val, tuple):
-            if val[0] == '#!children':
+            if val[0] == u'#!children':
                 data_dict[key] = collect_data(body, node, val[1])
-            elif val[0] == '#!html':
+            elif val[0] == u'#!html':
                 data_dict[key] = collect_html(node, val[1])
         elif isinstance(data_dict[key], dict):
             recursive_fill(body, data_dict[key], node)
@@ -138,7 +138,7 @@ def depart_html(self, node):
     self.body.append(node.endtag())
     node._body_end = len(self.body)
     if hasattr(node, 'html_extract'):
-        node._html = ''.join(self.body[(node._body_begin+1):-1])
+        node._html = u"".join(self.body[(node._body_begin+1):-1])
     if hasattr(node, 'yaml_data'):
         recursive_fill(self.body, node.yaml_data, node)
         if hasattr(node, 'yaml_write'):
@@ -151,9 +151,9 @@ class aplusmeta(nodes.General, nodes.Element):
     ''' Hidden node that includes meta data. '''
 
     def __init__(self, options={}):
-        self.tagname = 'meta'
+        self.tagname = u"meta"
         self.options = options
-        super().__init__(rawsource='')
+        super(aplusmeta, self).__init__(rawsource=u"")
 
 
 def visit_ignore(self, node):
