@@ -82,19 +82,19 @@ class Questionnaire(AbstractExercise):
 
         # Write configuration file.
         data = {
-            'key': name,
-            'category': category,
-            'max_points': points,
-            'max_submissions': self.options.get('submissions', 0 if is_feedback else env.config.questionnaire_default_submissions),
-            'min_group_size': 1 if is_feedback else env.config.default_min_group_size,
-            'max_group_size': 1 if is_feedback else env.config.default_max_group_size,
-            'points_to_pass': self.options.get('points-to-pass', 0),
-            'feedback': is_feedback,
-            'view_type': 'access.types.stdsync.createForm',
-            'title|i18n': translations.opt('feedback') if is_feedback else translations.opt('exercise', postfix=u" {}".format(key)),
-            'fieldgroups': [{
-                'title': '',
-                'fields': ('#!children', None),
+            u'key': name,
+            u'category': category,
+            u'max_points': points,
+            u'max_submissions': self.options.get('submissions', 0 if is_feedback else env.config.questionnaire_default_submissions),
+            u'min_group_size': 1 if is_feedback else env.config.default_min_group_size,
+            u'max_group_size': 1 if is_feedback else env.config.default_max_group_size,
+            u'points_to_pass': self.options.get('points-to-pass', 0),
+            u'feedback': is_feedback,
+            u'view_type': u'access.types.stdsync.createForm',
+            u'title|i18n': translations.opt('feedback') if is_feedback else translations.opt('exercise', postfix=u" {}".format(key)),
+            u'fieldgroups': [{
+                u'title': '',
+                u'fields': (u'#!children', None),
             }],
         }
         form.write_yaml(env, name, data, 'exercise')
@@ -128,11 +128,11 @@ class QuestionMixin:
 
         # Add title.
         if not title_text is None:
-            data['title'] = title_text
+            data[u'title'] = title_text
         elif env.questionnaire_is_feedback:
-            data['title'] = title_text = u''
+            data[u'title'] = title_text = u''
         else:
-            data['title|i18n'] = translations.opt('question', postfix=u" {:d}".format(env.question_count))
+            data[u'title|i18n'] = translations.opt('question', postfix=u" {:d}".format(env.question_count))
             title_text = u"{} {:d}".format(translations.get(env, 'question'), env.question_count)
         if title_text:
             title = aplus_nodes.html(u'label', {})
@@ -141,10 +141,10 @@ class QuestionMixin:
 
         # Add configuration.
         if points and len(self.arguments) > 0:
-            data['points'] = int(self.arguments[0])
+            data[u'points'] = int(self.arguments[0])
         if 'required' in self.options:
-            data['required'] = True
-        node.set_yaml(data, 'question')
+            data[u'required'] = True
+        node.set_yaml(data, u'question')
 
         return env, node, data
 
@@ -153,18 +153,18 @@ class QuestionMixin:
             return
 
         parent = aplus_nodes.html(u'div', {})
-        parent.store_html('more')
+        parent.store_html(u'more')
         nested_parse_with_titles(self.state, plain_content, parent)
         node.append(parent)
 
-        data['more'] = ('#!html', 'more')
+        data[u'more'] = (u'#!html', u'more')
 
     def add_feedback(self, node, data, paragraph):
         if not paragraph:
             return
 
         # Add feedback node for rendering without writing to file.
-        data['feedback'] = ('#!children', 'feedback')
+        data[u'feedback'] = (u'#!children', u'feedback')
         feedbacks = aplus_nodes.html(u'p', {u'class':u'feedback-holder'}, no_write=True)
 
         for i,line in slicer(paragraph):
@@ -188,12 +188,12 @@ class QuestionMixin:
 
             # Add configuration data.
             fbdata = {
-                'value': value,
-                'label': ('#!html', 'hint'),
+                u'value': value,
+                u'label': (u'#!html', u'hint'),
             }
             if isnot:
-                fbdata['not'] = True
-            hint.set_yaml(fbdata, 'feedback')
+                fbdata[u'not'] = True
+            hint.set_yaml(fbdata, u'feedback')
 
         node.append(feedbacks)
 
@@ -246,7 +246,7 @@ class Choice(QuestionMixin, Directive):
         # Create question.
         env, node, data = self.create_question()
         self.add_instructions(node, data, plain_content)
-        data['options'] = ('#!children', 'option')
+        data[u'options'] = (u'#!children', u'option')
 
         # Travel all answer options.
         for i,line in slicer(choices):
@@ -282,12 +282,12 @@ class Choice(QuestionMixin, Directive):
 
             # Add configuration data.
             optdata = {
-                'value': key,
-                'label': ('#!html', 'label'),
+                u'value': key,
+                u'label': (u'#!html', u'label'),
             }
             if correct:
-                optdata['correct'] = True
-            choice.set_yaml(optdata, 'option')
+                optdata[u'correct'] = True
+            choice.set_yaml(optdata, u'option')
 
         self.add_feedback(node, data, feedback)
 
@@ -301,7 +301,7 @@ class SingleChoice(Choice):
         return u'form-pick-one'
 
     def grader_field_type(self):
-        return 'radio'
+        return u'radio'
 
     def input_type(self):
         return u'radio'
@@ -314,7 +314,7 @@ class MultipleChoice(Choice):
         return u'form-pick-any'
 
     def grader_field_type(self):
-        return 'checkbox'
+        return u'checkbox'
 
     def input_type(self):
         return u'checkbox'
@@ -377,12 +377,12 @@ class FreeText(QuestionMixin, Directive):
 
         # Add configuration.
         if len(self.arguments) > 1:
-            data['compare_method'] = self.arguments[1]
+            data[u'compare_method'] = self.arguments[1]
         if config_content:
             if u'§' in config_content[0]:
-                data['correct'] = config_content[0].split(u'§', 1)[0].strip()
+                data[u'correct'] = config_content[0].split(u'§', 1)[0].strip()
             else:
-                data['correct'] = config_content[0].strip()
+                data[u'correct'] = config_content[0].strip()
                 config_content = config_content[1:]
             self.add_feedback(node, data, config_content)
 
@@ -434,8 +434,8 @@ class AgreeItem(QuestionMixin, Directive):
 
         for i, key in enumerate(['agreement4', 'agreement3', 'agreement2', 'agreement1', 'agreement0']):
             options.append({
-                'value': 4 - i,
-                'label|i18n': translations.opt(key),
+                u'value': 4 - i,
+                u'label|i18n': translations.opt(key),
             })
             choice = aplus_nodes.html(u'div', {u'class':u'radio'})
             label = aplus_nodes.html(u'label', {})
@@ -448,8 +448,8 @@ class AgreeItem(QuestionMixin, Directive):
             choice.append(label)
             node.append(choice)
 
-        data['options'] = options
+        data[u'options'] = options
         return [node]
 
     def grader_field_type(self):
-        return 'radio'
+        return u'radio'
