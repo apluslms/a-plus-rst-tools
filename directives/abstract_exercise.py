@@ -10,16 +10,16 @@ class AbstractExercise(Directive):
 
     def extract_exercise_arguments(self):
         key = self.arguments[0] if len(self.arguments) > 0 else 'unknown'
-        category, points = self.extract_category_and_points(self.arguments[1] if len(self.arguments) > 1 else None)
-        return (key, category, points)
+        difficulty, points = self.extract_difficulty_and_points(self.arguments[1] if len(self.arguments) > 1 else None)
+        return (key, difficulty, points)
 
-    def extract_category_and_points(self, arg):
-        category = None
+    def extract_difficulty_and_points(self, arg):
+        difficulty = None
         points = 0
         if not arg is None:
             for is_number, chars in itertools.groupby(arg, key=lambda a: str.isdigit(str(a))):
                 if is_number:
                     points = int(u''.join(chars))
                 else:
-                    category = u''.join(chars)
-        return category, points
+                    difficulty = u''.join(chars)
+        return difficulty, points

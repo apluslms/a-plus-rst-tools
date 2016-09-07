@@ -76,6 +76,7 @@ def write(app, exception):
                     'config': config['key'] + '.yaml',
                     'max_submissions': config['max_submissions'],
                     'max_points': config.get('max_points', 0),
+                    'difficulty': config.get('difficulty', ''),
                     'points_to_pass': config['points_to_pass'],
                     'category': config['category'],
                     'min_group_size': config['min_group_size'],
@@ -138,7 +139,12 @@ def write(app, exception):
         parse_chapter(docname, doc, module['children'])
 
     # Create categories.
-    categories = {key: {'name': key} for key in category_keys}
+    category_names = app.config.category_names
+    categories = {
+        key: {
+            'name': category_names.get(key, key),
+        } for key in category_keys
+    }
     if 'chapter' in categories:
         categories['chapter']['status'] = 'hidden'
 

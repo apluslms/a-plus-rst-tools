@@ -15,6 +15,7 @@ def setup(app):
 
     # Register new settings.
     app.add_config_value('course_title', None, 'html')
+    app.add_config_value('submit_title', "{config_title}", 'html')
     app.add_config_value('course_open_date', None, 'html')
     app.add_config_value('course_close_date', None, 'html')
     app.add_config_value('questionnaire_default_submissions', 5, 'html')
@@ -24,6 +25,7 @@ def setup(app):
     app.add_config_value('use_wide_column', True, 'html')
     app.add_config_value('append_content', [], 'html')
     app.add_config_value('feedback_override', {}, 'html')
+    app.add_config_value('category_names', {}, 'html')
 
     # Connect configuration generation to events.
     app.connect('builder-inited', toc_config.prepare)
