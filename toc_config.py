@@ -152,9 +152,10 @@ def write(app, exception):
     i = 0
     while i < len(app.outdir) and i < len(app.confdir) and app.outdir[i] == app.confdir[i]:
         i += 1
-    if app.outdir[i] == '/':
+    outdir = app.outdir.replace("\\", "/")
+    if outdir[i] == '/':
         i += 1
-    outdir = app.outdir[i:]
+    outdir = outdir[i:]
 
     # Write the configuration index.
     config = {
