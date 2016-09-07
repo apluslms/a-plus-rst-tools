@@ -88,6 +88,9 @@ def write(app, exception):
             })
             if 'scale_points' in config:
                 exercise['max_points'] = config['scale_points']
+            if 'title|i18n' in exercise:
+                exercise['title'] = exercise['title|i18n'].get(app.config.language)
+                del(exercise['title|i18n'])
             parent.append(exercise)
             if not config['category'] in category_keys:
                 category_keys.append(config['category'])
