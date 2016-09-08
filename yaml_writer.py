@@ -21,7 +21,7 @@ def file_path(env, name):
 def write(file_path, data_dict):
     ''' Writes dictionary into a yaml file '''
     with io.open(file_path, 'w', encoding='utf-8') as f:
-        out = yaml.dump(
+        out = yaml.safe_dump(
             data_dict,
             default_flow_style=False,
             allow_unicode=True

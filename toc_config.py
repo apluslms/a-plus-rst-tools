@@ -36,7 +36,7 @@ def write(app, exception):
 
     def first_title(doc):
         titles = doc.traverse(nodes.title)
-        return titles[0].astext() if titles else 'Unnamed'
+        return titles[0].astext() if titles else u'Unnamed'
 
     def first_meta(doc):
         metas = doc.traverse(directives.meta.aplusmeta)
@@ -44,66 +44,66 @@ def write(app, exception):
 
     # Tries to parse date from natural text.
     def parse_date(src):
-        parts = src.split(' ', 1)
+        parts = src.split(u' ', 1)
         d = parts[0]
         t = parts[1] if len(parts) > 1 else ''
-        if re.match('^\d\d.\d\d.\d\d\d\d$', d):
+        if re.match(r'^\d\d.\d\d.\d\d\d\d$', d):
             ds = d.split('.')
-            d = ds[2] + '-' + ds[1] + '-' + ds[0]
-        elif not re.match('^\d\d\d\d-\d\d-\d\d$', d):
-            raise SphinxError('Invalid date ' + d)
-        if not re.match('^\d\d(:\d\d(:\d\d)?)?$', t):
-            t = '12:00'
-        return d + ' ' + t
+            d = ds[2] + u'-' + ds[1] + u'-' + ds[0]
+        elif not re.match(r'^\d\d\d\d-\d\d-\d\d$', d):
+            raise SphinxError(u'Invalid date ' + d)
+        if not re.match(r'^\d\d(:\d\d(:\d\d)?)?$', t):
+            t = u'12:00'
+        return d + u' ' + t
 
     # Recursive chapter parsing.
     def parse_chapter(docname, doc, parent):
-        for config_file in [e.yaml_write for e in doc.traverse(aplus_nodes.html) if e.has_yaml('exercise')]:
+        for config_file in [e.yaml_write for e in doc.traverse(aplus_nodes.html) if e.has_yaml(u'exercise')]:
             config = yaml_writer.read(config_file)
-            if config.get('_external', False):
+            if config.get(u'_external', False):
                 exercise = config.copy()
-                del exercise['_external']
+                del exercise[u'_external']
             else:
                 exercise = {
-                    'key': config['key'],
-                    'config': config['key'] + '.yaml',
-                    'max_submissions': config['max_submissions'],
-                    'max_points': config.get('max_points', 0),
-                    'difficulty': config.get('difficulty', ''),
-                    'points_to_pass': config['points_to_pass'],
-                    'category': config['category'],
-                    'min_group_size': config['min_group_size'],
-                    'max_group_size': config['max_group_size'],
+                    u'key': config[u'key'],
+                    u'config': config[u'key'] + u'.yaml',
+                    u'max_submissions': config[u'max_submissions'],
+                    u'max_points': config.get(u'max_points', 0),
+                    u'difficulty': config.get(u'difficulty', ''),
+                    u'points_to_pass': config[u'points_to_pass'],
+                    u'category': config[u'category'],
+                    u'min_group_size': config[u'min_group_size'],
+                    u'max_group_size': config[u'max_group_size'],
                 }
             exercise.update({
-                'allow_assistant_grading': False,
-                'status': 'unlisted',
+                u'allow_assistant_grading': False,
+                u'status': u'unlisted',
             })
-            if 'scale_points' in config:
-                exercise['max_points'] = config['scale_points']
+            if u'scale_points' in config:
+                exercise[u'max_points'] = config[u'scale_points']
             parent.append(exercise)
-            if not config['category'] in category_keys:
-                category_keys.append(config['category'])
+            if not config[u'category'] in category_keys:
+                category_keys.append(config[u'category'])
 
         for name,hidden,child in traverse_tocs(doc):
             meta = first_meta(child)
             chapter = {
-                'key': name.split('/')[-1],#name.replace('/', '_'),
-                'status': 'unlisted' if hidden else 'ready',
-                'name': first_title(child),
-                'static_content': name + '.html',
-                'category': 'chapter',
-                'use_wide_column': app.config.use_wide_column,
-                'children': [],
+                u'key': name.split(u'/')[-1],#name.replace('/', '_'),
+                u'status': u'unlisted' if hidden else u'ready',
+                u'name': first_title(child),
+                u'static_content': name + u'.html',
+                u'category': u'chapter',
+                u'use_wide_column': app.config.use_wide_column,
+                u'children': [],
             }
             if meta:
                 audience = meta.get('audience')
                 if audience:
-                    chapter['audience'] = audience
+                    chapter[u'audience'] = unicode(audience)
             parent.append(chapter)
-            if not 'chapter' in category_keys:
-                category_keys.append('chapter')
-            parse_chapter(name, child, chapter['children'])
+            if not u'chapter' in category_keys:
+                category_keys.append(u'chapter')
+            parse_chapter(name, child, chapter[u'children'])
 
     root = app.env.get_doctree(app.config.master_doc)
     if not course_title:
@@ -111,7 +111,7 @@ def write(app, exception):
 
     # Traverse the documents using toctree directives.
     app.info('Traverse document elements to write configuration index.')
-    title_date_re = re.compile('.*\(DL (.+)\)')
+    title_date_re = re.compile(r'.*\(DL (.+)\)')
     for docname,hidden,doc in traverse_tocs(root):
         title = first_title(doc)
         title_date_match = title_date_re.match(title)
@@ -119,28 +119,28 @@ def write(app, exception):
         open_src = meta.get('open-time', course_open)
         close_src = meta.get('close-time', title_date_match.group(1) if title_date_match else course_close)
         module = {
-            'key': docname.split('/')[0],
-            'status': 'unlisted' if hidden else 'ready',
-            'name': title,
-            'children': [],
+            u'key': docname.split(u'/')[0],
+            u'status': u'unlisted' if hidden else u'ready',
+            u'name': title,
+            u'children': [],
         }
         if open_src:
-            module['open'] = parse_date(open_src)
+            module[u'open'] = parse_date(open_src)
         if close_src:
-            module['close'] = parse_date(close_src)
+            module[u'close'] = parse_date(close_src)
         modules.append(module)
-        parse_chapter(docname, doc, module['children'])
+        parse_chapter(docname, doc, module[u'children'])
 
     # Create categories.
     category_names = app.config.category_names
     categories = {
         key: {
-            'name': category_names.get(key, key),
+            u'name': category_names.get(key, key),
         } for key in category_keys
     }
     for key in ['chapter', 'feedback']:
         if key in categories:
-            categories[key]['status'] = 'hidden'
+            categories[key][u'status'] = u'hidden'
 
     # Get relative out dir.
     i = 0
@@ -153,16 +153,16 @@ def write(app, exception):
 
     # Write the configuration index.
     config = {
-        'name': course_title,
-        'language': app.config.language,
-        'static_dir': outdir,
-        'modules': modules,
-        'categories': categories,
+        u'name': course_title,
+        u'language': app.config.language,
+        u'static_dir': outdir,
+        u'modules': modules,
+        u'categories': categories,
     }
     if course_open:
-        config['start'] = parse_date(course_open)
+        config[u'start'] = parse_date(course_open)
     if course_close:
-        config['end'] = parse_date(course_close)
+        config[u'end'] = parse_date(course_close)
 
     # Append directly configured content.
     def recursive_merge(config, append):
@@ -194,8 +194,8 @@ def write(app, exception):
     for html_file in html_tools.walk(app.outdir):
         html_tools.annotate_file_links(
             html_file,
-            ['a'],
-            ['href'],
+            [u'a'],
+            [u'href'],
             keys,
-            'data-aplus-chapter="yes" '
+            u'data-aplus-chapter="yes" '
         )

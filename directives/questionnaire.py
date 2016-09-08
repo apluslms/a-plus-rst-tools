@@ -117,6 +117,7 @@ class QuestionMixin:
     option_spec = {
         'class' : directives.class_option,
         'required': directives.flag,
+        'key': directives.unchanged,
     }
 
     def create_question(self, title_text=None, points=True):
@@ -131,6 +132,9 @@ class QuestionMixin:
             u'type': self.grader_field_type(),
             u'extra_info': self.get_extra_info(),
         }
+        key = self.options.get('key', None)
+        if key:
+            data[u'key'] = unicode(key)
 
         # Add title.
         if not title_text is None:
@@ -148,7 +152,7 @@ class QuestionMixin:
         # Add configuration.
         if points and len(self.arguments) > 0:
             data[u'points'] = int(self.arguments[0])
-        if 'required' in self.options:
+        if self.options.get('required', False):
             data[u'required'] = True
         node.set_yaml(data, u'question')
 
@@ -346,6 +350,7 @@ class FreeText(QuestionMixin, Directive):
         'no-standard-prompt': directives.flag,
         'shorter-prompt': directives.flag,
         'class': directives.class_option,
+        'key': directives.unchanged,
         'extra': directives.unchanged,
     }
 
@@ -422,10 +427,6 @@ class FreeText(QuestionMixin, Directive):
 
     def get_extra_info(self):
         data = super(FreeText, self).get_extra_info()
-        if self.height > 1:
-            data[u'height'] = self.height
-        if self.length:
-            data[u'length'] = self.length
         for entry in self.options.get('extra', '').split(u';'):
             parts = entry.split(u'=', 1)
             if len(parts) == 2:

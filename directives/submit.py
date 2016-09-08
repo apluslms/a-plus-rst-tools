@@ -58,12 +58,12 @@ class SubmitForm(AbstractExercise):
         else:
             data = { u'_external': True }
             if 'url' in self.options:
-                data[u'url'] = self.options['url']
+                data[u'url'] = unicode(self.options['url'])
             if 'lti' in self.options:
                 data.update({
-                    u'lti': self.options['lti'],
-                    u'lti_context_id': self.options.get('lti_context_id', u''),
-                    u'lti_resource_link_id': self.options.get('lti_resource_link_id', u''),
+                    u'lti': unicode(self.options['lti']),
+                    u'lti_context_id': unicode(self.options.get('lti_context_id', u'')),
+                    u'lti_resource_link_id': unicode(self.options.get('lti_resource_link_id', u'')),
                 })
             config_title = None
 
