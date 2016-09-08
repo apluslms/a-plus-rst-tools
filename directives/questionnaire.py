@@ -11,6 +11,7 @@ from sphinx.util.nodes import nested_parse_with_titles
 import aplus_nodes
 import translations
 from directives.abstract_exercise import AbstractExercise
+from yaml_writer import ensure_unicode
 
 
 class Questionnaire(AbstractExercise):
@@ -134,7 +135,7 @@ class QuestionMixin:
         }
         key = self.options.get('key', None)
         if key:
-            data[u'key'] = unicode(key)
+            data[u'key'] = ensure_unicode(key)
 
         # Add title.
         if not title_text is None:
@@ -152,7 +153,7 @@ class QuestionMixin:
         # Add configuration.
         if points and len(self.arguments) > 0:
             data[u'points'] = int(self.arguments[0])
-        if self.options.get('required', False):
+        if 'required' in self.options:
             data[u'required'] = True
         node.set_yaml(data, u'question')
 
@@ -350,6 +351,7 @@ class FreeText(QuestionMixin, Directive):
         'no-standard-prompt': directives.flag,
         'shorter-prompt': directives.flag,
         'class': directives.class_option,
+        'required': directives.flag,
         'key': directives.unchanged,
         'extra': directives.unchanged,
     }

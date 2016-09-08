@@ -11,6 +11,7 @@ import aplus_nodes
 import translations
 import yaml_writer
 from directives.abstract_exercise import AbstractExercise
+from yaml_writer import ensure_unicode
 
 
 class SubmitForm(AbstractExercise):
@@ -58,12 +59,12 @@ class SubmitForm(AbstractExercise):
         else:
             data = { u'_external': True }
             if 'url' in self.options:
-                data[u'url'] = unicode(self.options['url'])
+                data[u'url'] = ensure_unicode(self.options['url'])
             if 'lti' in self.options:
                 data.update({
-                    u'lti': unicode(self.options['lti']),
-                    u'lti_context_id': unicode(self.options.get('lti_context_id', u'')),
-                    u'lti_resource_link_id': unicode(self.options.get('lti_resource_link_id', u'')),
+                    u'lti': ensure_unicode(self.options['lti']),
+                    u'lti_context_id': ensure_unicode(self.options.get('lti_context_id', u'')),
+                    u'lti_resource_link_id': ensure_unicode(self.options.get('lti_resource_link_id', u'')),
                 })
             config_title = None
 

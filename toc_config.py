@@ -99,7 +99,7 @@ def write(app, exception):
             if meta:
                 audience = meta.get('audience')
                 if audience:
-                    chapter[u'audience'] = unicode(audience)
+                    chapter[u'audience'] = yaml_writer.ensure_unicode(audience)
             parent.append(chapter)
             if not u'chapter' in category_keys:
                 category_keys.append(u'chapter')

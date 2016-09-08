@@ -33,3 +33,12 @@ def read(file_path):
     ''' Reads dictionary from a yaml file '''
     with io.open(file_path, 'r', encoding='utf-8') as f:
         return yaml.load(f.read())
+
+
+def ensure_unicode(value):
+    try:
+        unicode
+    except NameError:
+        return value
+    else:
+        return unicode(value)
