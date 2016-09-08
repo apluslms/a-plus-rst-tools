@@ -61,6 +61,7 @@ class html(nodes.General, nodes.Element):
 def annotate_links(html):
     return html_tools.annotate_links(
         html,
+        '',
         [u'a', u'img', u'script', u'iframe', u'link'],
         [u'href', u'src'],
         [u'_images', u'_static'],
