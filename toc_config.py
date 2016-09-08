@@ -22,7 +22,6 @@ def write(app, exception):
     course_title = app.config.course_title
     course_open = app.config.course_open_date
     course_close = app.config.course_close_date
-    feedback_override = app.config.feedback_override
 
     modules = []
     category_keys = []
@@ -61,12 +60,6 @@ def write(app, exception):
     def parse_chapter(docname, doc, parent):
         for config_file in [e.yaml_write for e in doc.traverse(aplus_nodes.html) if e.has_yaml('exercise')]:
             config = yaml_writer.read(config_file)
-            if config.get('feedback', False):
-                config.update(feedback_override)
-                if 'url' in config:
-                    config['url'] = config['url'].format(key=config['key'])
-                if config.get('view_type', True) is None:
-                    del config['view_type']
             if config.get('_external', False):
                 exercise = config.copy()
                 del exercise['_external']
@@ -88,9 +81,6 @@ def write(app, exception):
             })
             if 'scale_points' in config:
                 exercise['max_points'] = config['scale_points']
-            if 'title|i18n' in exercise:
-                exercise['title'] = exercise['title|i18n'].get(app.config.language)
-                del(exercise['title|i18n'])
             parent.append(exercise)
             if not config['category'] in category_keys:
                 category_keys.append(config['category'])
@@ -148,8 +138,9 @@ def write(app, exception):
             'name': category_names.get(key, key),
         } for key in category_keys
     }
-    if 'chapter' in categories:
-        categories['chapter']['status'] = 'hidden'
+    for key in ['chapter', 'feedback']:
+        if key in categories:
+            categories[key]['status'] = 'hidden'
 
     # Get relative out dir.
     i = 0

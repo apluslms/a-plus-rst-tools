@@ -98,6 +98,10 @@ class Questionnaire(AbstractExercise):
                 u'fields': (u'#!children', None),
             }],
         }
+        if is_feedback:
+            data.update(env.config.feedback_override)
+            if 'url' in data:
+                data['url'] = data['url'].format(key=name)
         form.write_yaml(env, name, data, 'exercise')
 
         return [node]
@@ -125,6 +129,7 @@ class QuestionMixin:
         })
         data = {
             u'type': self.grader_field_type(),
+            u'extra_info': self.get_extra_info(),
         }
 
         # Add title.
@@ -203,6 +208,11 @@ class QuestionMixin:
         if 'class' in self.options:
             classes.extend(self.options['class'])
         return classes
+
+    def get_extra_info(self):
+        return {
+            u'class': u' '.join(self.get_classes()),
+        }
 
     def grader_field_type(self):
         return u'undefined'
@@ -336,12 +346,13 @@ class FreeText(QuestionMixin, Directive):
         'no-standard-prompt': directives.flag,
         'shorter-prompt': directives.flag,
         'class': directives.class_option,
+        'extra': directives.unchanged,
     }
 
     def run(self):
-        self.length = self.options.get('length', 50)
+        self.length = self.options.get('length', None)
         self.height = self.options.get('height', 1)
-        position = u'place-on-own-line' if self.height > 1 or u'own-line' in self.options else u'place-inline'
+        self.position = u'place-on-own-line' if self.height > 1 or u'own-line' in self.options else u'place-inline'
 
         # Detect paragraphs: any number of plain content and correct answer including optional feedback
         plain_content = None
@@ -363,22 +374,27 @@ class FreeText(QuestionMixin, Directive):
 
         # Create input element.
         if self.height > 1:
-            element = aplus_nodes.html(u'textarea', {
+            attrs = {
                 u'rows': self.height,
-                u'cols': self.length,
-                u'class': position,
-            })
+                u'class': self.position,
+            }
+            if self.length:
+                attrs[u'cols'] = self.length
+            element = aplus_nodes.html(u'textarea', attrs)
         else:
-            element = aplus_nodes.html(u'input', {
+            attrs = {
                 u'type': u'text',
-                u'size': self.length,
-                u'class': position,
-            })
+                u'class': self.position,
+            }
+            if self.length:
+                attrs[u'size'] = self.length
+            element = aplus_nodes.html(u'input', attrs)
         node.append(element)
 
         # Add configuration.
         if len(self.arguments) > 1:
             data[u'compare_method'] = self.arguments[1]
+
         if config_content:
             if u'§' in config_content[0]:
                 data[u'correct'] = config_content[0].split(u'§', 1)[0].strip()
@@ -388,9 +404,6 @@ class FreeText(QuestionMixin, Directive):
             self.add_feedback(node, data, config_content)
 
         return [node]
-
-    def grader_field_type(self):
-        return u'textarea' if self.height > 1 else u'text'
 
     def get_classes(self):
         classes = super(FreeText, self).get_classes()
@@ -404,7 +417,27 @@ class FreeText(QuestionMixin, Directive):
             classes.append(u'standard')
         if 'shorter-prompt' in self.options:
             classes.append(u'shorter')
+        classes.append(self.position)
         return classes
+
+    def get_extra_info(self):
+        data = super(FreeText, self).get_extra_info()
+        if self.height > 1:
+            data[u'height'] = self.height
+        if self.length:
+            data[u'length'] = self.length
+        for entry in self.options.get('extra', '').split(u';'):
+            parts = entry.split(u'=', 1)
+            if len(parts) == 2:
+                try:
+                    parts[1] = int(parts[1])
+                except ValueError:
+                    pass
+                data[parts[0]] = parts[1]
+        return data
+
+    def grader_field_type(self):
+        return u'textarea' if self.height > 1 else u'text'
 
 
 class AgreeGroup(Directive):
