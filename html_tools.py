@@ -10,7 +10,7 @@ def annotate_links(content, file_name, tags, attributes, link_paths, append):
         r'(?P<attr>' + r'|'.join(attributes) + r')="(?P<val>[^"]*)"'
     )
     q1 = re.compile(r'^(\w+:\/\/|#)')
-    q2 = re.compile(r'\/(' + '|'.join(link_paths) + r')\/')
+    q2 = re.compile(r'(\/|\\)(' + '|'.join(link_paths) + r')(\/|\\)')
     i = 0
     for m in p.finditer(content):
         val = m.group('val')
