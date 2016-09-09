@@ -57,6 +57,7 @@ class Questionnaire(AbstractExercise):
 
         env = self.state.document.settings.env
         name = u"{}_{}".format(env.docname.replace(u'/', u'_'), key)
+        override = env.config.override
 
         env.questionnaire_is_feedback = is_feedback
         env.question_count = 0
@@ -99,10 +100,11 @@ class Questionnaire(AbstractExercise):
                 u'fields': (u'#!children', None),
             }],
         }
-        if is_feedback:
-            data.update(env.config.feedback_override)
+        if category in override:
+            data.update(override[category])
             if 'url' in data:
                 data['url'] = data['url'].format(key=name)
+
         form.write_yaml(env, name, data, 'exercise')
 
         return [node]

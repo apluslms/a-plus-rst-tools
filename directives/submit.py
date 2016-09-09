@@ -33,6 +33,7 @@ class SubmitForm(AbstractExercise):
 
         env = self.state.document.settings.env
         name = u"{}_{}".format(env.docname.replace(u'/', u'_'), key)
+        override = env.config.override
 
         classes = [u'exercise']
         if 'class' in self.options:
@@ -70,6 +71,7 @@ class SubmitForm(AbstractExercise):
 
         config_title = self.options.get('title', config_title)
 
+        category = u'submit'
         data.update({
             u'key': name,
             u'title': env.config.submit_title.format(
@@ -83,6 +85,11 @@ class SubmitForm(AbstractExercise):
             u'max_group_size': env.config.default_max_group_size,
             u'points_to_pass': self.options.get('points-to-pass', 0),
         })
+        if category in override:
+            data.update(override[category])
+            if 'url' in data:
+                data['url'] = data['url'].format(key=name)
+
         node.write_yaml(env, name, data, 'exercise')
 
         return [node]

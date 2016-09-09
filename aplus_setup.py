@@ -24,7 +24,7 @@ def setup(app):
     app.add_config_value('default_max_group_size', 1, 'html')
     app.add_config_value('use_wide_column', True, 'html')
     app.add_config_value('append_content', [], 'html')
-    app.add_config_value('feedback_override', {}, 'html')
+    app.add_config_value('override', {}, 'html')
     app.add_config_value('category_names', {}, 'html')
 
     # Connect configuration generation to events.
