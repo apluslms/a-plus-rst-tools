@@ -18,6 +18,7 @@ class SubmitForm(AbstractExercise):
     has_content = False
     option_spec = {
         'class' : directives.class_option,
+        'quiz': directives.flag,
         'submissions': directives.nonnegative_int,
         'points-to-pass': directives.nonnegative_int,
         'config': directives.unchanged,
@@ -40,10 +41,13 @@ class SubmitForm(AbstractExercise):
             classes.extend(self.options['class'])
 
         # Add document nodes.
-        node = aplus_nodes.html(u'div', {
+        args = {
             u'class': u' '.join(classes),
             u'data-aplus-exercise': u'yes',
-        })
+        }
+        if 'quiz' in self.options:
+            args[u'data-aplus-quiz'] = u'yes'
+        node = aplus_nodes.html(u'div', args)
         paragraph = aplus_nodes.html(u'p', {})
         paragraph.append(nodes.Text(translations.get(env, 'submit_placeholder')))
         node.append(paragraph)
