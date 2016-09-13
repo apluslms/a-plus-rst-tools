@@ -223,7 +223,7 @@ def depart_altered_node(self, node):
     self.body.append(annotate(u''.join(parsed_html), node.parent['name'], node['annotations']))
 
 def create_open_tag(number, section_name):
-    return u'<span class ="ex-%s loc%s">' % (section_name, number)
+    return u'<span class="ex-%s loc%s">' % (section_name, number)
 
 def create_close_tag(number, section_name):
     return u'</span>'
