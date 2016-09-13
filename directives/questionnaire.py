@@ -410,6 +410,7 @@ class FreeText(QuestionMixin, Directive):
             else:
                 data[u'correct'] = config_content[0].strip()
                 config_content = config_content[1:]
+            data[u'correct'] = data[u'correct'].replace(u"°°°", u"\n")
             self.add_feedback(node, data, config_content)
 
         return [node]
