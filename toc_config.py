@@ -1,4 +1,4 @@
-import re
+import re, os
 from docutils import nodes
 from sphinx import addnodes
 from sphinx.errors import SphinxError
@@ -191,7 +191,7 @@ def write(app, exception):
     app.info('Retouch all files to append chapter link attributes.')
     keys = [m['key'] for m in modules]
     keys.extend(['toc', 'user', 'account'])
-    for html_file in html_tools.walk(app.outdir):
+    for html_file in html_tools.walk(os.path.dirname(app.outdir)):
         html_tools.annotate_file_links(
             html_file,
             [u'a'],

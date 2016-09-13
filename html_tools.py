@@ -31,6 +31,8 @@ def walk(html_dir):
     for root, dirnames, filenames in os.walk(html_dir):
         for filename in fnmatch.filter(filenames, '*.html'):
             html_files.append(os.path.join(root, filename))
+        for filename in fnmatch.filter(filenames, '*.yaml'):
+            html_files.append(os.path.join(root, filename))
     return html_files
 
 
