@@ -22,6 +22,7 @@ def write(app, exception):
     course_title = app.config.course_title
     course_open = app.config.course_open_date
     course_close = app.config.course_close_date
+    override = app.config.override
 
     modules = []
     category_keys = []
@@ -85,6 +86,7 @@ def write(app, exception):
             if not config[u'category'] in category_keys:
                 category_keys.append(config[u'category'])
 
+        category = u'chapter'
         for name,hidden,child in traverse_tocs(doc):
             meta = first_meta(child)
             chapter = {
@@ -92,7 +94,7 @@ def write(app, exception):
                 u'status': u'unlisted' if hidden else u'ready',
                 u'name': first_title(child),
                 u'static_content': name + u'.html',
-                u'category': u'chapter',
+                u'category': category,
                 u'use_wide_column': app.config.use_wide_column,
                 u'children': [],
             }
@@ -100,6 +102,8 @@ def write(app, exception):
                 audience = meta.get('audience')
                 if audience:
                     chapter[u'audience'] = yaml_writer.ensure_unicode(audience)
+            if category in override:
+                chapter.update(override[category])
             parent.append(chapter)
             if not u'chapter' in category_keys:
                 category_keys.append(u'chapter')
