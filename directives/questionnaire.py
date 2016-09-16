@@ -156,12 +156,31 @@ class QuestionMixin:
         if not plain_content:
             return
 
+        plain_content_fi, plain_content_en = None, None
+        for i, element in enumerate(plain_content):
+            if "#EN" in element:
+                plain_content_fi = plain_content[0:i]
+                plain_content_en = plain_content[i:]
+                plain_content_en[0] = plain_content_en[0].split("#EN", 1)[1].lstrip()
+                break
+        # for-else, don't indent
+        else:
+            plain_content_fi = plain_content
+
         parent = aplus_nodes.html('div', {})
-        parent.store_html('more')
-        nested_parse_with_titles(self.state, plain_content, parent)
+        parent.store_html('more_fi')
+        nested_parse_with_titles(self.state, plain_content_fi, parent)
         node.append(parent)
 
-        data['more'] = ('#!html', 'more')
+        if plain_content_en is not None:
+            parent = aplus_nodes.html('div', {})
+            parent.store_html('more_en')
+            nested_parse_with_titles(self.state, plain_content_en, parent)
+            node.append(parent)
+
+        data['more|i18n'] = {'fi': ('#!html', 'more_fi'), 'en': ('#!html', 'more_en')}
+        # data['more'] = ('#!html', 'more')
+
 
     def add_feedback(self, node, data, paragraph):
         if not paragraph:
@@ -190,10 +209,15 @@ class QuestionMixin:
             hint.append(text)
             feedbacks.append(hint)
 
+            if "#EN" in line[0]:
+                line_fi, line_en = map(str.strip, line[0].split("#EN", 1))
+            else:
+                line_fi, line_en = line[0], ''
+
             # Add configuration data.
             fbdata = {
                 'value': value,
-                'label': ('#!html', 'hint'),
+                'label|i18n': {'fi': line_fi, 'en': line_en},
             }
             if isnot:
                 fbdata['not'] = True
@@ -284,10 +308,16 @@ class Choice(QuestionMixin, Directive):
             nested_parse_with_titles(self.state, line, text)
             label.append(text)
 
+            if "#EN" in line[0]:
+                line_fi, line_en = map(str.strip, line[0].split("#EN", 1))
+            else:
+                line_fi, line_en = line[0], ''
+
             # Add configuration data.
             optdata = {
                 'value': key,
-                'label': ('#!html', 'label'),
+                'label|i18n': {'fi': line_fi, 'en': line_en},
+                # 'label': ('#!html', 'label'),
             }
             if correct:
                 optdata['correct'] = True
