@@ -68,20 +68,21 @@ def write(app, exception):
                 exercise = {
                     u'key': config[u'key'],
                     u'config': config[u'key'] + u'.yaml',
-                    u'max_submissions': config[u'max_submissions'],
+                    u'max_submissions': config.get(u'max_submissions', 0),
                     u'max_points': config.get(u'max_points', 0),
                     u'difficulty': config.get(u'difficulty', ''),
-                    u'points_to_pass': config[u'points_to_pass'],
+                    u'points_to_pass': config.get(u'points_to_pass', 0),
                     u'category': config[u'category'],
-                    u'min_group_size': config[u'min_group_size'],
-                    u'max_group_size': config[u'max_group_size'],
+                    u'min_group_size': config.get(u'min_group_size', 1),
+                    u'max_group_size': config.get(u'max_group_size', 1),
+                    u'content_expire_minutes': config.get(u'content_expire_minutes', 0),
                 }
             exercise.update({
                 u'allow_assistant_grading': False,
                 u'status': u'unlisted',
             })
             if u'scale_points' in config:
-                exercise[u'max_points'] = config[u'scale_points']
+                exercise[u'max_points'] = config.pop(u'scale_points')
             parent.append(exercise)
             if not config[u'category'] in category_keys:
                 category_keys.append(config[u'category'])
