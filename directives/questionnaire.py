@@ -405,12 +405,18 @@ class FreeText(QuestionMixin, Directive):
             data[u'compare_method'] = self.arguments[1]
 
         if config_content:
+            fb = None
             if u'§' in config_content[0]:
-                data[u'correct'] = config_content[0].split(u'§', 1)[0].strip()
+                correct,fb = config_content[0].split(u'§', 1)
             else:
-                data[u'correct'] = config_content[0].strip()
+                correct = config_content[0]
                 config_content = config_content[1:]
-            data[u'correct'] = data[u'correct'].replace(u"°°°", u"\n")
+            if u'°=°' in correct:
+                correct,model = correct.split(u'°=°', 1)
+                data[u'model'] = model.strip().replace(u"°°°", u"\n")
+                if fb:
+                    config_content[0] = correct.strip() + u" § " + fb.strip()
+            data[u'correct'] = correct.strip().replace(u"°°°", u"\n")
             self.add_feedback(node, data, config_content)
 
         return [node]

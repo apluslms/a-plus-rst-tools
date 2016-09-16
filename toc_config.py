@@ -90,9 +90,12 @@ def write(app, exception):
         category = u'chapter'
         for name,hidden,child in traverse_tocs(doc):
             meta = first_meta(child)
+            status = u'hidden' if 'hidden' in meta else (
+                u'unlisted' if hidden else u'ready'
+            )
             chapter = {
                 u'key': name.split(u'/')[-1],#name.replace('/', '_'),
-                u'status': u'unlisted' if hidden else u'ready',
+                u'status': status,
                 u'name': first_title(child),
                 u'static_content': name + u'.html',
                 u'category': category,
@@ -121,11 +124,14 @@ def write(app, exception):
         title = first_title(doc)
         title_date_match = title_date_re.match(title)
         meta = first_meta(doc)
+        status = u'hidden' if 'hidden' in meta else (
+            u'unlisted' if hidden else u'ready'
+        )
         open_src = meta.get('open-time', course_open)
         close_src = meta.get('close-time', title_date_match.group(1) if title_date_match else course_close)
         module = {
             u'key': docname.split(u'/')[0],
-            u'status': u'unlisted' if hidden else u'ready',
+            u'status': status,
             u'name': title,
             u'children': [],
         }

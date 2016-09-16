@@ -15,6 +15,7 @@ class AplusMeta(Directive):
         'open-time': directives.unchanged,
         'close-time': directives.unchanged,
         'audience': directives.unchanged,
+        'hidden': directives.flag,
     }
 
     def run(self):
