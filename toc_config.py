@@ -75,7 +75,6 @@ def write(app, exception):
                     u'category': config[u'category'],
                     u'min_group_size': config.get(u'min_group_size', 1),
                     u'max_group_size': config.get(u'max_group_size', 1),
-                    u'content_expire_minutes': config.get(u'content_expire_minutes', 0),
                 }
             exercise.update({
                 u'allow_assistant_grading': False,
