@@ -114,6 +114,8 @@ def write(app, exception):
         meta = first_meta(doc)
         open_src = meta.get('open-time', course_open)
         close_src = meta.get('close-time', title_date_match.group(1) if title_date_match else course_close)
+        late_close_src = meta.get('late-close', course_close)
+        late_penalty_src = meta.get('late-penalty', 0.5)
         module = {
             'key': docname.split('/')[0],
             'name': title,
@@ -123,6 +125,10 @@ def write(app, exception):
             module['open'] = parse_date(open_src)
         if close_src:
             module['close'] = parse_date(close_src)
+        if late_close_src:
+            module['late_close'] = parse_date(late_close_src)
+        if late_penalty_src:
+            module['late_penalty'] = late_penalty_src
         modules.append(module)
         parse_chapter(docname, doc, module['children'])
 

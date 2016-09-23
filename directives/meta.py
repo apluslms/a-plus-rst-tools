@@ -21,6 +21,8 @@ class Meta(Directive):
     option_spec = {
         'open-time': directives.unchanged,
         'close-time': directives.unchanged,
+        'late-close': directives.unchanged,
+        'late-penalty': directives.unchanged,
     }
 
     def run(self):
