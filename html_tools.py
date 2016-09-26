@@ -7,7 +7,7 @@ def annotate_links(content, file_name, tags, attributes, link_paths, append):
     out = ""
     p = re.compile(
         r'<(' + '|'.join(tags) + r')[^<>]*'
-        r'(?P<attr>' + r'|'.join(attributes) + r')="(?P<val>[^"]*)"'
+        r'(?P<attr>' + r'|'.join(attributes) + r')=(?P<slash>\\?)"(?P<val>[^"]*)\\?"'
     )
     q1 = re.compile(r'^(\w+:|#)')
     q2 = re.compile(r'(\/|\\)(' + '|'.join(link_paths) + r')(\/|\\)')
@@ -20,6 +20,8 @@ def annotate_links(content, file_name, tags, attributes, link_paths, append):
                 j = m.start('attr')
                 out += content[i:j]
                 i = j
+                if m.group('slash'):
+                    append = append.replace('"','\\"')
                 if not out.endswith(append):
                     out += append
     out += content[i:]
