@@ -22,6 +22,8 @@ def write(app, exception):
     course_title = app.config.course_title
     course_open = app.config.course_open_date
     course_close = app.config.course_close_date
+    course_late = app.config.default_late_date
+    course_penalty = app.config.default_late_penalty
     override = app.config.override
 
     modules = []
@@ -56,6 +58,9 @@ def write(app, exception):
         if not re.match(r'^\d\d(:\d\d(:\d\d)?)?$', t):
             t = u'12:00'
         return d + u' ' + t
+
+    def parse_float(src, default):
+        return float(src) if src else default
 
     # Recursive chapter parsing.
     def parse_chapter(docname, doc, parent):
@@ -128,6 +133,7 @@ def write(app, exception):
         )
         open_src = meta.get('open-time', course_open)
         close_src = meta.get('close-time', title_date_match.group(1) if title_date_match else course_close)
+        late_src = meta.get('late-time', course_late)
         module = {
             u'key': docname.split(u'/')[0],
             u'status': status,
@@ -138,6 +144,9 @@ def write(app, exception):
             module[u'open'] = parse_date(open_src)
         if close_src:
             module[u'close'] = parse_date(close_src)
+        if late_src:
+            module[u'late_close'] = parse_date(late_src)
+            module[u'late_penalty'] = parse_float(meta.get('late-penalty', course_penalty), 0.0)
         modules.append(module)
         parse_chapter(docname, doc, module[u'children'])
 
