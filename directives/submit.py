@@ -19,6 +19,7 @@ class SubmitForm(AbstractExercise):
     option_spec = {
         'class' : directives.class_option,
         'quiz': directives.flag,
+        'ajax': directives.flag,
         'submissions': directives.nonnegative_int,
         'points-to-pass': directives.nonnegative_int,
         'config': directives.unchanged,
@@ -47,6 +48,8 @@ class SubmitForm(AbstractExercise):
         }
         if 'quiz' in self.options:
             args[u'data-aplus-quiz'] = u'yes'
+        if 'ajax' in self.options:
+            args[u'data-aplus-ajax'] = u'yes'
         node = aplus_nodes.html(u'div', args)
         paragraph = aplus_nodes.html(u'p', {})
         paragraph.append(nodes.Text(translations.get(env, 'submit_placeholder')))
