@@ -8,7 +8,7 @@ If necessary, edit this setup to select the loaded directives.
 import toc_config
 import aplus_nodes
 from directives.meta import AplusMeta
-from directives.questionnaire import Questionnaire, SingleChoice, MultipleChoice, FreeText, AgreeGroup, AgreeItem
+from directives.questionnaire import Questionnaire, SingleChoice, MultipleChoice, FreeText, AgreeGroup, AgreeItem, AgreeItemGenerate
 from directives.submit import SubmitForm
 
 def setup(app):
@@ -53,6 +53,7 @@ def setup(app):
     app.add_directive('freetext',  FreeText)
     app.add_directive('agree-group',  AgreeGroup)
     app.add_directive('agree-item',  AgreeItem)
+    app.add_directive('agree-item-generate', AgreeItemGenerate)
 
     # The submit directive.
     app.add_directive('submit', SubmitForm)

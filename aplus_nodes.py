@@ -83,10 +83,9 @@ def collect_data(body, node, data_type=None):
     def recursive_collect(parent, from_body):
         body_i = from_body
         for child in parent.children:
-            if hasattr(child, 'has_yaml'):
+            if hasattr(child, 'has_yaml') and child.has_yaml(data_type):
                 add_static_block(body_i, child._body_begin)
-                if child.has_yaml(data_type):
-                    data.append(child.pop_yaml())
+                data.append(child.pop_yaml())
                 body_i = child._body_end
             else:
                 body_i = recursive_collect(child, body_i)

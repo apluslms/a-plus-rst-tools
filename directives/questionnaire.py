@@ -10,8 +10,8 @@ from sphinx.util.nodes import nested_parse_with_titles
 
 import aplus_nodes
 import translations
+import yaml_writer
 from directives.abstract_exercise import AbstractExercise
-from yaml_writer import ensure_unicode
 
 
 class Questionnaire(AbstractExercise):
@@ -137,7 +137,7 @@ class QuestionMixin:
         }
         key = self.options.get('key', None)
         if key:
-            data[u'key'] = ensure_unicode(key)
+            data[u'key'] = yaml_writer.ensure_unicode(key)
 
         # Add title.
         if not title_text is None:
@@ -458,10 +458,16 @@ class AgreeGroup(Directive):
     required_arguments = 0
     optional_arguments = 0
     final_argument_whitespace = False
+    option_spec = {
+        'class' : directives.class_option,
+    }
 
     def run(self):
         # This directive is obsolete, AgreeItems can be placed alone.
-        node = aplus_nodes.html(u'div', {u'class':u'agreement-group'})
+        classes = [u'form-group']
+        if 'class' in self.options:
+            classes.extend(self.options['class'])
+        node = aplus_nodes.html(u'div', { u'class': u" ".join(classes) })
         nested_parse_with_titles(self.state, self.content, node)
         return  [node]
 
@@ -474,10 +480,12 @@ class AgreeItem(QuestionMixin, Directive):
     final_argument_whitespace = True
 
     def run(self):
-
         env, node, data = self.create_question(title_text=self.arguments[0], points=False)
-        options = []
+        data[u'options'] = self.generate_options(env, node)
+        return [node]
 
+    def generate_options(self, env, node):
+        options = []
         for i, key in enumerate(['agreement4', 'agreement3', 'agreement2', 'agreement1', 'agreement0']):
             options.append({
                 u'value': 4 - i,
@@ -493,9 +501,47 @@ class AgreeItem(QuestionMixin, Directive):
             label.append(nodes.Text(translations.get(env, key)))
             choice.append(label)
             node.append(choice)
+        return options
 
-        data[u'options'] = options
-        return [node]
 
     def grader_field_type(self):
         return u'radio'
+
+
+class AgreeItemGenerate(AgreeItem):
+    ''' Generates questions presenting an agreement scale. '''
+    has_content = True
+    required_arguments = 1
+    optional_arguments = 0
+    final_argument_whitespace = True
+    option_spec = {
+        'config' : directives.unchanged,
+        'class' : directives.class_option,
+        'required': directives.flag,
+        'key': directives.unchanged,
+    }
+
+    def run(self):
+        env = self.state.document.settings.env
+
+        if not 'config' in self.options:
+            raise SphinxError('Config option is required')
+        import os
+        path = os.path.join(env.app.srcdir, self.options['config'])
+        if not os.path.exists(path):
+            raise SphinxError('Missing config path {}'.format(self.options['config']))
+        item_list = yaml_writer.read(path)
+
+        nodes = []
+        for item in item_list:
+            _, node, data = self.create_question(title_text=self.replace_vals(self.arguments[0], item), points=False)
+            data[u'options'] = self.generate_options(env, node)
+            #if self.content:
+            #    self.add_instructions(node, data, [self.replace_vals(part, item) for part in self.content])
+            nodes.append(node)
+        return nodes
+
+    def replace_vals(self, text, item_dict):
+        for key,val in item_dict.items():
+            text = text.replace(key, val)
+        return text
