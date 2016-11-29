@@ -68,37 +68,33 @@ def annotate_links(html):
         u'data-aplus-path="/static/{course}" '
     )
 
+
 def collect_data(body, node, data_type=None):
     data = []
-    e = 0
-    for i in range(len(node.children)):
-        child = node.children[i]
 
-        def recursive_collect(n):
-            if hasattr(n, 'has_yaml'):
-                if n.has_yaml(data_type):
-                    data.append(n.pop_yaml())
-            for c in n.children:
-                recursive_collect(c)
-        recursive_collect(child)
+    def add_static_block(from_body, last_body):
+        if data_type is None and last_body > from_body:
+            data.append({
+                u'type': u'static',
+                u'title': u"",
+                u'more': annotate_links(u"".join(body[from_body:last_body])),
+            })
 
-        # Collect body for non data nodes.
-        if not data_type and not hasattr(child, 'has_yaml'):
-            b = i - 1
-            while b >= 0 and not hasattr(node.children[b], '_body_end'):
-                b -= 1
-            b = node.children[b]._body_end if b >= 0 else (node._body_begin + 1)
+    def recursive_collect(parent, from_body):
+        body_i = from_body
+        for child in parent.children:
+            if hasattr(child, 'has_yaml'):
+                add_static_block(body_i, child._body_begin)
+                if child.has_yaml(data_type):
+                    data.append(child.pop_yaml())
+                body_i = child._body_end
+            else:
+                body_i = recursive_collect(child, body_i)
+        return body_i
 
-            if b >= e:
-                e = i + 1
-                while e < len(node.children) and not hasattr(node.children[e], '_body_begin'):
-                    e += 1
-                e = node.children[e]._body_begin if e < len(node.children) else (node._body_end - 1)
-                data.append({
-                    u'type': u'static',
-                    u'title': u"",
-                    u'more': annotate_links(u"".join(body[b:e])),
-                })
+    if node.children:
+        from_body = recursive_collect(node, node._body_children_begin)
+        add_static_block(from_body, node._body_children_end)
     return data
 
 
@@ -132,10 +128,12 @@ def visit_html(self, node):
         self.body = []
     node._body_begin = len(self.body)
     self.body.append(node.starttag())
+    node._body_children_begin = len(self.body)
 
 
 def depart_html(self, node):
     ''' The HTML render ends for the node. '''
+    node._body_children_end = len(self.body)
     self.body.append(node.endtag())
     node._body_end = len(self.body)
     if hasattr(node, 'html_extract'):
