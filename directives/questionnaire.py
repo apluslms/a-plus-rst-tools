@@ -532,16 +532,25 @@ class AgreeItemGenerate(AgreeItem):
             raise SphinxError('Missing config path {}'.format(self.options['config']))
         item_list = yaml_writer.read(path)
 
-        nodes = []
+        itemnodes = []
         for item in item_list:
-            _, node, data = self.create_question(title_text=self.replace_vals(self.arguments[0], item), points=False)
-            data[u'options'] = self.generate_options(env, node)
-            #if self.content:
-            #    self.add_instructions(node, data, [self.replace_vals(part, item) for part in self.content])
-            nodes.append(node)
-        return nodes
+            title, info, img = [item.get(u"title", u""), item.get(u"info", u""), item.get(u"image_url", u"")]
+            _, node, data = self.create_question(title_text=self.arguments[0].replace(u"$title", title), points=False)
 
-    def replace_vals(self, text, item_dict):
-        for key,val in item_dict.items():
-            text = text.replace(key, val)
-        return text
+            more = u""
+            if img:
+                e = aplus_nodes.html(u"p", {u"class": u"indent"})
+                e.append(aplus_nodes.html(u"img", {u"src":img, u"alt": title, u"style": u"max-height:100px;"}))
+                node.append(e)
+                more += str(e)
+            if info:
+                e = aplus_nodes.html(u"p", {u"class": u"indent"})
+                e.append(nodes.Text(info))
+                node.append(e)
+                more += str(e)
+
+            data[u'options'] = self.generate_options(env, node)
+            data[u'more'] = more
+            itemnodes.append(node)
+
+        return itemnodes
