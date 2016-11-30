@@ -23,10 +23,11 @@ class html(nodes.General, nodes.Element):
         to store HTML.
     '''
 
-    def __init__(self, tagname, attributes={}, no_write=False):
+    def __init__(self, tagname, attributes={}, no_write=False, skip_html=False):
         ''' Constructor: no_write option removes node from final document after configuration data is processed. '''
         self.tagname = tagname
         self.no_write = no_write
+        self.skip_html = skip_html
         super(html, self).__init__(rawsource=u"", **attributes)
 
     def write_yaml(self, env, name, data_dict, data_type=None):
@@ -83,10 +84,13 @@ def collect_data(body, node, data_type=None):
     def recursive_collect(parent, from_body):
         body_i = from_body
         for child in parent.children:
-            if hasattr(child, 'has_yaml') and child.has_yaml(data_type):
-                add_static_block(body_i, child._body_begin)
-                data.append(child.pop_yaml())
-                body_i = child._body_end
+            if hasattr(child, 'has_yaml'):
+                yaml = child.has_yaml(data_type)
+                if yaml or child.skip_html:
+                    add_static_block(body_i, child._body_begin)
+                    body_i = child._body_end
+                if yaml:
+                    data.append(child.pop_yaml())
             else:
                 body_i = recursive_collect(child, body_i)
         return body_i

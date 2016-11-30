@@ -78,7 +78,7 @@ class Questionnaire(AbstractExercise):
             u'type': u'submit',
             u'value': translations.get(env, u'submit'),
             u'class': u'btn btn-primary',
-        })
+        }, skip_html=True)
         form.append(submit)
         node.append(form)
 
