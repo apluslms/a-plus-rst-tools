@@ -91,8 +91,7 @@ def collect_data(body, node, data_type=None):
                     body_i = child._body_end
                 if yaml:
                     data.append(child.pop_yaml())
-            else:
-                body_i = recursive_collect(child, body_i)
+            body_i = recursive_collect(child, body_i)
         return body_i
 
     if node.children:
