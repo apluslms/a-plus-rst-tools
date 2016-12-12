@@ -23,6 +23,7 @@ class Questionnaire(AbstractExercise):
         'appendix-feedback': directives.flag,
         'course-feedback': directives.flag,
         'feedback': directives.flag,
+        'no-override': directives.flag,
         'submissions': directives.nonnegative_int,
         'points-to-pass': directives.nonnegative_int,
     }
@@ -100,7 +101,7 @@ class Questionnaire(AbstractExercise):
                 u'fields': (u'#!children', None),
             }],
         }
-        if category in override:
+        if not 'no-override' in self.options and category in override:
             data.update(override[category])
             if 'url' in data:
                 data['url'] = data['url'].format(key=name)
