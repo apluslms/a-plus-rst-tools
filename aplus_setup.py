@@ -23,7 +23,7 @@ def setup(app):
     app.add_config_value('default_min_group_size', 1, 'html')
     app.add_config_value('default_max_group_size', 1, 'html')
     app.add_config_value('default_late_date', None, 'html')
-    app.add_config_value('default_late_penalty', 0, 'html')
+    app.add_config_value('default_late_penalty', 0.0, 'html')
     app.add_config_value('use_wide_column', True, 'html')
     app.add_config_value('append_content', [], 'html')
     app.add_config_value('override', {}, 'html')
