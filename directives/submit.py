@@ -87,10 +87,10 @@ class SubmitForm(AbstractExercise):
             u'category': u'submit',
             u'scale_points': points,
             u'difficulty': difficulty or '',
-            u'max_submissions': self.options.get('submissions', env.config.program_default_submissions),
-            u'min_group_size': env.config.default_min_group_size,
-            u'max_group_size': env.config.default_max_group_size,
-            u'points_to_pass': self.options.get('points-to-pass', 0),
+            u'max_submissions': self.options.get('submissions', data.get('max_submissions', env.config.program_default_submissions)),
+            u'min_group_size': data.get('min_group_size', env.config.default_min_group_size),
+            u'max_group_size': data.get('max_group_size', env.config.default_max_group_size),
+            u'points_to_pass': self.options.get('points-to-pass', data.get('points_to_pass', 0)),
         })
         if category in override:
             data.update(override[category])
