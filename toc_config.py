@@ -80,6 +80,7 @@ def write(app, exception):
                     u'category': config[u'category'],
                     u'min_group_size': config.get(u'min_group_size', 1),
                     u'max_group_size': config.get(u'max_group_size', 1),
+                    u'confirm_the_level': config.get(u'confirm_the_level', False),
                 }
             exercise.update({
                 u'allow_assistant_grading': False,
