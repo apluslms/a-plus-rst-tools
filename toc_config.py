@@ -160,7 +160,7 @@ def write(app, exception):
     }
     for key in ['chapter', 'feedback']:
         if key in categories:
-            categories[key][u'status'] = u'hidden'
+            categories[key][u'status'] = u'nototal'
 
     # Get relative out dir.
     i = 0
