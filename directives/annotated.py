@@ -248,6 +248,7 @@ def annotate(html, section_name, annotations):
         startpoint_map[start].append(number)
         endpoint_map[end].append(number)
 
+    html = html.replace("<span></span>", "") # temporary workaround for extra span created by Sphinx in Python 3
     parts = re.split(u'(<pre.*?>|</pre>)', html)
 
     # separate tags from text
