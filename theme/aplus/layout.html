@@ -1,0 +1,262 @@
+{%- block doctype -%}
+<!DOCTYPE html>
+{%- endblock %}
+
+{%- macro siblings() %}
+<nav class="row siblings">
+  {%- if next %}
+  <a href="{{ next.link|e }}" class="pull-right btn btn-link">
+    {{ next.title }} &raquo;
+  </a>
+  {%- endif %}
+  {%- if prev %}
+  <a href="{{ prev.link|e }}" class="btn btn-link">
+    &laquo; {{ prev.title }}
+  </a>
+  {%- endif %}
+</nav>
+{%- endmacro %}
+
+<html{% if language is not none %} lang="{{ language }}" {% endif %}>
+
+  <head>
+    <meta charset="{{ encoding }}" />
+    <meta name="viewport" content="width=device-width, initial-scale=1"> {{ metatags }} {%- block htmltitle %}
+    <title>{{ title|striptags|e }}{{ titlesuffix }}</title>
+    {%- endblock %}
+
+    <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.7/styles/github.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/highlight.min.js"></script>
+
+    <script type="text/javascript" async src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+    <link rel="stylesheet" href="https://plus.cs.hut.fi/static/css/main.css" />
+
+    {%- if style %}
+    <link rel="stylesheet" href="{{ pathto('_static/' + style, 1) }}" type="text/css" data-aplus="yes" />
+    {%- endif %}
+    <link rel="stylesheet" href="{{ pathto('_static/pygments.css', 1) }}" type="text/css" data-aplus="yes" />
+
+    {#%- for cssfile in css_files %}
+    <link rel="stylesheet" href="{{ pathto(cssfile, 1) }}" type="text/css" />
+    {%- endfor %#}
+
+    {#%- for scriptfile in script_files %}
+    <script type="text/javascript" src="{{ pathto(scriptfile, 1) }}"></script>
+    {%- endfor %#}
+
+    {%- block extrahead %} {% endblock %}
+    {%- block footer %} {% endblock %}
+  </head>
+
+  <body role="document">
+    <div class="page-wrap">
+      <nav class="navbar navbar-inverse navbar-static-top">
+        <div class="container-fluid">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-navbar-collapse" aria-expanded="false">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand hidden-xs" href="#">
+              A+
+            </a>
+            <span class="navbar-brand visible-xs">
+              A+ &nbsp; {{ title }}
+            </span>
+          </div>
+          <div class="collapse navbar-collapse" id="bs-navbar-collapse">
+            <ul class="nav navbar-nav hidden-xs">
+              <li role="presentation" class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                  Mock frame
+                  <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                  <li role="presentation">
+                    <a href="{{ pathto(master_doc) }}">
+                      Index
+                    </a>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+            <ul class="user-menu nav navbar-nav navbar-right hidden-xs">
+              <li role="presentation" class="menu-profile">
+                <a href="#">
+                  <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+                  username
+                </a>
+              </li>
+              <li role="presentation">
+                <a href="#">
+                  <span class="glyphicon glyphicon-log-out" aria-hidden="true"></span>
+                  Log out
+                </a>
+              </li>
+            </ul>
+            <ul class="nav navbar-nav visible-xs">
+              <li role="presentation">
+                <a href="{{ pathto(master_doc) }}">
+                  {{ title }}
+                </a>
+              </li>
+              <li role="presentation" class="header">
+                <h4>Course</h4></li>
+              <li role="presentation" class="menu-home">
+                <a href="{{ pathto(master_doc) }}">
+                  <span class="glyphicon glyphicon-book" aria-hidden="true"></span>
+                  Index
+                </a>
+              </li>
+              <li role="presentation" class="menu-results">
+                <a href="#">
+                  <span class="glyphicon glyphicon-stats" aria-hidden="true"></span>
+                  Exercise results
+                </a>
+              </li>
+              <li role="presentation" class="menu-notifications">
+                <a href="#">
+                  <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span>
+                  Notifications
+                </a>
+              </li>
+              <li role="presentation" class="header">
+                <h4>External</h4>
+              </li>
+              <li>
+                <a href="#">
+                  <span class="glyphicon glyphicon-inbox" aria-hidden="true"></span>
+                  Discussions
+                </a>
+              </li>
+              <li>
+                <a href="#">
+                  <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
+                  Help
+                </a>
+              </li>
+              <li role="presentation" class="header">
+                <h4>Site</h4></li>
+              <li role="presentation">
+                <a href="#">
+                  <span class="glyphicon glyphicon-home" aria-hidden="true"></span>
+                  Home
+                </a>
+              </li>
+              <li role="presentation">
+                <a href="#">
+                  <span class="glyphicon glyphicon-time" aria-hidden="true"></span>
+                  Course archive
+                </a>
+              </li>
+              <li role="presentation">
+                <a href="#">
+                  <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+                  username
+                </a>
+              </li>
+              <li role="presentation">
+                <a href="#">
+                  <span class="glyphicon glyphicon-log-out" aria-hidden="true"></span>
+                  Log out
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+      <div class="site-content container-fluid">
+        <div class="row">
+          <div class="col-sm-2 hidden-xs">
+            <nav class="course-menu">
+              <ul class="nav nav-pills nav-stacked">
+                <li role="presentation" class="header">
+                  <h4>Course</h4>
+                </li>
+                <li role="presentation" class="menu-home">
+                  <a href="{{ pathto(master_doc) }}">
+                    <span class="glyphicon glyphicon-book" aria-hidden="true"></span>
+                    Index
+                  </a>
+                </li>
+                <li role="presentation" class="menu-results">
+                  <a href="#">
+                    <span class="glyphicon glyphicon-stats" aria-hidden="true"></span>
+                    Exercise results
+                  </a>
+                </li>
+                <li role="presentation" class="menu-notifications">
+                  <a href="#">
+                    <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span>
+                    Notifications
+                  </a>
+                </li>
+                <li role="presentation" class="header">
+                  <h4>External</h4></li>
+                <li>
+                  <a href="#">
+                    <span class="glyphicon glyphicon-inbox" aria-hidden="true"></span>
+                    Discussions
+                  </a>
+                </li>
+                <li>
+                  <a href="#">
+                    <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
+                    Help
+                  </a>
+                </li>
+              </ul>
+            </nav>
+          </div>
+          <div class="col-sm-10">
+            {{ siblings() }}
+            <ol class="breadcrumb">
+              {% for doc in parents %}
+                <li><a href="{{ doc.link|e }}">{{ doc.title }}</a> &raquo;</li>
+              {% endfor %}
+              <li class="active">{{ title }}</li>
+            </ol>
+
+            <div class="row">
+              <div class="col-lg-{%- if theme_use_wide_column|tobool %}12{%- else %}9{%- endif %}">
+                <div id="exercise">
+                  <div class="content">
+                    {%- block content %} {%- block document %} {%- block body %} {% endblock %} {%- endblock %} {%- endblock %}
+                  </div>
+                </div>
+              </div>
+              {%- if not theme_use_wide_column|tobool %}
+              <div class="col-lg-3">
+                <div class="well">
+                  <p>Column placeholder</p>
+                </div>
+              </div>
+              {%- endif %}
+            </div>
+
+            {{ siblings() }}
+          </div>
+        </div>
+      </div>
+      <nav class="site-footer navbar navbar-default navbar-fixed-bottom">
+        <div class="container-fluid">
+          <ul class="nav navbar-nav">
+            <li role="presentation">
+              <a href="#">
+                Privacy Policy
+              </a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+  </body>
+</html>
