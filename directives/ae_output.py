@@ -43,15 +43,19 @@ class AEOutput(AbstractExercise):
             u'class': u' '.join(classes),
             u'data-aplus-exercise': u'yes',
             u'data-aplus-active-element': u'out',
-            u'data-title': u''+ self.options['title'],
             u'data-inputs': u''+ self.options['inputs'],
-            u'style': u'width:'+ self.options['width'] + ';',
         }
         
         if 'type' in self.options:
           args['data-type'] = self.options['type']
         else:
           args['data-type'] = 'text'
+          
+        if 'title' in self.options:
+          args['data-title'] = self.options['title']
+          
+        if 'width' in self.options:
+          args['style'] = 'width:'+ self.options['width'] + ';'
          
 
         node = aplus_nodes.html(u'div', args)
@@ -83,12 +87,8 @@ class AEOutput(AbstractExercise):
                 key_title=key_title, config_title=config_title
             ),
             u'category': u'Active element output',
-            u'max_submissions': self.options.get('submissions', data.get('max_submissions', env.config.program_default_submissions)),
+            u'max_submissions': self.options.get('submissions', data.get('max_submissions', env.config.ae_default_submissions)),
         })
-        if category in override:
-            data.update(override[category])
-            if 'url' in data:
-                data['url'] = data['url'].format(key=name)
 
         node.write_yaml(env, name, data, 'exercise')
 

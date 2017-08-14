@@ -41,9 +41,14 @@ class AEInput(AbstractExercise):
             u'class': u' '.join(classes),
             u'data-aplus-active-element': u'in',
             u'id': u''+ self.options['id'],
-            u'data-title': u''+ self.options['title'],
-            u'style': u'width:'+ self.options['width'] + ';',
         }
+        
+        if 'title' in self.options:
+          args['data-title'] = self.options['title']
+          
+        if 'width' in self.options:
+          args['style'] = 'width:'+ self.options['width'] + ';'
+        
         node = aplus_nodes.html(u'div', args)
         paragraph = aplus_nodes.html(u'p', {})
         paragraph.append(nodes.Text(translations.get(env, 'submit_placeholder')))
