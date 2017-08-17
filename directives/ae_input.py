@@ -19,7 +19,6 @@ class AEInput(AbstractExercise):
     option_spec = {
         'id': directives.unchanged,
         'class' : directives.class_option,
-        'submissions': directives.nonnegative_int,
         'title': directives.unchanged,
         'width': directives.unchanged,
         'url': directives.unchanged,

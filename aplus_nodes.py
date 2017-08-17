@@ -32,7 +32,6 @@ class html(nodes.General, nodes.Element):
 
     def write_yaml(self, env, name, data_dict, data_type=None):
         ''' Adds configuration data and requests write into a file. '''
-        print('Writing yaml for: ', name)
         self.set_yaml(data_dict, data_type)
         self.yaml_write = yaml_writer.file_path(env, name)
 

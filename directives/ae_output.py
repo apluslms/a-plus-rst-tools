@@ -32,7 +32,6 @@ class AEOutput(AbstractExercise):
 
         env = self.state.document.settings.env
         name = u"{}_{}".format(env.docname.replace(u'/', u'_'), key)
-        override = env.config.override
 
         classes = [u'exercise']
         if 'class' in self.options:
@@ -57,7 +56,6 @@ class AEOutput(AbstractExercise):
         if 'width' in self.options:
           args['style'] = 'width:'+ self.options['width'] + ';'
          
-
         node = aplus_nodes.html(u'div', args)
         paragraph = aplus_nodes.html(u'p', {})
         paragraph.append(nodes.Text(translations.get(env, 'submit_placeholder')))
