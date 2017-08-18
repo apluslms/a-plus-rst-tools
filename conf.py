@@ -32,7 +32,7 @@ use_wide_column = True
 #sys.path.insert(0, os.path.abspath('.'))
 
 sys.path.append(os.path.abspath('a-plus-rst-tools'))
-
+sys.path.append(os.path.abspath('a-plus-rst-tools/directives'))
 # -- General configuration ------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
@@ -46,7 +46,7 @@ extensions = [
     'sphinx.ext.mathjax',
     'sphinx.ext.ifconfig',
     'aplus_setup',
-    'ae_output',
+    'axx_output',
 ]
 
 # Add any paths that contain templates here, relative to this directory.

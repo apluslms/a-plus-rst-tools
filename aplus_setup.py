@@ -10,8 +10,8 @@ import aplus_nodes
 from directives.meta import AplusMeta
 from directives.questionnaire import Questionnaire, SingleChoice, MultipleChoice, FreeText, AgreeGroup, AgreeItem, AgreeItemGenerate
 from directives.submit import SubmitForm
-from directives.ae_input import AEInput
-from directives.ae_output import AEOutput
+from directives.ae_input import ActiveElementInput
+from directives.ae_output import ActiveElementOutput
 
 def setup(app):
 
@@ -61,5 +61,5 @@ def setup(app):
 
     # The submit directive.
     app.add_directive('submit', SubmitForm)
-    app.add_directive('ae-input', AEInput)    
-    app.add_directive('ae-output', AEOutput)
+    app.add_directive('ae-input', ActiveElementInput)    
+    app.add_directive('ae-output', ActiveElementOutput)

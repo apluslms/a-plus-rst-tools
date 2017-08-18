@@ -14,7 +14,8 @@ from directives.abstract_exercise import AbstractExercise
 from yaml_writer import ensure_unicode
 
 
-class AEOutput(AbstractExercise):
+
+class ActiveElementOutput(AbstractExercise):
     has_content = False
     option_spec = {
         'class' : directives.class_option,
@@ -91,3 +92,5 @@ class AEOutput(AbstractExercise):
         node.write_yaml(env, name, data, 'exercise')
 
         return [node]
+        
+      

@@ -14,7 +14,7 @@ from directives.abstract_exercise import AbstractExercise
 from yaml_writer import ensure_unicode
 
 
-class AEInput(AbstractExercise):
+class ActiveElementInput(AbstractExercise):
     has_content = False
     option_spec = {
         'id': directives.unchanged,
