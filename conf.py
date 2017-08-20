@@ -23,6 +23,7 @@ course_close_date = '2017-01-01'
 questionnaire_default_submissions = 5
 program_default_submissions = 10
 use_wide_column = True
+static_host = os.environ.get('STATIC_CONTENT_HOST', None)
 
 
 # If extensions (or modules to document with autodoc) are in another directory,

@@ -25,6 +25,7 @@ def write(app, exception):
     course_late = app.config.default_late_date
     course_penalty = app.config.default_late_penalty
     override = app.config.override
+    static_host = app.config.static_host
 
     modules = []
     category_keys = []
@@ -207,15 +208,8 @@ def write(app, exception):
 
     yaml_writer.write(yaml_writer.file_path(app.env, 'index'), config)
 
-    # Mark links to other modules.
-    app.info('Retouch all files to append chapter link attributes.')
+    # Rewrite links for remote inclusion.
+    app.info('Retouch all files to rewrite links.')
     keys = [m['key'] for m in modules]
     keys.extend(['toc', 'user', 'account'])
-    for html_file in html_tools.walk(os.path.dirname(app.outdir)):
-        html_tools.annotate_file_links(
-            html_file,
-            [u'a'],
-            [u'href'],
-            keys,
-            u'data-aplus-chapter="yes" '
-        )
+    html_tools.rewrite_outdir(app.outdir, keys, static_host)
