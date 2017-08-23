@@ -26,6 +26,7 @@ class ActiveElementOutput(AbstractExercise):
         'inputs': directives.unchanged,
         'width': directives.unchanged,
         'height': directives.unchanged,
+        'clear': directives.unchanged,
         'type': directives.unchanged,
     }
 
@@ -60,6 +61,9 @@ class ActiveElementOutput(AbstractExercise):
           
         if 'height' in self.options:
           args['style'] = args['style'] + 'height:'+ self.options['height'] + ';'
+          
+        if 'clear' in self.options:
+          args['style'] = args['style'] + 'clear:'+ self.options['clear'] + ';'
          
         node = aplus_nodes.html(u'div', args)
         paragraph = aplus_nodes.html(u'p', {})
