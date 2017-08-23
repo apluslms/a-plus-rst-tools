@@ -23,6 +23,7 @@ class ActiveElementInput(AbstractExercise):
         'width': directives.unchanged,
         'height': directives.unchanged,
         'url': directives.unchanged,
+        'default': directives.unchanged,
     }
 
     def run(self):
@@ -44,13 +45,16 @@ class ActiveElementInput(AbstractExercise):
         }
         
         if 'title' in self.options:
-          args['data-title'] = self.options['title']
+            args['data-title'] = self.options['title']
+          
+        if 'default' in self.options:
+            args['data-default'] = self.options['default']
           
         if 'width' in self.options:
-          args['style'] = 'width:'+ self.options['width'] + ';'
+            args['style'] = 'width:'+ self.options['width'] + ';'
 
         if 'height' in self.options:
-          args['style'] = args['style'] + 'height:'+ self.options['height'] + ';'
+            args['style'] = args['style'] + 'height:'+ self.options['height'] + ';'
         
         node = aplus_nodes.html(u'div', args)
         paragraph = aplus_nodes.html(u'p', {})
