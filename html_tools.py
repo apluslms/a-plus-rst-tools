@@ -72,9 +72,10 @@ def rewrite_elements(content, tag, attr, path, root, q1, static_host, q2, append
                 if q2 and q2.search(my_path):
                     a = append.replace('"','\\"') if m.group('slash') else append
                     if not out.endswith(append):
-                        j = m.start('val')
-                        out += append + content[i:j] + my_path.replace('\\','/')
-                        i = m.end('val')
+                        out += append
+                        #j = m.start('val')
+                        #out += append + content[i:j] + my_path.replace('\\','/')
+                        #i = m.end('val')
 
                 # Other links.
                 elif static_host:
