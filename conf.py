@@ -24,6 +24,7 @@ questionnaire_default_submissions = 5
 program_default_submissions = 10
 ae_default_submissions = 10000
 use_wide_column = True
+static_host = os.environ.get('STATIC_CONTENT_HOST', None)
 
 
 # If extensions (or modules to document with autodoc) are in another directory,
@@ -32,7 +33,7 @@ use_wide_column = True
 #sys.path.insert(0, os.path.abspath('.'))
 
 sys.path.append(os.path.abspath('a-plus-rst-tools'))
-sys.path.append(os.path.abspath('a-plus-rst-tools/directives'))
+
 # -- General configuration ------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
@@ -46,7 +47,6 @@ extensions = [
     'sphinx.ext.mathjax',
     'sphinx.ext.ifconfig',
     'aplus_setup',
-    'axx_output',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -136,7 +136,8 @@ html_theme_options = {
 }
 
 # Add any paths that contain custom themes here, relative to this directory.
-html_theme_path = ['theme']
+html_theme_path = ['a-plus-rst-tools/theme']
+
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".

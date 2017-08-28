@@ -59,17 +59,6 @@ class html(nodes.General, nodes.Element):
         self.html_extract = name
 
 
-def annotate_links(html):
-    return html_tools.annotate_links(
-        html,
-        '',
-        [u'a', u'img', u'script', u'iframe', u'link'],
-        [u'href', u'src'],
-        [u'_images', u'_static'],
-        u'data-aplus-path="/static/{course}" '
-    )
-
-
 def collect_data(body, node, data_type=None):
     data = []
 
@@ -78,7 +67,7 @@ def collect_data(body, node, data_type=None):
             data.append({
                 u'type': u'static',
                 u'title': u"",
-                u'more': annotate_links(u"".join(body[from_body:last_body])),
+                u'more': u"".join(body[from_body:last_body]),
             })
 
     def recursive_collect(parent, from_body):
@@ -106,7 +95,7 @@ def collect_html(node, name):
         if hasattr(n, 'html_extract') and n.html_extract == name:
             html.append(n._html)
         html.append(collect_html(n, name))
-    return annotate_links(u"".join(html))
+    return u"".join(html)
 
 
 def recursive_fill(body, data_dict, node):

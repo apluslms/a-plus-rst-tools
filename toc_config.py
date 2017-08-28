@@ -25,6 +25,7 @@ def write(app, exception):
     course_late = app.config.default_late_date
     course_penalty = app.config.default_late_penalty
     override = app.config.override
+    static_host = app.config.static_host
 
     modules = []
     category_keys = []
@@ -64,9 +65,12 @@ def write(app, exception):
 
     # Recursive chapter parsing.
     def parse_chapter(docname, doc, parent):
+<<<<<<< HEAD
         
         # FIXME this won't traverse the output element nodes for some reason when the directive is 
         # defined outside a-plus-rst-tools directory
+=======
+>>>>>>> 455ac3b03d1f03dc32b5b37191a1d48b0b4aefe6
         for config_file in [e.yaml_write for e in doc.traverse(aplus_nodes.html) if e.has_yaml(u'exercise')]:
             config = yaml_writer.read(config_file)
             if config.get(u'_external', False):
@@ -163,7 +167,11 @@ def write(app, exception):
     }
     for key in ['chapter', 'feedback']:
         if key in categories:
+<<<<<<< HEAD
             categories[key][u'status'] = u'hidden'
+=======
+            categories[key][u'status'] = u'nototal'
+>>>>>>> 455ac3b03d1f03dc32b5b37191a1d48b0b4aefe6
 
     # Get relative out dir.
     i = 0
@@ -210,6 +218,7 @@ def write(app, exception):
 
     yaml_writer.write(yaml_writer.file_path(app.env, 'index'), config)
 
+<<<<<<< HEAD
     # Mark links to other modules.
     app.info('Retouch all files to append chapter link attributes.')
     keys = [m['key'] for m in modules]
@@ -222,3 +231,10 @@ def write(app, exception):
             keys,
             u'data-aplus-chapter="yes" '
         )
+=======
+    # Rewrite links for remote inclusion.
+    app.info('Retouch all files to rewrite links.')
+    keys = [m['key'] for m in modules]
+    keys.extend(['toc', 'user', 'account'])
+    html_tools.rewrite_outdir(app.outdir, keys, static_host)
+>>>>>>> 455ac3b03d1f03dc32b5b37191a1d48b0b4aefe6
