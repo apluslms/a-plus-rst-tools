@@ -65,12 +65,6 @@ def write(app, exception):
 
     # Recursive chapter parsing.
     def parse_chapter(docname, doc, parent):
-<<<<<<< HEAD
-        
-        # FIXME this won't traverse the output element nodes for some reason when the directive is 
-        # defined outside a-plus-rst-tools directory
-=======
->>>>>>> 455ac3b03d1f03dc32b5b37191a1d48b0b4aefe6
         for config_file in [e.yaml_write for e in doc.traverse(aplus_nodes.html) if e.has_yaml(u'exercise')]:
             config = yaml_writer.read(config_file)
             if config.get(u'_external', False):
