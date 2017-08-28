@@ -161,11 +161,7 @@ def write(app, exception):
     }
     for key in ['chapter', 'feedback']:
         if key in categories:
-<<<<<<< HEAD
-            categories[key][u'status'] = u'hidden'
-=======
             categories[key][u'status'] = u'nototal'
->>>>>>> 455ac3b03d1f03dc32b5b37191a1d48b0b4aefe6
 
     # Get relative out dir.
     i = 0
@@ -212,23 +208,8 @@ def write(app, exception):
 
     yaml_writer.write(yaml_writer.file_path(app.env, 'index'), config)
 
-<<<<<<< HEAD
-    # Mark links to other modules.
-    app.info('Retouch all files to append chapter link attributes.')
-    keys = [m['key'] for m in modules]
-    keys.extend(['toc', 'user', 'account'])
-    for html_file in html_tools.walk(os.path.dirname(app.outdir)):
-        html_tools.annotate_file_links(
-            html_file,
-            [u'a'],
-            [u'href'],
-            keys,
-            u'data-aplus-chapter="yes" '
-        )
-=======
     # Rewrite links for remote inclusion.
     app.info('Retouch all files to rewrite links.')
     keys = [m['key'] for m in modules]
     keys.extend(['toc', 'user', 'account'])
     html_tools.rewrite_outdir(app.outdir, keys, static_host)
->>>>>>> 455ac3b03d1f03dc32b5b37191a1d48b0b4aefe6
