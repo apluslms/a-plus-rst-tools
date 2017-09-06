@@ -14,7 +14,7 @@ Creating a new course
 We recommend to start with a fork from the mooc-grader-rst-course repository
 from Github.
 
-    git clone --recursive https://github.com/Aalto-LeTech/mooc-grader-rst-course.git
+    git clone -b rst --recursive https://github.com/Aalto-LeTech/mooc-grader-course.git
 
 To compile the RST source into HTML the Python sphinx module is required.
 
@@ -49,6 +49,7 @@ List of directives and examples
 
 1. Graded questionnaire
 
+```
     .. questionnaire:: 1 A50
       :submissions: 4
       :points-to-pass: 0
@@ -94,10 +95,11 @@ List of directives and examples
 
         test
         !test § Follow the instruction.
-
+```
 
 2. Feedback questionnaire
 
+```
     .. questionnaire::
       :feedback:
 
@@ -112,24 +114,27 @@ List of directives and examples
       .. agree-group::
 
         .. agree-item:: Did it work for you?
-
+```
 
 3. Submit an exercise
 
 These type of exercises are configured separately for mooc-grader.
 The directive will attach the exercise at this position.
 
+```
     .. submit:: 2 A100
       :submissions: 100
       :config: exercises/hello_python/config.yaml
-
+```
 
 4. Submit a remote exercise
 
 This exercise opens an external tool via LTI launch protocol.
 
+```
     .. submit:: 3 B50
       :url: https://rubyric.com/edge/exercises/111/lti
       :lti: Rubyric+
       :lti_context_id: asdasd
       :lti_resource_link_id: asdasd
+```
