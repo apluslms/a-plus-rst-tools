@@ -55,6 +55,7 @@ class Questionnaire(AbstractExercise):
             classes.append(u'feedback')
         else:
             category = u'questionnaire'
+            classes.append(u'difficulty-' + difficulty)
 
         env = self.state.document.settings.env
         name = u"{}_{}".format(env.docname.replace(u'/', u'_'), key)
