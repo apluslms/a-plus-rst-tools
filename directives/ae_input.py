@@ -25,6 +25,7 @@ class ActiveElementInput(AbstractExercise):
         'clear': directives.unchanged,
         'url': directives.unchanged,
         'default': directives.unchanged,
+        'type': directives.unchanged,
     }
 
     def run(self):
@@ -50,6 +51,9 @@ class ActiveElementInput(AbstractExercise):
           
         if 'default' in self.options:
             args['data-default'] = self.options['default']
+       
+        if 'type' in self.options:
+            args['data-type'] = self.options['type']
           
         if 'width' in self.options:
             args['style'] = 'width:'+ self.options['width'] + ';'
