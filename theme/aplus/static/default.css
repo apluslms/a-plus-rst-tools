@@ -1,0 +1,73 @@
+/* This Sphinx theme is designed for content that is embedded in the A+
+learning management system and thus the theme defines CSS rules for only some
+special components. Generic and body-level rules come from the A+ system. */
+
+/* -- admonitions ----------------------------------------------------------- */
+
+.admonition {
+  min-height: 42px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  margin-left: 0;
+  margin-right: 0;
+  margin-top: 1.5rem;
+  /* default colors */
+  color: #606060;
+  background-color: #e8e8e8;
+  border-color: #d7d7d7;
+}
+
+.admonition button {
+  margin-bottom: 0.5rem;
+}
+
+.admonition-title {
+  font-weight: 700;
+  margin: 0px 0px 0.5rem;
+}
+
+.admonition .last {
+  margin-bottom: 0;
+}
+
+.admonition dt {
+  font-weight: bold;
+}
+
+.admonition dl {
+  margin-bottom: 0;
+}
+
+/* Specialized admonitions use different colours */
+.admonition.success, .admonition.meta {
+  color: #3c763d;
+  background-color: #dff0d8;
+  border-color: #d6e9c6;
+}
+
+.admonition.info, .admonition.note, .admonition.seealso {
+  color: #31708f;
+  background-color: #d9edf7;
+  border-color: #bce8f1;
+}
+
+.admonition.warning, .admonition.caution, .admonition.attention, .admonition.admonition-todo {
+  color: #8a6d3b;
+  background-color: #fcf8e3;
+  border-color: #faebcc;
+}
+
+.admonition.danger, .admonition.error {
+  color: #a94442;
+  background-color: #f2dede;
+  border-color: #ebccd1;
+}
+
+.admonition.aside {
+  color: #606060;
+  background-color: #e8e8e8;
+  border-color: #d7d7d7;
+}
+
