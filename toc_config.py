@@ -74,8 +74,9 @@ def write(app, exception):
                     'category': config['category'],
                 }
             allow_assistant_viewing = config.get('allow_assistant_viewing', app.config.allow_assistant_viewing)
+            allow_assistant_grading = config.get('allow_assistant_grading', app.config.allow_assistant_grading)
             exercise.update({
-                'allow_assistant_grading': False,
+                'allow_assistant_grading': allow_assistant_grading,
                 'allow_assistant_viewing': allow_assistant_viewing,
                 'status': 'unlisted',
             })
