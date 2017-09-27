@@ -4,6 +4,8 @@ from docutils import nodes
 from docutils.parsers.rst import directives
 from sphinx.util.compat import Directive
 
+import aplus_nodes
+
 # DIRECTIVE FOR ARTICULATE STORYLINE BLOCKS: story
 
 class story_node(nodes.General, nodes.Element): pass
@@ -154,17 +156,24 @@ def depart_iframe_node(self, node):
 
 def setup(app):
 
-    app.add_node(story_node, html=(visit_story_node, depart_story_node))
+    ignore_visitors = (aplus_nodes.visit_ignore, aplus_nodes.depart_ignore)
+
+    app.add_node(story_node, html=(visit_story_node, depart_story_node),
+            latex=ignore_visitors)
     app.add_directive('story', BasicStory)
 
-    app.add_node(jsvee_node, html=(visit_jsvee_node, depart_jsvee_node))
+    app.add_node(jsvee_node, html=(visit_jsvee_node, depart_jsvee_node),
+            latex=ignore_visitors)
     app.add_directive('jsvee', JSVEE)
 
-    app.add_node(youtube_node, html=(visit_youtube_node, depart_youtube_node))
+    app.add_node(youtube_node, html=(visit_youtube_node, depart_youtube_node),
+            latex=ignore_visitors)
     app.add_directive('youtube', YouTubeVideo)
 
-    app.add_node(video_node, html=(visit_video_node, depart_video_node))
+    app.add_node(video_node, html=(visit_video_node, depart_video_node),
+            latex=ignore_visitors)
     app.add_directive('local-video', LocalVideo)
 
-    app.add_node(iframe_node, html=(visit_iframe_node, depart_iframe_node))
+    app.add_node(iframe_node, html=(visit_iframe_node, depart_iframe_node),
+            latex=ignore_visitors)
     app.add_directive('embedded-page', IFrame)

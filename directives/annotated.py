@@ -11,6 +11,8 @@ from sphinx.directives.code import CodeBlock
 from sphinx.errors import SphinxError
 from operator import itemgetter
 
+import aplus_nodes
+
 annotated_section_counts = Counter()
 
 class AnnotationError(SphinxError):
@@ -328,11 +330,16 @@ def annotate(html, section_name, annotations):
 
 def setup(app):
 
-    app.add_node(annotated_node, html=(visit_annotated_node, depart_annotated_node))
+    ignore_visitors = (aplus_nodes.visit_ignore, aplus_nodes.depart_ignore)
+
+    app.add_node(annotated_node, html=(visit_annotated_node, depart_annotated_node),
+            latex=ignore_visitors)
     app.add_directive('annotated', AnnotatedSection)
 
-    app.add_node(annotation_node, html=(visit_annotation_node, depart_annotation_node))
+    app.add_node(annotation_node, html=(visit_annotation_node, depart_annotation_node),
+            latex=ignore_visitors)
     app.add_directive('annotation', Annotation)
 
-    app.add_node(altered_node, html=(visit_altered_node, depart_altered_node))
+    app.add_node(altered_node, html=(visit_altered_node, depart_altered_node),
+            latex=ignore_visitors)
     app.add_directive('altered-code-block', AlteredCodeBlock)
