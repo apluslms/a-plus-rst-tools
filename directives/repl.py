@@ -6,6 +6,8 @@ from sphinx.util.compat import Directive
 from cgi import escape
 import re
 
+import aplus_nodes
+
 # DIRECTIVE FOR REPL SESSIONS: repl
 # this is an embarrassing mess, but it works for now. if you're thinking of making changes, rewrite instead.
 # is there some better way to go about this by using inheritance from literal_block; 
@@ -89,10 +91,14 @@ def depart_res_count_reset_node(self, node):
 
 def setup(app):
 
-    app.add_node(repl_node, html=(visit_repl_node, depart_repl_node))
+    ignore_visitors = (aplus_nodes.visit_ignore, aplus_nodes.depart_ignore)
+
+    app.add_node(repl_node, html=(visit_repl_node, depart_repl_node),
+            latex=ignore_visitors)
     app.add_directive('repl', REPLSession)
 
-    app.add_node(res_count_reset_node, html=(visit_res_count_reset_node, depart_res_count_reset_node))
+    app.add_node(res_count_reset_node, html=(visit_res_count_reset_node, depart_res_count_reset_node),
+            latex=ignore_visitors)
     app.add_directive('repl-res-count-reset', ResCountReset)
 
 

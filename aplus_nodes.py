@@ -22,13 +22,15 @@ class html(nodes.General, nodes.Element):
         Captures rendered HTML from children nodes that were requested
         to store HTML.
     '''
-
-    def __init__(self, tagname, attributes={}, no_write=False, skip_html=False):
+    
+    def __init__(self, tagname, attributes={}, no_write=False, skip_html=False, *children, **other_attributes):
         ''' Constructor: no_write option removes node from final document after configuration data is processed. '''
         self.tagname = tagname
         self.no_write = no_write
         self.skip_html = skip_html
-        super(html, self).__init__(rawsource=u"", **attributes)
+        attrs = other_attributes.copy()
+        attrs.update(attributes) # attributes dict gets prioritized if the same key exists in both dicts
+        super(html, self).__init__(u"", *children, **attrs)
 
     def write_yaml(self, env, name, data_dict, data_type=None):
         ''' Adds configuration data and requests write into a file. '''
@@ -57,6 +59,20 @@ class html(nodes.General, nodes.Element):
 
     def store_html(self, name):
         self.html_extract = name
+    
+    def copy(self):
+        '''sphinx.util.nodes (function _new_copy) monkey-patches the Element.copy method
+        to include the source and line, however, it calls the Element constructor with
+        a positional argument rawsource instead of using keyword arguments.
+        That is changed here so that the constructor of this class can use other
+        positional parameters.
+        '''
+        newnode = self.__class__(self.tagname, self.attributes, self.no_write,
+            self.skip_html, *self.children)
+        if isinstance(self, nodes.Element):
+            newnode.source = self.source
+            newnode.line = self.line
+        return newnode
 
 
 def collect_data(body, node, data_type=None):
@@ -140,10 +156,23 @@ def depart_html(self, node):
 class aplusmeta(nodes.General, nodes.Element):
     ''' Hidden node that includes meta data. '''
 
-    def __init__(self, options={}):
-        self.tagname = u"meta"
+    def __init__(self, options={}, *children, **attributes):
+        assert len(children) == 0, "aplusmeta node may not have children"
         self.options = options
-        super(aplusmeta, self).__init__(rawsource=u"")
+        super(aplusmeta, self).__init__(rawsource=u"", **attributes)
+    
+    def copy(self):
+        '''sphinx.util.nodes (function _new_copy) monkey-patches the Element.copy method
+        to include the source and line, however, it calls the Element constructor with
+        a positional argument rawsource instead of using keyword arguments.
+        That is changed here so that the constructor of this class can use other
+        positional parameters.
+        '''
+        newnode = self.__class__(self.options, *self.children, **self.attributes)
+        if isinstance(self, nodes.Element):
+            newnode.source = self.source
+            newnode.line = self.line
+        return newnode
 
 
 def visit_ignore(self, node):
