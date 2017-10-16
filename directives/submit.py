@@ -16,6 +16,7 @@ class SubmitForm(AbstractExercise):
     has_content = False
     option_spec = {
         'class' : directives.class_option,
+        'ajax': directives.flag,
         'submissions': directives.nonnegative_int,
         'points-to-pass': directives.nonnegative_int,
         'config': directives.unchanged,
@@ -37,10 +38,13 @@ class SubmitForm(AbstractExercise):
             classes.extend(self.options['class'])
 
         # Add document nodes.
-        node = aplus_nodes.html('div', {
-            'class': ' '.join(classes),
-            'data-aplus-exercise': 'yes',
-        })
+        args = {
+          'class': ' '.join(classes),
+          'data-aplus-exercise': 'yes',
+        }
+        if 'ajax' in self.options:
+            args[u'data-aplus-ajax'] = u'yes'
+        node = aplus_nodes.html('div', args)
         paragraph = aplus_nodes.html('p', {})
         paragraph.append(nodes.Text(translations.get(env, 'submit_placeholder')))
         node.append(paragraph)
