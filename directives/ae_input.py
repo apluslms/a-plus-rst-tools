@@ -71,7 +71,7 @@ class ActiveElementInput(AbstractExercise):
         
         node = aplus_nodes.html(u'div', args)
         paragraph = aplus_nodes.html(u'p', {})
-        paragraph.append(nodes.Text(translations.get(env, 'submit_placeholder')))
+        paragraph.append(nodes.Text(translations.get(env, 'active_element_placeholder')))
         node.append(paragraph)
 
         return [node]
