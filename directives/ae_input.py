@@ -17,19 +17,21 @@ from yaml_writer import ensure_unicode
 class ActiveElementInput(AbstractExercise):
     has_content = False
     option_spec = {
-        'id': directives.unchanged,
         'class' : directives.class_option,
         'title': directives.unchanged,
         'width': directives.unchanged,
         'height': directives.unchanged,
         'clear': directives.unchanged,
-        'url': directives.unchanged,
         'default': directives.unchanged,
         'type': directives.unchanged,
     }
 
     def run(self):
-        key, difficulty, points = self.extract_exercise_arguments()
+               
+        if len(self.arguments) > 0:
+            key = self.arguments[0] 
+        else: 
+            raise SphinxError('Missing active element input id')
 
         env = self.state.document.settings.env
         name = u"{}_{}".format(env.docname.replace(u'/', u'_'), key)
@@ -43,7 +45,7 @@ class ActiveElementInput(AbstractExercise):
         args = {
             u'class': u' '.join(classes),
             u'data-aplus-active-element': u'in',
-            u'id': u''+ self.options['id'],
+            u'id': u''+ key,
         }
         
         if 'title' in self.options:
