@@ -61,7 +61,10 @@ class ActiveElementInput(AbstractExercise):
             args['style'] = 'width:'+ self.options['width'] + ';'
 
         if 'height' in self.options:
-            args['style'] = args['style'] + 'height:'+ self.options['height'] + ';'
+            if 'style' not in args:
+                args['style'] = 'height:'+ self.options['height'] + ';'
+            else:
+                args['style'] = args['style'] + 'height:'+ self.options['height'] + ';'
             
         if 'clear' in self.options:
           args['style'] = args['style'] + 'clear:'+ self.options['clear'] + ';'
@@ -70,7 +73,5 @@ class ActiveElementInput(AbstractExercise):
         paragraph = aplus_nodes.html(u'p', {})
         paragraph.append(nodes.Text(translations.get(env, 'submit_placeholder')))
         node.append(paragraph)
-
-        key_title = u"{} {}".format(translations.get(env, 'exercise'), key)
 
         return [node]
