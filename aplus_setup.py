@@ -31,7 +31,7 @@ def setup(app):
     app.add_config_value('override', {}, 'html')
     app.add_config_value('category_names', {}, 'html')
     app.add_config_value('static_host', None, 'html')
-    app.add_config_value('ae_default_submissions', 10000, 'html')
+    app.add_config_value('ae_default_submissions', 0, 'html')
 
     # Connect configuration generation to events.
     app.connect('builder-inited', toc_config.prepare)

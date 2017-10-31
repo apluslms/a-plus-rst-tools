@@ -22,7 +22,7 @@ course_open_date = '2016-01-01'
 course_close_date = '2017-01-01'
 questionnaire_default_submissions = 5
 program_default_submissions = 10
-ae_default_submissions = 10000
+ae_default_submissions = 0
 use_wide_column = True
 static_host = os.environ.get('STATIC_CONTENT_HOST', None)
 
