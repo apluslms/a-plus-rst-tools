@@ -21,13 +21,13 @@ class ActiveElementOutput(AbstractExercise):
         'class' : directives.class_option,
         'submissions': directives.nonnegative_int,
         'config': directives.unchanged,
-        'url': directives.unchanged,
         'title': directives.unchanged,
         'inputs': directives.unchanged,
         'width': directives.unchanged,
         'height': directives.unchanged,
         'clear': directives.unchanged,
         'type': directives.unchanged,
+        'scale-size': directives.flag 
     }
 
     def run(self):
@@ -52,6 +52,9 @@ class ActiveElementOutput(AbstractExercise):
             args['data-type'] = self.options['type']
         else:
             args['data-type'] = 'text'
+            
+        if 'scale-size' in self.options:
+            args['data-scale'] = ''
           
         if 'title' in self.options:
             args['data-title'] = self.options['title']
