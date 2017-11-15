@@ -40,6 +40,8 @@ class SubmitForm(AbstractExercise):
         classes = [u'exercise']
         if 'class' in self.options:
             classes.extend(self.options['class'])
+        if difficulty:
+            classes.append(u'difficulty-' + difficulty)
 
         # Add document nodes.
         args = {

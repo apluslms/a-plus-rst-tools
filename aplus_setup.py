@@ -31,7 +31,7 @@ def setup(app):
     app.add_config_value('override', {}, 'html')
     app.add_config_value('category_names', {}, 'html')
     app.add_config_value('static_host', None, 'html')
-    app.add_config_value('ae_default_submissions', 10000, 'html')
+    app.add_config_value('ae_default_submissions', 0, 'html')
 
     # Connect configuration generation to events.
     app.connect('builder-inited', toc_config.prepare)
@@ -40,13 +40,24 @@ def setup(app):
     # Add node type that can describe HTML elements and store configurations.
     app.add_node(
         aplus_nodes.html,
-        html=(aplus_nodes.visit_html, aplus_nodes.depart_html)
+        html=(aplus_nodes.visit_html, aplus_nodes.depart_html),
+        latex=(aplus_nodes.visit_ignore, aplus_nodes.depart_ignore),
+        # TODO: This html node is used by the A+ exercise directives that embed exercises into chapters.
+        # The Latex builder could insert some content about the exercise to show where it would
+        # be embedded in the HTML page instead of completely ignoring the exercise directive.
+        # There could be a configuration option to control whether the Latex builder should
+        # ignore exercises or not.
+        # Note: even though these latex visitor functions do nothing, the exercise directives
+        # nonetheless output some text to the Latex/PDF output. The text is even often duplicated
+        # multiple times. This is possibly caused by broken aplus_nodes classes that interfere
+        # with the builder output even though only the visitor functions should do that.
     )
 
     # The directive for injecting document meta data.
     app.add_node(
         aplus_nodes.aplusmeta,
-        html=(aplus_nodes.visit_ignore, aplus_nodes.depart_ignore)
+        html=(aplus_nodes.visit_ignore, aplus_nodes.depart_ignore),
+        latex=(aplus_nodes.visit_ignore, aplus_nodes.depart_ignore),
     )
     app.add_directive('aplusmeta', AplusMeta)
 

@@ -11,6 +11,10 @@ translations = {
         'en': u'A+ presents the exercise submission form here.',
         'fi': u'A+ esittää tässä kohdassa tehtävän palautuslomakkeen.',
     },
+        'active_element_placeholder': {
+        'en': u'A+ presents the active element here.',
+        'fi': u'A+ esittää tässä kohdassa "active element"-elementin.',
+    },
     'feedback': {
         'en': u'Feedback',
         'fi': u'Palaute',

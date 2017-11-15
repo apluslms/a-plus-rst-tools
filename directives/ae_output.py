@@ -21,13 +21,13 @@ class ActiveElementOutput(AbstractExercise):
         'class' : directives.class_option,
         'submissions': directives.nonnegative_int,
         'config': directives.unchanged,
-        'url': directives.unchanged,
         'title': directives.unchanged,
         'inputs': directives.unchanged,
         'width': directives.unchanged,
         'height': directives.unchanged,
         'clear': directives.unchanged,
         'type': directives.unchanged,
+        'scale-size': directives.flag 
     }
 
     def run(self):
@@ -49,21 +49,27 @@ class ActiveElementOutput(AbstractExercise):
         }
         
         if 'type' in self.options:
-          args['data-type'] = self.options['type']
+            args['data-type'] = self.options['type']
         else:
-          args['data-type'] = 'text'
+            args['data-type'] = 'text'
+            
+        if 'scale-size' in self.options:
+            args['data-scale'] = ''
           
         if 'title' in self.options:
-          args['data-title'] = self.options['title']
+            args['data-title'] = self.options['title']
           
         if 'width' in self.options:
-          args['style'] = 'width:'+ self.options['width'] + ';'
+            args['style'] = 'width:'+ self.options['width'] + ';'
           
         if 'height' in self.options:
-          args['style'] = args['style'] + 'height:'+ self.options['height'] + ';'
+            if 'style' not in args:
+                args['style'] = 'height:'+ self.options['height'] + ';'
+            else:
+                args['style'] = args['style'] + 'height:'+ self.options['height'] + ';'
           
         if 'clear' in self.options:
-          args['style'] = args['style'] + 'clear:'+ self.options['clear'] + ';'
+            args['style'] = args['style'] + 'clear:'+ self.options['clear'] + ';'
          
         node = aplus_nodes.html(u'div', args)
         paragraph = aplus_nodes.html(u'p', {})

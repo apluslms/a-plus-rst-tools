@@ -16,6 +16,12 @@ def prepare(app):
 
 def write(app, exception):
     ''' Writes the table of contents level configuration. '''
+    if app.builder.name != 'html':
+        # course configuration YAML is only built with the Sphinx HTML builder
+        # because some parts of the YAML generation have only been implemented
+        # in the visit methods of the HTML builder (aplus_nodes functions
+        # visit_html and depart_html)
+        return
     if exception:
         return
 
