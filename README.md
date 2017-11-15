@@ -133,3 +133,42 @@ This exercise opens an external tool via LTI launch protocol.
       :lti: Rubyric+
       :lti_context_id: asdasd
       :lti_resource_link_id: asdasd
+      
+      
+5. Active element input
+
+This creates an input field for active element
+
+    .. ae-input:: id-for-input
+    	:title: title of the input (displayed on the html page)
+    	:default: default value for the input (displayed when the user has not submitted a solution)
+    	:class: In the example css-file classes "active-element" and "ae-input" 
+             are used to style the input element and can be modified as needed.
+             The classes left and right can be used to float the box left or right,
+             or center to align it centered. 
+    	:width: can be used to determine the width of the element 
+    	:height: can be used to determine the height of the input textarea (deafult with classes "active element" and "ae-input" is 150px)
+    	:clear: 'both' forces the element to a new line, 'left' ('right') allows no floating elements on the left (right)
+    	:type: use "file" for file inputs and "dropdown" for dropdown. For dropdowns, the available options
+            should be listed after the type indicating "dropdown" in this format: "dropdown:option1,option2,option3"
+            
+            
+5. Active element output
+
+This creates an input field for active element
+
+    .. ae-output:: key-for-output
+    	:config (required): path to the exercise configuration file
+    	:inputs (required): ids of the input elements required for the output
+    	:title: title of the output element
+    	:class: In the example css-file the classe "active-element" is used to style the input element 
+             and can be modified as needed.
+             The classes left and right can be used to float the box left or right,
+             or center to align it centered. 
+             Class "no-border" can be used to remove the output box border.
+    	:width: can be used to determine the width of the element
+    	:height: can be used to determine the height of the output div (deafult with class "active element" is 150px) 
+    	:clear: 'both' forces the element to a new line, 'left' ('right') allows no floating elements on the left (right)
+    	:type: default type is text; for image (png) outputs use "image"
+    	:submissions: number of allowed submissions (default is unlimited for active elements)
+    	:scale-size: no value; if this option is present, the output element height will scale to match content that has a defined height
