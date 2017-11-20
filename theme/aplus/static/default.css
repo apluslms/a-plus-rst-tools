@@ -223,6 +223,12 @@ table.citation td {
     border-bottom: none;
 }
 
+table.citation .label {
+    /* Bootstrap makes labels unreadable in Sphinx bibliographies (lists of references)
+    by using white font on white background. */
+    color: #333333;
+}
+
 /* -- figures --------------------------------------------------------------- */
 
 div.figure {
