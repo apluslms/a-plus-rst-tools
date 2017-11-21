@@ -24,6 +24,7 @@ class Questionnaire(AbstractExercise):
         'course-feedback': directives.flag,
         'feedback': directives.flag,
         'no-override': directives.flag,
+        'pick_randomly': directives.nonnegative_int,
         'submissions': directives.nonnegative_int,
         'points-to-pass': directives.nonnegative_int,
     }
@@ -107,6 +108,11 @@ class Questionnaire(AbstractExercise):
             data.update(override[category])
             if 'url' in data:
                 data['url'] = data['url'].format(key=name)
+        if "pick_randomly" in self.options:
+            pick_randomly = self.options.get('pick_randomly', 0)
+            if pick_randomly < 1:
+                raise SphinxError(u'Number of fields to sample randomly should greater than zero.')
+            data[u'fieldgroups'][0]['pick_randomly'] = pick_randomly
 
         form.write_yaml(env, name, data, 'exercise')
 
