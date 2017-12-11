@@ -104,7 +104,7 @@ class ActiveElementOutput(AbstractExercise):
             u'title': env.config.submit_title.format(
                 key_title=key_title, config_title=config_title
             ),
-            u'category': u'Active element output',
+            u'category': u'active elements',
             u'max_submissions': self.options.get('submissions', data.get('max_submissions', env.config.ae_default_submissions)),
         })
         
