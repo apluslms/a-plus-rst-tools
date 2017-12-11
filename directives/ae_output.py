@@ -21,6 +21,7 @@ class ActiveElementOutput(AbstractExercise):
         'class' : directives.class_option,
         'submissions': directives.nonnegative_int,
         'config': directives.unchanged,
+        'url': directives.unchanged,
         'title': directives.unchanged,
         'inputs': directives.unchanged,
         'width': directives.unchanged,
@@ -35,6 +36,7 @@ class ActiveElementOutput(AbstractExercise):
 
         env = self.state.document.settings.env
         name = u"{}_{}".format(env.docname.replace(u'/', u'_'), key)
+        override = env.config.override
 
         classes = [u'exercise']
         if 'class' in self.options:
@@ -105,6 +107,11 @@ class ActiveElementOutput(AbstractExercise):
             u'category': u'Active element output',
             u'max_submissions': self.options.get('submissions', data.get('max_submissions', env.config.ae_default_submissions)),
         })
+        
+        if category in override:
+            data.update(override[category])
+            if 'url' in data:
+                data['url'] = data['url'].format(key=name)
 
         node.write_yaml(env, name, data, 'exercise')
 
