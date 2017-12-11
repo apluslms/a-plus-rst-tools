@@ -45,8 +45,11 @@ class ActiveElementOutput(AbstractExercise):
             u'class': u' '.join(classes),
             u'data-aplus-exercise': u'yes',
             u'data-aplus-active-element': u'out',
-            u'data-inputs': u''+ self.options['inputs'],
+            u'data-inputs': u''+ self.options.get('inputs', ''),
         }
+        
+        if 'inputs' not in self.options:
+            raise self.warning("The input list for output '{:s}' is empty.".format(key))
         
         if 'type' in self.options:
             args['data-type'] = self.options['type']
