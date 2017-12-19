@@ -27,6 +27,7 @@ class Questionnaire(AbstractExercise):
         'pick_randomly': directives.nonnegative_int,
         'submissions': directives.nonnegative_int,
         'points-to-pass': directives.nonnegative_int,
+        'title': directives.unchanged,
     }
 
     def run(self):
