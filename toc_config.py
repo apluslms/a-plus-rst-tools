@@ -88,9 +88,9 @@ def write(app, exception):
                     u'min_group_size': config.get(u'min_group_size', 1),
                     u'max_group_size': config.get(u'max_group_size', 1),
                     u'confirm_the_level': config.get(u'confirm_the_level', False),
+                    u'allow_assistant_grading': config.get(u'allow_assistant_grading', False),
                 }
             exercise.update({
-                u'allow_assistant_grading': False,
                 u'status': u'unlisted',
             })
             if u'scale_points' in config:
