@@ -412,6 +412,7 @@ class FreeText(QuestionMixin, Directive):
 
         # Add configuration.
         if len(self.arguments) > 1:
+            self._validate_compare_method(self.arguments[1])
             data[u'compare_method'] = self.arguments[1]
 
         if config_content:
@@ -460,6 +461,24 @@ class FreeText(QuestionMixin, Directive):
 
     def grader_field_type(self):
         return u'textarea' if self.height > 1 else u'text'
+
+    def _validate_compare_method(self, method):
+        # valid_t and valid_mods should reflect those specified in mooc-grader
+        # See also mooc-grader/README.md and mooc-grader/access/forms.py method compare_values
+        valid_t = {'array', 'unsortedchars', 'string', 'regexp', 'int', 'float'}
+        # 'requirecase' has an effect only when used with 'string'.
+        # TODO: raise an exception when using 'requirecase' with something else
+        valid_mods = {'ignorerepl', 'ignorews', 'ignorequotes', 'ignoreparenthesis', 'requirecase'}
+
+        parts = method.split('-')
+        t = parts[0]
+        mods = parts[1:]
+
+        if t not in valid_t:
+            raise SphinxError('Unknown compare method: %s' % t)
+        for mod in mods:
+            if mod not in valid_mods:
+                raise SphinxError('Unknown compare method modifier: %s' % mod)
 
 
 class AgreeGroup(Directive):
