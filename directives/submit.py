@@ -28,6 +28,8 @@ class SubmitForm(AbstractExercise):
         'lti': directives.unchanged,
         'lti_context_id': directives.unchanged,
         'lti_resource_link_id': directives.unchanged,
+        'radar_tokenizer': directives.unchanged,
+        'radar_minimum_match_tokens': directives.unchanged,
     }
 
     def run(self):
@@ -79,6 +81,11 @@ class SubmitForm(AbstractExercise):
             config_title = None
 
         config_title = self.options.get('title', config_title)
+        if "radar_tokenizer" in self.options or "radar_minimum_match_tokens" in self.options:
+            data[u'radar_info'] = {
+                u'tokenizer': self.options.get("radar_tokenizer"),
+                u'minimum_match_tokens': self.options.get("radar_minimum_match_tokens"),
+            }
 
         category = u'submit'
         data.update({
