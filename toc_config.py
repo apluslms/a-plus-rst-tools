@@ -3,11 +3,11 @@ from docutils import nodes
 from sphinx import addnodes
 from sphinx.errors import SphinxError
 
-import toc_languages
 import aplus_nodes
-import yaml_writer
 import directives.meta
-import html_tools
+import lib.yaml_writer as yaml_writer
+import lib.html_tools as html_tools
+import lib.toc_languages as toc_languages
 
 
 def prepare(app):
@@ -45,7 +45,8 @@ def write(app, exception):
             yaml_writer.write(yaml_writer.file_path(app.env, 'index_' + lang), index)
             indexes.append((lang, index))
 
-        index = toc_languages.join(indexes)
+        app.info('Joining language tree to one index.')
+        index = toc_languages.join(app, indexes)
         append_manual_content(app, index)
         yaml_writer.write(yaml_writer.file_path(app.env, 'index'), index)
         keys |= set(m['key'] for m in index['modules'])
