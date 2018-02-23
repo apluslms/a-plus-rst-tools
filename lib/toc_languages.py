@@ -137,12 +137,15 @@ def join_exercises(app, key, lang1, c1, lang2, c2):
 
 
 def join_keys(lang1, key1, lang2, key2):
+    SEP = ('_', '-')
     k = ""
     l2 = len(key2)
     for i,c in enumerate(key1):
         if i < l2 and c == key2[i]:
-            if not (c in ("_", "-")) or k == "" or k[-1] != c:
+            if not c in SEP or k == "" or k[-1] != c:
                 k += c
+    if k[-1] in SEP:
+        k = k[:-1]
     return k
 
 
@@ -160,6 +163,7 @@ def join_values(lang1, val1, lang2, val2):
 
 
 def join_exercise_values(path, k, d, lang1, d1, lang2, d2):
+    # Warn about others than name,title,more,label,>actions,>container
     v1 = d1[k]
     if k.endswith('|i18n'):
         v2 = d2.get(k, d2.get(k[:-5]))
