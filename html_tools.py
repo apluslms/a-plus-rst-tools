@@ -2,6 +2,7 @@ import fnmatch
 import io, os, re
 
 
+
 def rewrite_outdir(out_dir, chapter_dirs, static_host):
     build_dir = os.path.dirname(out_dir)
     if static_host and not static_host.endswith('/'):
@@ -82,9 +83,10 @@ def rewrite_elements(content, tag, attr, path, root, q1, static_host, q2, append
                     j = m.start('val')
                     out += content[i:j] + static_host + my_path.replace('\\','/')
                     i = m.end('val')
-
+                    
     out += content[i:]
     return out
+
 
 
 def _walk(html_dir):
@@ -105,3 +107,4 @@ def _read_file(file_path):
 def _write_file(file_path, content):
     with io.open(file_path, 'w', encoding='utf-8') as f:
         f.write(content)
+
