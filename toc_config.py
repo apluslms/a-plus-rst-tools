@@ -31,7 +31,7 @@ def write(app, exception):
     # Check for language tree.
     tocs = root.traverse(addnodes.toctree)
     keys = set()
-    if tocs and tocs[0].get('rawcaption') == u'languages':
+    if tocs and tocs[0].get('rawcaption') == u'Select language':
         app.info('Detected language tree.')
 
         indexes = []
