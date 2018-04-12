@@ -13,6 +13,8 @@ from directives.submit import SubmitForm
 from directives.ae_input import ActiveElementInput
 from directives.ae_output import ActiveElementOutput
 from directives.hiddenblock import HiddenBlock
+from directives.codeblock_lineref import LineRefCodeBlock
+
 
 def setup(app):
 
