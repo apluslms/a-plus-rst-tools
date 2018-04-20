@@ -125,6 +125,7 @@ def lineref_role(name, rawtext, text, lineno, inliner, options={}, content=[]):
 
     Reference a label defined in a lineref-code-block.
     """
+
     env = inliner.document.settings.env
     location = (env.docname, lineno)
 
@@ -158,6 +159,7 @@ def lineref_role(name, rawtext, text, lineno, inliner, options={}, content=[]):
         parens = True
     linknode = nodes.reference(rawtext, str(linktext), refuri='#'+anchor, 
                                 **options)
+    linknode['classes'].append('codeblock-lineref')
 
     if parens:
         return [nodes.Text('('), linknode, nodes.Text(')')], []
