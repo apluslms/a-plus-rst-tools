@@ -501,3 +501,30 @@ div.math:hover a.headerlink {
         display: none;
     }
 }
+
+/* -- point of interest --------------------------------------------------- */
+
+.poi {
+    margin: 20px;
+    padding: 20px 15px 15px 15px;
+    border: 1px solid #ccc;
+    width:inherit;
+}
+
+.poi-container {
+    width:100%;
+}
+
+.poi-leftnav {
+    width:50%;
+    float:left;
+    margin: 5px 0 0 0;
+    min-height:1px;
+}
+.poi-rightnav {
+    width:50%;
+    float:left;
+    text-align:right;
+    margin: 5px 0 0 0;
+    min-height:1px;
+}
