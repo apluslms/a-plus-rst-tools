@@ -21,6 +21,7 @@ class PointOfInterest(Directive):
     has_content = True
     final_argument_whitespace = True
     option_spec = {
+        'title': directives.unchanged, 
         'previous': directives.unchanged,
         'next': directives.unchanged, 
     }
@@ -28,32 +29,23 @@ class PointOfInterest(Directive):
     def run(self):
         self.assert_has_content()
         name = self.arguments[0]
+        title_text = ''
+        if 'title' in  self.options:
+            title_text = self.options['title']
 
-        '''
-        # TODO: 
-
-        nodes:
-
-        node    - container with class poi and id name
-        content - container for actual content
-        nav     - container for prev/next links
-        leftnav - container for prev link
-        rightnav- container for next link
-        prev    - link to poi named in previous option
-        next    - link to poi named in next
-
-        '''
         node = nodes.container()
+        title = nodes.container()
         content = nodes.container('\n'.join(self.content))
         nav = nodes.container()
-        rightnav = nodes.container()
-        leftnav = nodes.container()
+        #rightnav = nodes.container()
+        links = nodes.container()
 
         container_class = 'poi-container'
-        node['classes'].extend(['poi'])
-        leftnav['classes'].extend(['poi-leftnav'])
-        rightnav['classes'].extend(['poi-rightnav'])
-        content['classes'].extend([container_class])
+        node['classes'].extend(['poi']) # This style adds the border
+        title['classes'].extend(['poi-title'])
+        links['classes'].extend(['poi-links'])
+        #rightnav['classes'].extend(['poi-rightnav'])
+        content['classes'].extend([container_class, 'poi-content'])
         nav['classes'].extend([container_class])
         self.options['name'] = name
         self.add_name(node)
@@ -62,18 +54,24 @@ class PointOfInterest(Directive):
             label = nodes.Text('previous')
             prevlink = aplus_nodes.html(u'a', {u'href':u'#' + self.options['previous']})
             prevlink.append(label)
-            leftnav.append(prevlink)
+            links.append(prevlink)
+        else:
+            links.append(nodes.Text('previous'))
+        links.append(nodes.Text(' | '))
         if 'next' in self.options:
             label = nodes.Text('next')
             nextlink = aplus_nodes.html(u'a', {u'href':u'#' + self.options['next']}, children=label)
             nextlink.append(label)
-            rightnav.append(nextlink)
+            links.append(nextlink)
+        else:
+            links.append(nodes.Text('next'))
+        title.append(nodes.Text(title_text))
+        nav.append(title)
+        nav.append(links)
+        #nav.append(rightnav)
 
-        nav.append(leftnav)
-        nav.append(rightnav)
-
-        node.append(content)
         node.append(nav)
+        node.append(content)
 
         # This might not work
         self.state.nested_parse(self.content, self.content_offset, content)

@@ -505,9 +505,8 @@ div.math:hover a.headerlink {
 /* -- point of interest --------------------------------------------------- */
 
 .poi {
-    margin: 20px;
+    margin: 20px 0;
     padding: 20px 15px 15px 15px;
-    border: 1px solid #ccc;
     width:inherit;
 }
 
@@ -515,16 +514,32 @@ div.math:hover a.headerlink {
     width:100%;
 }
 
-.poi-leftnav {
-    width:50%;
+.poi-title {
+    width: 80%;
+    float:left;
+    min-height:1px;
+    font-weight: bold;
+    font-size:1.2em;
+}
+.poi-content {
+    border: 1px solid #ccc;
+    padding:15px 20px;
+    border-radius:4px;
+}    
+
+
+.poi-links {
+    width:20%;
+    text-align:right;
     float:left;
     margin: 5px 0 0 0;
     min-height:1px;
 }
+/*
 .poi-rightnav {
-    width:50%;
+    width:15%;
     float:left;
     text-align:right;
     margin: 5px 0 0 0;
     min-height:1px;
-}
+}*/
