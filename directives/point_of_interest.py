@@ -2,18 +2,21 @@
 '''
 Directive for creating "point of interest" summary block.
 
-.. point-of-interest:: name
-    :previous:
-    :next:
+.. point-of-interest:: name (unique id within the document)
+    :title: optional title text
+    :previous: name of previous point-of-interest
+    :next: name of next point-of-interest
+    :hidden: (if this flag is present, the content of this poi is hidden by default)
+
+    Content of point-of-interest here
 
 '''
 import os.path
 from docutils.parsers.rst import directives
 from docutils import nodes
+from sphinx.util.compat import Directive
 
 import aplus_nodes
-
-from sphinx.util.compat import Directive
 
 
 class PointOfInterest(Directive):
@@ -24,6 +27,7 @@ class PointOfInterest(Directive):
         'title': directives.unchanged, 
         'previous': directives.unchanged,
         'next': directives.unchanged, 
+        'hidden': directives.flag,
     }
 
     def run(self):
@@ -37,19 +41,24 @@ class PointOfInterest(Directive):
         title = nodes.container()
         content = nodes.container('\n'.join(self.content))
         nav = nodes.container()
-        #rightnav = nodes.container()
         links = nodes.container()
 
         container_class = 'poi-container'
         node['classes'].extend(['poi']) # This style adds the border
         title['classes'].extend(['poi-title'])
         links['classes'].extend(['poi-links'])
-        #rightnav['classes'].extend(['poi-rightnav'])
-        content['classes'].extend([container_class, 'poi-content'])
+        content['classes'].extend([container_class, 'poi-content', 'collapse'])
+        if not 'hidden' in self.options:
+            content['classes'].extend(['in'])
         nav['classes'].extend([container_class])
+
         self.options['name'] = name
         self.add_name(node)
-        options={}
+        # There may be a better way to add id to the content node
+        content_name = name + '-content'
+        self.options['name'] = content_name
+        self.add_name(content)
+
         if 'previous' in self.options:
             label = nodes.Text('previous')
             prevlink = aplus_nodes.html(u'a', {u'href':u'#' + self.options['previous']})
@@ -60,20 +69,31 @@ class PointOfInterest(Directive):
         links.append(nodes.Text(' | '))
         if 'next' in self.options:
             label = nodes.Text('next')
-            nextlink = aplus_nodes.html(u'a', {u'href':u'#' + self.options['next']}, children=label)
+            nextlink = aplus_nodes.html(u'a', {u'href':u'#' + self.options['next']})
             nextlink.append(label)
             links.append(nextlink)
         else:
             links.append(nodes.Text('next'))
-        title.append(nodes.Text(title_text))
+
+        icon = aplus_nodes.html(u'img', {
+            u'src':u'../_static/poi.png', 
+            u'alt':u'Point of interest icon',
+            u'class':u'poi-icon',
+            })
+
+        hidelink = aplus_nodes.html(u'a', {
+            u'href':u'#' + content_name, 
+            u'data-toggle':u'collapse'})
+
+        hidelink.append(icon)
+        hidelink.append(nodes.Text(title_text))
+        title.append(hidelink)
         nav.append(title)
         nav.append(links)
-        #nav.append(rightnav)
 
         node.append(nav)
         node.append(content)
 
-        # This might not work
         self.state.nested_parse(self.content, self.content_offset, content)
 
         return [node]

@@ -506,40 +506,41 @@ div.math:hover a.headerlink {
 
 .poi {
     margin: 20px 0;
-    padding: 20px 15px 15px 15px;
+    padding: 0;
     width:inherit;
 }
 
 .poi-container {
     width:100%;
+    padding:0;
+    margin: 5px 0;
 }
 
-.poi-title {
-    width: 80%;
-    float:left;
-    min-height:1px;
-    font-weight: bold;
-    font-size:1.2em;
-}
 .poi-content {
     border: 1px solid #ccc;
     padding:15px 20px;
     border-radius:4px;
-}    
+}   
 
+.poi-title {
+    width: 80%;
+    float:left;
+    height:20px;
+    font-weight: bold;
+    font-size:1.2em;
+    padding-left:0;
+} 
 
 .poi-links {
     width:20%;
     text-align:right;
     float:left;
     margin: 5px 0 0 0;
-    min-height:1px;
+    height:20px;
 }
-/*
-.poi-rightnav {
-    width:15%;
-    float:left;
-    text-align:right;
-    margin: 5px 0 0 0;
-    min-height:1px;
-}*/
+
+.poi-icon {
+    margin: 0 10px;
+    vertical-align: baseline;
+    height:20px;
+}
