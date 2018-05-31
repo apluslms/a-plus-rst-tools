@@ -28,6 +28,7 @@ class PointOfInterest(Directive):
         'previous': directives.unchanged,
         'next': directives.unchanged, 
         'hidden': directives.flag,
+        'class' : directives.class_option,
     }
 
     def run(self):
@@ -44,7 +45,9 @@ class PointOfInterest(Directive):
         links = nodes.container()
 
         container_class = 'poi-container'
-        node['classes'].extend(['poi']) # This style adds the border
+        node['classes'].extend(['poi']) 
+        if 'class' in self.options:
+            node['classes'].extend(self.options['class'])
         title['classes'].extend(['poi-title'])
         links['classes'].extend(['poi-links'])
         content['classes'].extend([container_class, 'poi-content', 'collapse'])
