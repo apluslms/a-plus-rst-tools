@@ -112,7 +112,7 @@ class ActiveElementInput(AbstractExercise):
 
             # Generate raw node
             rawnode = nodes.raw('', text, **{'format':'html'})
-            wrapnode = aplus_nodes.html(u'div', {u'id': u''+ key + '-wrap'})
+            wrapnode = aplus_nodes.html(u'div', {u'id': u''+ key + '-wrap',u'class': u'clickable-ae-wrapper'})
             wrapnode.append(node)
             wrapnode.append(rawnode)
             return [wrapnode]
