@@ -28,6 +28,7 @@ class Questionnaire(AbstractExercise):
         'submissions': directives.nonnegative_int,
         'points-to-pass': directives.nonnegative_int,
         'title': directives.unchanged,
+        'category': directives.unchanged,
     }
 
     def run(self):
@@ -59,6 +60,9 @@ class Questionnaire(AbstractExercise):
             category = u'questionnaire'
             if difficulty:
                 classes.append(u'difficulty-' + difficulty)
+
+        if 'category' in self.options:
+            category = str(self.options.get('category'))
 
         env = self.state.document.settings.env
         name = u"{}_{}".format(env.docname.replace(u'/', u'_'), key)

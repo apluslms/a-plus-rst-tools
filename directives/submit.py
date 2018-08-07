@@ -30,6 +30,7 @@ class SubmitForm(AbstractExercise):
         'lti_resource_link_id': directives.unchanged,
         'radar_tokenizer': directives.unchanged,
         'radar_minimum_match_tokens': directives.unchanged,
+        'category': directives.unchanged,
     }
 
     def run(self):
@@ -105,6 +106,9 @@ class SubmitForm(AbstractExercise):
             data.update(override[category])
             if 'url' in data:
                 data['url'] = data['url'].format(key=name)
+
+        if 'category' in self.options:
+            data['category'] = str(self.options['category'])
 
         node.write_yaml(env, name, data, 'exercise')
 
