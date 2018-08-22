@@ -8,10 +8,10 @@ from docutils import nodes
 from sphinx.errors import SphinxError
 
 import aplus_nodes
-import translations
-import yaml_writer
+import lib.translations as translations
+import lib.yaml_writer as yaml_writer
+from lib.yaml_writer import ensure_unicode
 from directives.abstract_exercise import AbstractExercise
-from yaml_writer import ensure_unicode
 
 
 class SubmitForm(AbstractExercise):

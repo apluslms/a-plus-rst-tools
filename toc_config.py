@@ -4,9 +4,10 @@ from sphinx import addnodes
 from sphinx.errors import SphinxError
 
 import aplus_nodes
-import yaml_writer
 import directives.meta
-import html_tools
+import lib.yaml_writer as yaml_writer
+import lib.html_tools as html_tools
+import lib.toc_languages as toc_languages
 
 
 def prepare(app):
@@ -25,24 +26,64 @@ def write(app, exception):
     if exception:
         return
 
+    root = app.env.get_doctree(app.config.master_doc)
+
+    # Check for language tree.
+    tocs = root.traverse(addnodes.toctree)
+    keys = set()
+    if tocs and tocs[0].get('rawcaption') == u'Select language':
+        app.info('Detected language tree.')
+
+        indexes = []
+        for docname,_,doc in traverse_tocs(app, root):
+            i = docname.rfind('_')
+            if i < 0:
+                raise SphinxError('Language postfix is required (e.g. docname_en): ' + docname)
+            lang = docname[(i + 1):]
+            app.info('Traverse document elements to write configuration index ({}).'.format(lang))
+            index = make_index(app, doc)
+            yaml_writer.write(yaml_writer.file_path(app.env, 'index_' + lang), index)
+            indexes.append((lang, index))
+
+        app.info('Joining language tree to one index.')
+        index = toc_languages.join(app, indexes)
+        append_manual_content(app, index)
+        yaml_writer.write(yaml_writer.file_path(app.env, 'index'), index)
+        keys |= set(m['key'] for m in index['modules'])
+
+    else:
+        app.info('Traverse document elements to write configuration index.')
+        index = make_index(app, root)
+        append_manual_content(app, index)
+        yaml_writer.write(yaml_writer.file_path(app.env, 'index'), index)
+        keys |= set(m['key'] for m in index['modules'])
+
+    # Rewrite links for remote inclusion.
+    app.info('Retouch all files to rewrite links.')
+    keys |= {'toc', 'user', 'account'}
+    html_tools.rewrite_outdir(app.outdir, keys, app.config.static_host)
+
+
+def make_index(app, root):
+
     course_title = app.config.course_title
     course_open = app.config.course_open_date
     course_close = app.config.course_close_date
     course_late = app.config.default_late_date
     course_penalty = app.config.default_late_penalty
     override = app.config.override
-    static_host = app.config.static_host
 
     modules = []
     category_keys = []
 
-    def traverse_tocs(doc):
-        names = []
-        for toc in doc.traverse(addnodes.toctree):
-            hidden = toc.attributes['hidden']
-            for _,docname in toc.get('entries', []):
-                names.append((docname,hidden))
-        return [(name,hidden,app.env.get_doctree(name)) for name,hidden in names]
+    def get_static_dir(app):
+        i = 0
+        while i < len(app.outdir) and i < len(app.confdir) and app.outdir[i] == app.confdir[i]:
+            i += 1
+        outdir = app.outdir.replace("\\", "/")
+        if outdir[i] == '/':
+            i += 1
+        return outdir[i:]
 
     def first_title(doc):
         titles = doc.traverse(nodes.title)
@@ -100,7 +141,7 @@ def write(app, exception):
                 category_keys.append(config[u'category'])
 
         category = u'chapter'
-        for name,hidden,child in traverse_tocs(doc):
+        for name,hidden,child in traverse_tocs(app, doc):
             meta = first_meta(child)
             status = u'hidden' if 'hidden' in meta else (
                 u'unlisted' if hidden else u'ready'
@@ -125,14 +166,13 @@ def write(app, exception):
                 category_keys.append(u'chapter')
             parse_chapter(name, child, chapter[u'children'])
 
-    root = app.env.get_doctree(app.config.master_doc)
+    # Read title from document.
     if not course_title:
         course_title = first_title(root)
 
     # Traverse the documents using toctree directives.
-    app.info('Traverse document elements to write configuration index.')
     title_date_re = re.compile(r'.*\(DL (.+)\)')
-    for docname,hidden,doc in traverse_tocs(root):
+    for docname,hidden,doc in traverse_tocs(app, root):
         title = first_title(doc)
         title_date_match = title_date_re.match(title)
         meta = first_meta(doc)
@@ -169,29 +209,24 @@ def write(app, exception):
         if key in categories:
             categories[key][u'status'] = u'nototal'
 
-    # Get relative out dir.
-    i = 0
-    while i < len(app.outdir) and i < len(app.confdir) and app.outdir[i] == app.confdir[i]:
-        i += 1
-    outdir = app.outdir.replace("\\", "/")
-    if outdir[i] == '/':
-        i += 1
-    outdir = outdir[i:]
-
-    # Write the configuration index.
-    config = {
+    # Build configuration index.
+    index = {
         u'name': course_title,
         u'language': app.config.language,
-        u'static_dir': outdir,
+        u'static_dir': get_static_dir(app),
         u'modules': modules,
         u'categories': categories,
     }
     if course_open:
-        config[u'start'] = parse_date(course_open)
+        index[u'start'] = parse_date(course_open)
     if course_close:
-        config[u'end'] = parse_date(course_close)
+        index[u'end'] = parse_date(course_close)
 
-    # Append directly configured content.
+    return index
+
+
+def append_manual_content(app, index):
+
     def recursive_merge(config, append):
         if type(append) == dict:
             for key,val in append.items():
@@ -209,13 +244,15 @@ def write(app, exception):
                             add = False
                 if add:
                     config.append(entry)
+
     for path in app.config.append_content:
-        recursive_merge(config, yaml_writer.read(path))
+        recursive_merge(index, yaml_writer.read(path))
 
-    yaml_writer.write(yaml_writer.file_path(app.env, 'index'), config)
 
-    # Rewrite links for remote inclusion.
-    app.info('Retouch all files to rewrite links.')
-    keys = [m['key'] for m in modules]
-    keys.extend(['toc', 'user', 'account'])
-    html_tools.rewrite_outdir(app.outdir, keys, static_host)
+def traverse_tocs(app, doc):
+    names = []
+    for toc in doc.traverse(addnodes.toctree):
+        hidden = toc.get('hidden', False)
+        for _,docname in toc.get('entries', []):
+            names.append((docname,hidden))
+    return [(name,hidden,app.env.get_doctree(name)) for name,hidden in names]

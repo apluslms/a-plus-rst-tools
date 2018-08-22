@@ -9,8 +9,8 @@ from sphinx.util.compat import Directive
 from sphinx.util.nodes import nested_parse_with_titles
 
 import aplus_nodes
-import translations
-import yaml_writer
+import lib.translations as translations
+import lib.yaml_writer as yaml_writer
 from directives.abstract_exercise import AbstractExercise
 
 

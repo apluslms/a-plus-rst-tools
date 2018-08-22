@@ -8,10 +8,10 @@ from docutils import nodes
 from sphinx.errors import SphinxError
 
 import aplus_nodes
-import translations
-import yaml_writer
+import lib.translations as translations
+import lib.yaml_writer as yaml_writer
 from directives.abstract_exercise import AbstractExercise
-from yaml_writer import ensure_unicode
+from lib.yaml_writer import ensure_unicode
 
 
 
@@ -28,7 +28,7 @@ class ActiveElementOutput(AbstractExercise):
         'height': directives.unchanged,
         'clear': directives.unchanged,
         'type': directives.unchanged,
-        'scale-size': directives.flag 
+        'scale-size': directives.flag
     }
 
     def run(self):
@@ -49,33 +49,33 @@ class ActiveElementOutput(AbstractExercise):
             u'data-aplus-active-element': u'out',
             u'data-inputs': u''+ self.options.get('inputs', ''),
         }
-        
+
         if 'inputs' not in self.options:
             raise self.warning("The input list for output '{:s}' is empty.".format(key))
-        
+
         if 'type' in self.options:
             args['data-type'] = self.options['type']
         else:
             args['data-type'] = 'text'
-            
+
         if 'scale-size' in self.options:
             args['data-scale'] = ''
-          
+
         if 'title' in self.options:
             args['data-title'] = self.options['title']
-          
+
         if 'width' in self.options:
             args['style'] = 'width:'+ self.options['width'] + ';'
-          
+
         if 'height' in self.options:
             if 'style' not in args:
                 args['style'] = 'height:'+ self.options['height'] + ';'
             else:
                 args['style'] = args['style'] + 'height:'+ self.options['height'] + ';'
-          
+
         if 'clear' in self.options:
             args['style'] = args['style'] + 'clear:'+ self.options['clear'] + ';'
-         
+
         node = aplus_nodes.html(u'div', args)
         paragraph = aplus_nodes.html(u'p', {})
         paragraph.append(nodes.Text(translations.get(env, 'submit_placeholder')))
@@ -107,7 +107,7 @@ class ActiveElementOutput(AbstractExercise):
             u'category': u'active elements',
             u'max_submissions': self.options.get('submissions', data.get('max_submissions', env.config.ae_default_submissions)),
         })
-        
+
         if category in override:
             data.update(override[category])
             if 'url' in data:
@@ -116,5 +116,3 @@ class ActiveElementOutput(AbstractExercise):
         node.write_yaml(env, name, data, 'exercise')
 
         return [node]
-        
-      

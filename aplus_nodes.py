@@ -2,8 +2,8 @@ import os.path
 import re
 from docutils import nodes
 
-import yaml_writer
-import html_tools
+import lib.yaml_writer as yaml_writer
+import lib.html_tools as html_tools
 
 
 class html(nodes.General, nodes.Element):
@@ -22,7 +22,7 @@ class html(nodes.General, nodes.Element):
         Captures rendered HTML from children nodes that were requested
         to store HTML.
     '''
-    
+
     def __init__(self, tagname, attributes={}, no_write=False, skip_html=False, *children, **other_attributes):
         ''' Constructor: no_write option removes node from final document after configuration data is processed. '''
         self.tagname = tagname
@@ -59,7 +59,7 @@ class html(nodes.General, nodes.Element):
 
     def store_html(self, name):
         self.html_extract = name
-    
+
     def copy(self):
         '''sphinx.util.nodes (function _new_copy) monkey-patches the Element.copy method
         to include the source and line, however, it calls the Element constructor with
@@ -160,7 +160,7 @@ class aplusmeta(nodes.General, nodes.Element):
         assert len(children) == 0, "aplusmeta node may not have children"
         self.options = options
         super(aplusmeta, self).__init__(rawsource=u"", **attributes)
-    
+
     def copy(self):
         '''sphinx.util.nodes (function _new_copy) monkey-patches the Element.copy method
         to include the source and line, however, it calls the Element constructor with
