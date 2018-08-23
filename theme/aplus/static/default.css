@@ -544,3 +544,7 @@ div.math:hover a.headerlink {
     vertical-align: baseline;
     height:20px;
 }
+
+.borderless .poi-content {
+    border: 0;
+} 
