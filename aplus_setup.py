@@ -33,6 +33,7 @@ def setup(app):
     app.add_config_value('category_names', {}, 'html')
     app.add_config_value('static_host', None, 'html')
     app.add_config_value('ae_default_submissions', 0, 'html')
+    app.add_config_value('skip_language_inconsistencies', False, 'html')
 
     # Connect configuration generation to events.
     app.connect('builder-inited', toc_config.prepare)
@@ -73,7 +74,6 @@ def setup(app):
 
     # The submit directive.
     app.add_directive('submit', SubmitForm)
-    app.add_directive('ae-input', ActiveElementInput)    
+    app.add_directive('ae-input', ActiveElementInput)
     app.add_directive('ae-output', ActiveElementOutput)
     app.add_directive('hidden-block', HiddenBlock)
-
