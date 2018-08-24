@@ -99,14 +99,13 @@ class ActiveElementInput(AbstractExercise):
                                         encoding=self.state.document.settings.input_encoding,
                                         error_handler=self.state.document.settings.input_encoding_error_handler)
             except IOError as error:
-                # TODO think about the error message
-                logger.error(u'Problem with "%s" directive path:\n%s.'
+                logger.error(u'Problem with "%s" directive:\n%s.'
                                   % (self.name, ErrorString(error)), location=node)
                 return []
             try:
                 text = raw_file.read()
             except UnicodeError as error:
-                logger.error(u'Problemswith "%s" directive path:\n%s.'
+                logger.error(u'Problem with "%s" directive:\n%s.'
                                   % (self.name, ErrorString(error)), location=node)
                 return []
 
