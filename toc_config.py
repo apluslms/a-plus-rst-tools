@@ -183,7 +183,11 @@ def make_index(app, root):
         close_src = meta.get('close-time', title_date_match.group(1) if title_date_match else course_close)
         late_src = meta.get('late-time', course_late)
         module = {
-            u'key': docname.split(u'/')[0],
+            # modules01/index -> modules01
+            # modules/01/index -> modules_01
+            # modules/01/n/index -> modules_01_n
+            # ...
+            u'key': docname if u'/' not in docname else u'_'.join(docname.split(u'/')[:-1]),
             u'status': status,
             u'name': title,
             u'children': [],
