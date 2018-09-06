@@ -27,7 +27,7 @@ class SubmitForm(AbstractExercise):
     }
 
     def run(self):
-        key, category, points = self.extract_exercise_arguments()
+        key, difficulty, points = self.extract_exercise_arguments()
 
         env = self.state.document.settings.env
         # name = env.docname.replace('/', '_') + '_' + key
@@ -36,6 +36,8 @@ class SubmitForm(AbstractExercise):
         classes = ['exercise']
         if 'class' in self.options:
             classes.extend(self.options['class'])
+        if difficulty:
+            classes.append(u'difficulty-' + difficulty)
 
         # Add document nodes.
         args = {
@@ -71,8 +73,9 @@ class SubmitForm(AbstractExercise):
 
         data.update({
             'key': name,
-            'category': category or 'exercise',
+            'category': 'submit',
             'scale_points': points,
+            'difficulty': difficulty or '',
             'max_submissions': self.options.get('submissions', env.config.program_default_submissions),
             'points_to_pass': self.options.get('points-to-pass', 0),
         })
