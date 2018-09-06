@@ -27,7 +27,7 @@ class Questionnaire(AbstractExercise):
 
     def run(self):
         self.assert_has_content()
-        key, category, points = self.extract_exercise_arguments()
+        key, difficulty, points = self.extract_exercise_arguments()
 
         # Parse options.
         classes = ['exercise']
@@ -45,10 +45,15 @@ class Questionnaire(AbstractExercise):
             is_feedback = True
         if is_feedback:
             key = 'feedback'
-            category = category or 'feedback'
+            category = 'feedback'
             classes.append('feedback')
         else:
-            category = category or 'exercise'
+            category = 'questionnaire'
+            if difficulty:
+                classes.append(u'difficulty-' + difficulty)
+
+        if 'category' in self.options:
+            category = str(self.options.get('category'))
 
         env = self.state.document.settings.env
         #name = env.docname.replace('/', '_') + '_' + key
@@ -91,6 +96,7 @@ class Questionnaire(AbstractExercise):
             'key': name,
             'category': category,
             'max_points': points,
+            'difficulty': difficulty or '',
             'max_submissions': self.options.get('submissions', env.config.questionnaire_default_submissions),
             'points_to_pass': self.options.get('points-to-pass', 0),
             'feedback': is_feedback,
