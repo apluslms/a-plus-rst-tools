@@ -23,6 +23,7 @@ class Questionnaire(AbstractExercise):
         'feedback': directives.flag,
         'submissions': directives.nonnegative_int,
         'points-to-pass': directives.nonnegative_int,
+        'category': directives.unchanged,
     }
 
     def run(self):
