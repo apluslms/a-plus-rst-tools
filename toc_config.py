@@ -72,6 +72,7 @@ def write(app, exception):
                     'max_points': config.get('max_points', 0),
                     'points_to_pass': config['points_to_pass'],
                     'category': config['category'],
+                    'difficulty': config.get('difficulty', ''),
                 }
             allow_assistant_viewing = config.get('allow_assistant_viewing', app.config.allow_assistant_viewing)
             allow_assistant_grading = config.get('allow_assistant_grading', app.config.allow_assistant_grading)
