@@ -116,7 +116,7 @@ def write(app, exception):
         meta = first_meta(doc)
         open_src = meta.get('open-time', course_open)
         close_src = meta.get('close-time', title_date_match.group(1) if title_date_match else course_close)
-        late_close_src = meta.get('late-close', course_close)
+        late_close_src = meta.get('late-time', course_close)
         late_penalty_src = meta.get('late-penalty', 0.5)
         module = {
             'key': docname.split('/')[0],
