@@ -19,13 +19,13 @@ class AnnotationError(SphinxError):
     category = 'Annotation error'
 
 
-def clean_path(path): 
-  return re.sub(r"[/\\ :]+", "", path).replace(".rst", "") 
+def clean_path(path):
+  return re.sub(r"[/\\ :]+", "", path).replace(".rst", "")
 
 def new_annotated_section_id(source_file_path):
-  idprefix = clean_path(source_file_path).replace(clean_path(os.getcwd()), "") 
+  idprefix = clean_path(source_file_path).replace(clean_path(os.getcwd()), "")
   global annotated_section_counts
-  annotated_section_counts[idprefix] += 1 
+  annotated_section_counts[idprefix] += 1
   return "%s_%s" % (idprefix, str(annotated_section_counts[idprefix]))
 
 def slicer(stringList):
@@ -62,7 +62,7 @@ class AnnotatedSection(Directive):
         node['name'] = env.annotated_name
         if env.annotated_annotation_count != highest_annotation:
             return [self.state.document.reporter.error('Mismatching number of annotation captions (n=%s) and the embedded annotation markers (n=%s) in %s' % (env.annotated_annotation_count, highest_annotation, self.block_text))]
-        
+
         env.annotated_now_within = False
 
         return [node]
@@ -75,7 +75,7 @@ class AnnotatedSection(Directive):
           return None
         else:
           return highest_present
-          
+
 
 def visit_annotated_node(self, node):
     self.body.append('<div class="annotated ex-%s">\n' % (node['name']))
@@ -175,9 +175,9 @@ class AlteredCodeBlock(CodeBlock):
         loc  = 0
 
         for line in slicer(self.content):
-            processed   = []        
-            
-            for part in re.split(u'(\d«» |\d«|»)', line[0]): 
+            processed   = []
+
+            for part in re.split(u'(\d«» |\d«|»)', line[0]):
                 if u'«» ' in part:
                     openstack.append((part[0], line_num, loc))
                     selfclosing.append(part[0])
@@ -189,7 +189,7 @@ class AlteredCodeBlock(CodeBlock):
                 else:
                     processed.append(part)
                     loc += len(part)
-            
+
             for tag in selfclosing:
                 start = openstack.pop()
                 annotations.append((start[0], start[1], start[2], line_num, loc))
@@ -231,11 +231,11 @@ def create_close_tag(number, section_name):
     return u'</span>'
 
 def turn_to_close_tag(tag):
-    return u'</%s>' % re.findall(u'<(\w+).*?>', tag)[0]        
+    return u'</%s>' % re.findall(u'<(\w+).*?>', tag)[0]
 
 def annotate(html, section_name, annotations):
     # sorting the annotations by their ending points correctly orders the starting points
-    # for two annotations starting in the same location are correctly nested 
+    # for two annotations starting in the same location are correctly nested
     annotations = sorted(annotations, key = lambda x:x[3:5], reverse=True)
 
     from collections import defaultdict
@@ -256,7 +256,7 @@ def annotate(html, section_name, annotations):
 
     # separate tags from text
     original = re.split(u'(<.*?>|\n)', parts[2])
-    
+
     #add splits
     line = 0
     loc  = 0
@@ -304,7 +304,7 @@ def annotate(html, section_name, annotations):
                     result.append(create_open_tag(number, section_name))
 
             # iterate over possible split locations and append chars
-            
+
             for char in chars:
                 if (loc != start_loc) & (loc != end_loc) & (((line, loc) in endpoint_map) | ((line, loc) in startpoint_map)):
                     # somewhere in the middle

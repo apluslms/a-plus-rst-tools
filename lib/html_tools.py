@@ -83,7 +83,7 @@ def rewrite_elements(content, tag, attr, path, root, q1, static_host, q2, append
                     j = m.start('val')
                     out += content[i:j] + static_host + my_path.replace('\\','/')
                     i = m.end('val')
-                    
+
     out += content[i:]
     return out
 

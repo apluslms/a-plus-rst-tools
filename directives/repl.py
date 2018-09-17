@@ -10,7 +10,7 @@ import aplus_nodes
 
 # DIRECTIVE FOR REPL SESSIONS: repl
 # this is an embarrassing mess, but it works for now. if you're thinking of making changes, rewrite instead.
-# is there some better way to go about this by using inheritance from literal_block; 
+# is there some better way to go about this by using inheritance from literal_block;
 # and how are parsed literals represented as nodes, anyway?
 
 class repl_node(nodes.line_block, nodes.Element): pass
@@ -28,7 +28,7 @@ class REPLSession(Directive):
 
 def visit_repl_node(self, node):
     self.body.append('<pre class="repl literal-block">\n')
-    
+
     previouslyInInputBlock = False
     for line in node.content:
         htmlLine = ""
@@ -42,8 +42,8 @@ def visit_repl_node(self, node):
         elif line == u"ø":                        # ø marks the non-output that the REPL provides when the result is Unit
             if previouslyInInputBlock:
                 htmlLine += '</em>'
-            previouslyInInputBlock = False 
-        else:          
+            previouslyInInputBlock = False
+        else:
             def clean_output(line):
                 line = escape(line)
                 resStart = re.compile("^res((\d+)|X):")
@@ -51,7 +51,7 @@ def visit_repl_node(self, node):
                     env = self.builder.env
                     line = resStart.sub("res" + str(env.repl_page_res_count) + ":", line)
                     env.repl_page_res_count += 1
-                return line 
+                return line
             if previouslyInInputBlock:
                 htmlLine += '</em>'
             if line.startswith(u"¡"):
@@ -66,7 +66,7 @@ def visit_repl_node(self, node):
 
     if previouslyInInputBlock:
         self.body += '</em>'
-       
+
 def depart_repl_node(self, node):
     self.body.append("</pre>\n")
 
@@ -84,7 +84,7 @@ class ResCountReset(Directive):
 def visit_res_count_reset_node(self, node):
     env = self.builder.env
     env.repl_page_res_count = 0
-       
+
 def depart_res_count_reset_node(self, node):
     pass
 
