@@ -83,7 +83,8 @@ def write(app, exception):
                     u'confirm_the_level': config.get(u'confirm_the_level', False),
                 }
             exercise.update({
-                u'allow_assistant_grading': False,
+                u'allow_assistant_grading': True,
+                u'allow_assistant_viewing': True,
                 u'status': u'unlisted',
             })
             if u'scale_points' in config:
