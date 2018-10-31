@@ -13,6 +13,7 @@ from directives.submit import SubmitForm
 from directives.ae_input import ActiveElementInput
 from directives.ae_output import ActiveElementOutput
 from directives.hiddenblock import HiddenBlock
+from directives.exercisecollection import ExerciseCollection
 
 def setup(app):
 
@@ -79,3 +80,6 @@ def setup(app):
     app.add_directive('ae-input', ActiveElementInput)
     app.add_directive('ae-output', ActiveElementOutput)
     app.add_directive('hidden-block', HiddenBlock)
+
+    # ExerciseCollection directive
+    app.add_directive('exercisecollection', ExerciseCollection)
