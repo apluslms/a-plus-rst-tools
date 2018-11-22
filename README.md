@@ -144,6 +144,8 @@ This creates an input field for active element.
 
 More active element examples can be found at https://version.aalto.fi/gitlab/piitulr1/active-element-example
 
+Tools for making clickable active element inputs: https://version.aalto.fi/gitlab/piitulr1/click-input-editor
+
     .. ae-input:: id-for-input
     	:title: title of the input (displayed on the html page)
     	:default: default value for the input (displayed when the user has not
@@ -160,9 +162,12 @@ More active element examples can be found at https://version.aalto.fi/gitlab/pii
     	       (deafult with classes "active element" and "ae-input" is 150px)
     	:clear: "both" forces the element to a new line, "left" ("right") allows
     	       no floating elements on the left (right)
-    	:type: use "file" for file inputs and "dropdown" for dropdown. For
-    	      dropdowns, the available options should be listed after the type
-    	      indicating "dropdown" in this format: "dropdown:option1,option2,option3"
+    	:type: use "file" for file inputs, "clickable" for clickable inputs, and
+            "dropdown" for dropdown. For dropdowns, the available options should
+            be listed after the type indicating "dropdown" in this
+            format: "dropdown:option1,option2,option3"
+      :file: (only for type clickable) path to the html file that contains
+            the default clickable input
 
 
 5. Active element output
