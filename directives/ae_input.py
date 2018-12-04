@@ -4,14 +4,19 @@ Directive that places active element inputs.
 '''
 import os.path
 from docutils.parsers.rst import directives
-from docutils import nodes
+from docutils import io, nodes, utils
 from sphinx.errors import SphinxError
+from sphinx.util import logging
 
 import aplus_nodes
 import lib.translations as translations
 import lib.yaml_writer as yaml_writer
 from directives.abstract_exercise import AbstractExercise
 from lib.yaml_writer import ensure_unicode
+
+from docutils.utils.error_reporting import SafeString, ErrorString
+
+logger = logging.getLogger(__name__)
 
 
 class ActiveElementInput(AbstractExercise):
@@ -24,6 +29,7 @@ class ActiveElementInput(AbstractExercise):
         'clear': directives.unchanged,
         'default': directives.unchanged,
         'type': directives.unchanged,
+        'file': directives.unchanged,
     }
 
     def run(self):
@@ -34,6 +40,7 @@ class ActiveElementInput(AbstractExercise):
             raise SphinxError('Missing active element input id')
 
         env = self.state.document.settings.env
+
         name = u"{}_{}".format(env.docname.replace(u'/', u'_'), key)
         override = env.config.override
 
@@ -73,5 +80,40 @@ class ActiveElementInput(AbstractExercise):
         paragraph = aplus_nodes.html(u'p', {})
         paragraph.append(nodes.Text(translations.get(env, 'active_element_placeholder')))
         node.append(paragraph)
+
+        # For clickable inputs the pre-generated html
+        # needs to be added after the regular a+ exercise node
+        if 'type' in self.options and self.options['type'] == 'clickable':
+            if 'file' not in self.options:
+                logger.warning('Clickable active element input "{}" missing template file.'
+                                .format(name), location=node)
+                return [node]
+
+            # Read given html file (from docutils.directives.misc.raw)
+            source_dir = os.path.dirname(
+                os.path.abspath(self.state.document.current_source))
+            path = os.path.join(env.app.srcdir, self.options['file'])
+            path = utils.relative_path(None, path)
+            try:
+                raw_file = io.FileInput(source_path=path,
+                                        encoding=self.state.document.settings.input_encoding,
+                                        error_handler=self.state.document.settings.input_encoding_error_handler)
+            except IOError as error:
+                logger.error(u'Problem with "%s" directive:\n%s.'
+                                  % (self.name, ErrorString(error)), location=node)
+                return []
+            try:
+                text = raw_file.read()
+            except UnicodeError as error:
+                logger.error(u'Problem with "%s" directive:\n%s.'
+                                  % (self.name, ErrorString(error)), location=node)
+                return []
+
+            # Generate raw node
+            rawnode = nodes.raw('', text, **{'format':'html'})
+            wrapnode = aplus_nodes.html(u'div', {u'id': u''+ key + '-wrap',u'class': u'clickable-ae-wrapper'})
+            wrapnode.append(node)
+            wrapnode.append(rawnode)
+            return [wrapnode]
 
         return [node]

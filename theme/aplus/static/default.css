@@ -501,3 +501,50 @@ div.math:hover a.headerlink {
         display: none;
     }
 }
+
+/* -- point of interest --------------------------------------------------- */
+
+.poi {
+    margin: 20px 0;
+    padding: 0;
+    width:inherit;
+}
+
+.poi-container {
+    width:100%;
+    padding:0;
+    margin: 5px 0;
+}
+
+.poi-content {
+    border: 1px solid #ccc;
+    padding:15px 20px;
+    border-radius:4px;
+}   
+
+.poi-title {
+    width: 80%;
+    float:left;
+    height:20px;
+    font-weight: bold;
+    font-size:1.2em;
+    padding-left:0;
+} 
+
+.poi-links {
+    width:20%;
+    text-align:right;
+    float:left;
+    margin: 5px 0 0 0;
+    height:20px;
+}
+
+.poi-icon {
+    margin: 0 10px;
+    vertical-align: baseline;
+    height:20px;
+}
+
+.borderless .poi-content {
+    border: 0;
+} 

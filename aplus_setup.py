@@ -12,6 +12,7 @@ from directives.questionnaire import Questionnaire, SingleChoice, MultipleChoice
 from directives.submit import SubmitForm
 from directives.ae_input import ActiveElementInput
 from directives.ae_output import ActiveElementOutput
+from directives.hiddenblock import HiddenBlock
 
 def setup(app):
 
@@ -77,3 +78,4 @@ def setup(app):
     app.add_directive('submit', SubmitForm)
     app.add_directive('ae-input', ActiveElementInput)
     app.add_directive('ae-output', ActiveElementOutput)
+    app.add_directive('hidden-block', HiddenBlock)

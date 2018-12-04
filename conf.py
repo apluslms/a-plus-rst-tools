@@ -33,7 +33,6 @@ static_host = os.environ.get('STATIC_CONTENT_HOST', None)
 #sys.path.insert(0, os.path.abspath('.'))
 
 sys.path.append(os.path.abspath('a-plus-rst-tools'))
-
 # -- General configuration ------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.

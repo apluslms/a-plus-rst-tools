@@ -136,35 +136,40 @@ This exercise opens an external tool via LTI launch protocol.
       :lti: Rubyric+
       :lti_context_id: asdasd
       :lti_resource_link_id: asdasd
-      
-      
+
+
 5. Active element input
 
 This creates an input field for active element.
 
 More active element examples can be found at https://version.aalto.fi/gitlab/piitulr1/active-element-example
 
+Tools for making clickable active element inputs: https://version.aalto.fi/gitlab/piitulr1/click-input-editor
+
     .. ae-input:: id-for-input
     	:title: title of the input (displayed on the html page)
-    	:default: default value for the input (displayed when the user has not 
+    	:default: default value for the input (displayed when the user has not
     	       submitted a solution)
     	:class: Any css classes that the active element exercise div should have
     					separated by a space (class1 class2 class3).
 		  	      In the example course css-file:
-		  	       - classes "active-element" and "ae-input" are used to style the 
+		  	       - classes "active-element" and "ae-input" are used to style the
 		  	         input element and can be modified as needed.
-		  	       - classes "left" and "right" can be used to float the box left or 
-		  	         right, or "center" to align it centered. 
-    	:width: can be used to set the width of the element 
-    	:height: can be used to set the height of the input textarea 
+		  	       - classes "left" and "right" can be used to float the box left or
+		  	         right, or "center" to align it centered.
+    	:width: can be used to set the width of the element
+    	:height: can be used to set the height of the input textarea
     	       (deafult with classes "active element" and "ae-input" is 150px)
-    	:clear: "both" forces the element to a new line, "left" ("right") allows 
+    	:clear: "both" forces the element to a new line, "left" ("right") allows
     	       no floating elements on the left (right)
-    	:type: use "file" for file inputs and "dropdown" for dropdown. For 
-    	      dropdowns, the available options should be listed after the type 
-    	      indicating "dropdown" in this format: "dropdown:option1,option2,option3"
-            
-            
+    	:type: use "file" for file inputs, "clickable" for clickable inputs, and
+            "dropdown" for dropdown. For dropdowns, the available options should
+            be listed after the type indicating "dropdown" in this
+            format: "dropdown:option1,option2,option3"
+      :file: (only for type clickable) path to the html file that contains
+            the default clickable input
+
+
 5. Active element output
 
 This creates an output field for active element
@@ -178,18 +183,44 @@ More active element examples can be found at https://version.aalto.fi/gitlab/pii
     	:class: Any css classes that the active element exercise div should have
     					separated by a space (class1 class2 class3).
 		  	      In the example css-file:
-		  	       - class "active-element" is used to style the 
+		  	       - class "active-element" is used to style the
 		  	         input element and can be modified as needed.
-		  	       - classes "left" and "right" can be used to float the box left or 
-		  	         right, or "center" to align it centered. 
+		  	       - classes "left" and "right" can be used to float the box left or
+		  	         right, or "center" to align it centered.
     	:width: can be used to set the width of the element
-    	:height: can be used to set the height of the output div (deafult 
-    	       with class "active element" is 150px) 
-    	:clear: "both" forces the element to a new line, "left" ("right") allows 
+    	:height: can be used to set the height of the output div (deafult
+    	       with class "active element" is 150px)
+    	:clear: "both" forces the element to a new line, "left" ("right") allows
     	       no floating elements on the left (right)
     	:type: default type is text; for image (png) outputs use "image"
-    	:submissions: number of allowed submissions (default is unlimited for 
+    	:submissions: number of allowed submissions (default is unlimited for
     	       active elements)
-    	:scale-size: no value; if this option is present, the output element 
+    	:scale-size: no value; if this option is present, the output element
     	       height will scale to match content that has a defined height
 
+6. Hidden block
+
+Directive for creating hidden content blocks.
+
+```
+  .. hidden-block:: name (required)
+    :label: Optional text for the show/hide link (default Show/Hide)
+    :visible: # if this flag is present, the collapsible div starts out visible
+
+    hidden content here
+```
+
+7. Point of interest
+
+Directive for creating "point of interest" summary block.
+
+```
+.. point-of-interest:: name (unique id within the document)
+    :title: optional title text
+    :previous: name of previous point-of-interest (optional)
+    :next: name of next point-of-interest (optional)
+    :hidden: (if this flag is present, the content of this poi is hidden by default)
+    :class: any additional css classes
+
+    Content of point-of-interest here
+```
