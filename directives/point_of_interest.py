@@ -13,9 +13,8 @@ Directive for creating "point of interest" summary block.
 
 '''
 import os.path
-from docutils.parsers.rst import directives
+from docutils.parsers.rst import Directive, directives
 from docutils import nodes
-from sphinx.util.compat import Directive
 from sphinx.errors import SphinxError
 from sphinx.util import logging
 

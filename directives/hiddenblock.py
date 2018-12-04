@@ -10,12 +10,10 @@ Directive for creating hidden content blocks.
 
 '''
 import os.path
-from docutils.parsers.rst import directives
+from docutils.parsers.rst import Directive, directives
 from docutils import nodes
 
 import aplus_nodes
-
-from sphinx.util.compat import Directive
 
 
 class HiddenBlock(Directive):
