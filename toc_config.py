@@ -143,6 +143,23 @@ def make_index(app, root):
             if not config[u'category'] in category_keys:
                 category_keys.append(config[u'category'])
 
+        for config_file in [e.yaml_write for e in doc.traverse(aplus_nodes.html) if e.has_yaml(u'exercisecollection')]:
+            config = yaml_writer.read(config_file)
+            exercise = {
+                u'key': config[u'key'],
+                u'max_points': config[u'max_points'],
+                u'points_to_pass': config.get(u'points_to_pass', 0),
+                u'collection_course': config[u'collection_course'],
+                u'collection_url': config[u'collection_url'],
+                u'collection_category': config[u'collection_category'],
+                u'category': config[u'category'],
+                u'status': u'unlisted',
+            }
+            parent.append(exercise)
+            if not config[u'category'] in category_keys:
+                category_keys.append(config[u'category'])
+
+
         category = u'chapter'
         for name,hidden,child in traverse_tocs(app, doc):
             meta = first_meta(child)
