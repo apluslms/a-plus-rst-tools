@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 import docutils
 from docutils import nodes
-from docutils.parsers.rst import directives
-from sphinx.util.compat import Directive
+from docutils.parsers.rst import Directive, directives
 
 import aplus_nodes
 

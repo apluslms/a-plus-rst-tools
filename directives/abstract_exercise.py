@@ -1,5 +1,5 @@
 import itertools
-from sphinx.util.compat import Directive
+from docutils.parsers.rst import Directive
 
 
 class AbstractExercise(Directive):
