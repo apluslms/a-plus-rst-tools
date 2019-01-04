@@ -17,6 +17,7 @@ class AplusMeta(Directive):
         'late-penalty': directives.unchanged,
         'audience': directives.unchanged,
         'hidden': directives.flag,
+        'points-to-pass': directives.nonnegative_int, # set points to pass for modules
     }
 
     def run(self):

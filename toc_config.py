@@ -210,6 +210,7 @@ def make_index(app, root):
             u'key': docname if u'/' not in docname else u'_'.join(docname.split(u'/')[:-1]),
             u'status': status,
             u'name': title,
+            u'points_to_pass': meta.get('points-to-pass', 0),
             u'children': [],
         }
         if open_src:
