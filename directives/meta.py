@@ -18,6 +18,7 @@ class AplusMeta(Directive):
         'audience': directives.unchanged,
         'hidden': directives.flag,
         'points-to-pass': directives.nonnegative_int, # set points to pass for modules
+        'introduction': directives.unchanged, # module introduction HTML
     }
 
     def run(self):
