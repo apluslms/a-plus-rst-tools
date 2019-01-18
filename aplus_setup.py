@@ -37,6 +37,7 @@ def setup(app):
     app.add_config_value('skip_language_inconsistencies', False, 'html')
     app.add_config_value('allow_assistant_viewing', True, 'html')
     app.add_config_value('allow_assistant_grading', False, 'html')
+    app.add_config_value('course_head_urls', None, 'html')
 
     # Connect configuration generation to events.
     app.connect('builder-inited', toc_config.prepare)

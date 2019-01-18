@@ -249,6 +249,12 @@ def make_index(app, root):
         index[u'start'] = parse_date(course_open)
     if course_close:
         index[u'end'] = parse_date(course_close)
+    head_urls = app.config.course_head_urls
+    if head_urls is not None:
+        # If the value is None, it is not set to the index.yaml nor aplus-json at all.
+        # If the value is an empty list, it is still part of the index.yaml
+        # and could be used to override a previous truthy value.
+        index[u'head_urls'] = head_urls
 
     return index
 
