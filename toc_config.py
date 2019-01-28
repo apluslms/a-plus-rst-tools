@@ -147,13 +147,13 @@ def make_index(app, root):
             config = yaml_writer.read(config_file)
             exercise = {
                 u'key': config[u'key'],
-                u'max_points': config[u'max_points'],
+                u'max_points': config.get(u'max_points', 0),
                 u'points_to_pass': config.get(u'points_to_pass', 0),
-                u'collection_course': config[u'collection_course'],
-                u'collection_url': config[u'collection_url'],
-                u'collection_category': config[u'collection_category'],
+                u'target_url': config[u'target_url'],
+                u'target_category': config[u'target_category'],
                 u'category': config[u'category'],
                 u'status': u'unlisted',
+                u'title': config[u'title'],
             }
             parent.append(exercise)
             if not config[u'category'] in category_keys:

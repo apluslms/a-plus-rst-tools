@@ -11,10 +11,10 @@ from directives.abstract_exercise import AbstractExercise
 
 class ExerciseCollection(AbstractExercise):
     has_content = True
+    required_arguments = 1
     option_spec = {
-        'collection_course': directives.unchanged,
-        'collection_url': directives.unchanged,
-        'collection_category': directives.unchanged,
+        'target_url': directives.unchanged,
+        'target_category': directives.unchanged,
         'category': directives.unchanged,
         'points-to-pass': directives.nonnegative_int,
         'max_points': directives.nonnegative_int,
@@ -27,35 +27,13 @@ class ExerciseCollection(AbstractExercise):
 
         errors = []
 
-        for option in ['collection_category', 'max_points']:
-            if option not in self.options:
+        if not 'target_category' in self.options:
+            errors.append('Error in {} directive: Missing target_category.'.format(self.name))
 
-                # Because warning, error and severe don't make any difference.
-                errors.append('Error in {} directive: Missing option {}.'.format(self.name, option))
-                #self.severe('Error in {} directive: Missing option {}.'.format(self.name, option))
+        if not 'target_url' in self.options:
+            errors.append('Error in {} directive: Missing target_url.'.format(self.name))
 
-        if ('collection_course' in self.options) == ('collection_url' in self.options):
-            errors.append('Error in {} directive: Must contain either "collection_course" or "collection_url" option.'.format(self.name))
-
-        if ('collection_course' in self.options) and (not ';' in str(self.options.get('collection_course'))):
-            # Because warning, error and severe don't make any difference.
-            errors.append('Error in {} directive: collection_course must be in format "<course>;<instance>"'.format(self.name))
-            #self.reporter.severe('Error in {} directive: collection_course must be in format "<course>;<instance>".'.format(self.name))
-
-        if errors:
-            assert False, '\n'.join(errors)
-
-        if 'max_points' in self.options:
-            points = int(self.options.get('max_points'))
-        else:
-            points = 10
-
-        if 'category' in self.options:
-            category = str(self.options.get('category'))
-        else:
-            category = 'Prerequisit'
-
-
+        assert not errors, '\n'.join(errors)
 
         name = u"{}_{}".format(env.docname.replace(u'/', u'_'), key)
 
@@ -69,17 +47,13 @@ class ExerciseCollection(AbstractExercise):
 
         data = {
             u'key': name,
-            u'category': category,
-            u'max_points': points,
-            u'points_to_pass': self.options.get('points-to-pass'),
-            u'collection_course': None,
-            u'collection_url': None,
-            u'collection_category': self.options.get('collection_category'),
+            u'category': self.options.get('category', 'prerequisit'),
+            u'max_points': self.options.get('max_points', 10),
+            u'points_to_pass': self.options.get('points-to-pass', 0),
+            u'target_url': self.options.get('target_url', None),
+            u'target_category': self.options.get('target_category', None),
+            u'title': self.arguments[0]
         }
-        if 'collection_course' in self.options:
-            data[u'collection_course'] = self.options.get('collection_course')
-        else:
-            data[u'collection_url'] = self.options.get('collection_url')
 
         node.write_yaml(env, name, data, 'exercisecollection')
 
