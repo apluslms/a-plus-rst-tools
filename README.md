@@ -315,7 +315,7 @@ override = {
     :length: 100
     :height: 4
     :class: my-input-class
-    
+
     What do you think now?
 
   .. agree-item:: Did it work for you?
@@ -499,14 +499,23 @@ they are also linked to each other with next/previous links. The links enable
 the user to quickly navigate between the points of interest.
 
 ```
-.. point-of-interest:: name (unique id within the document)
-  :title: optional title text
-  :previous: name of previous point-of-interest (optional)
-  :next: name of next point-of-interest (optional)
+.. point-of-interest:: Title text
+  :id: unique id, if not supplied a random id will be generated
+  :previous: id of previous point-of-interest (optional)
+  :next: id of next point-of-interest (optional)
   :hidden: (if this flag is present, the content of this poi is hidden by default)
   :class: any additional css classes
+  :height: fixed height in pixels
+  :columns: relative width of each column (e.g. for three columns 2 2 3)
+  :bgimg: path to background image
 
-  Content of point-of-interest here
+  Content of point-of-interest here.
+
+  Use ::newcol to start a new column:
+
+  ::newcol
+
+  New column starts here. If :columns: option not present columns of equal width will be created.
 ```
 
 
