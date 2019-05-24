@@ -3,7 +3,8 @@ import docutils
 from docutils import nodes
 from docutils.parsers.rst import Directive, directives
 
-import aplus_nodes
+from .. import aplus_nodes
+
 
 # DIRECTIVE FOR ARTICULATE STORYLINE BLOCKS: story
 

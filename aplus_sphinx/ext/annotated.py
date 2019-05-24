@@ -1,16 +1,18 @@
 # -*- coding: utf-8 -*-
+import os
+import re
+from cgi import escape
+from collections import Counter
+from operator import itemgetter
+
 import docutils
 from docutils import nodes
 from docutils.parsers.rst import Directive, directives
-from cgi import escape
-from collections import Counter
-import re
-import os
 from sphinx.directives.code import CodeBlock
 from sphinx.errors import SphinxError
-from operator import itemgetter
 
-import aplus_nodes
+from .. import aplus_nodes
+
 
 annotated_section_counts = Counter()
 

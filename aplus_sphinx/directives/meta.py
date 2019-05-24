@@ -1,7 +1,7 @@
 from docutils import nodes
 from docutils.parsers.rst import Directive, directives
 
-from aplus_nodes import aplusmeta
+from ..aplus_nodes import aplusmeta
 
 
 class AplusMeta(Directive):

@@ -19,14 +19,18 @@ Directive for creating "point of interest" summary block.
     Using ::newcol separated by line breaks starts a new column
 
 '''
-import os.path, random, string
+import os.path
+import random
+import string
 from math import floor
-from docutils.parsers.rst import Directive, directives
+
 from docutils import nodes
+from docutils.parsers.rst import Directive, directives
 from sphinx.errors import SphinxError
 from sphinx.util import logging
 
-import aplus_nodes
+from .. import aplus_nodes
+
 
 logger = logging.getLogger(__name__)
 

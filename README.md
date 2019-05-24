@@ -149,7 +149,6 @@ The following settings are already defined in the template conf.py
 
 ```python
 sys.path.append(os.path.abspath('a-plus-rst-tools'))
-sys.path.append(os.path.abspath('a-plus-rst-tools/directives'))
 
 extensions = [
     'sphinx.ext.mathjax', # optional

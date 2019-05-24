@@ -23,12 +23,13 @@ import re
 import docutils
 from docutils import nodes
 from docutils.parsers.rst import directives, roles
-
 from sphinx.directives.code import CodeBlock
-from sphinx.util import logging
 from sphinx.locale import __
+from sphinx.util import logging
+
 
 logger = logging.getLogger(__name__)
+
 
 class codeblock_lineref(nodes.General, nodes.Element):
     pass

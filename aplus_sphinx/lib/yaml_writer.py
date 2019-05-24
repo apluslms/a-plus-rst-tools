@@ -1,5 +1,6 @@
 import io
 import os.path
+
 import yaml
 from sphinx.util.osutil import ensuredir
 

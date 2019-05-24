@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
+import re
+from cgi import escape
+
 import docutils
 from docutils import nodes
 from docutils.parsers.rst import Directive, directives
-from cgi import escape
-import re
 
-import aplus_nodes
+from .. import aplus_nodes
+
 
 # DIRECTIVE FOR REPL SESSIONS: repl
 # this is an embarrassing mess, but it works for now. if you're thinking of making changes, rewrite instead.

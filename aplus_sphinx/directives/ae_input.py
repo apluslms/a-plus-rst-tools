@@ -3,18 +3,16 @@
 Directive that places active element inputs.
 '''
 import os.path
-from docutils.parsers.rst import directives
 from docutils import io, nodes, utils
+from docutils.parsers.rst import directives
+from docutils.utils.error_reporting import SafeString, ErrorString
 from sphinx.errors import SphinxError
 from sphinx.util import logging
 
-import aplus_nodes
-import lib.translations as translations
-import lib.yaml_writer as yaml_writer
-from directives.abstract_exercise import AbstractExercise
-from lib.yaml_writer import ensure_unicode
+from .. import aplus_nodes
+from ..lib import translations
+from .abstract_exercise import AbstractExercise
 
-from docutils.utils.error_reporting import SafeString, ErrorString
 
 logger = logging.getLogger(__name__)
 

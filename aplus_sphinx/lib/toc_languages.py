@@ -1,6 +1,7 @@
 from sphinx.errors import SphinxError
 
-import lib.yaml_writer as yaml_writer
+from . import yaml_writer
+
 
 # Following keys may be given a default in base (first) language
 # and other language versions are allowed to omit them.

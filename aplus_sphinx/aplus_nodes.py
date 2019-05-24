@@ -1,9 +1,12 @@
 import os.path
 import re
+
 from docutils import nodes
 
-import lib.yaml_writer as yaml_writer
-import lib.html_tools as html_tools
+from .lib import (
+    yaml_writer,
+    html_tools,
+)
 
 
 class html(nodes.General, nodes.Element):

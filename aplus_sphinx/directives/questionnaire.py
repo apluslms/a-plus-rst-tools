@@ -7,10 +7,12 @@ from docutils.parsers.rst import Directive, directives
 from sphinx.errors import SphinxError
 from sphinx.util.nodes import nested_parse_with_titles
 
-import aplus_nodes
-import lib.translations as translations
-import lib.yaml_writer as yaml_writer
-from directives.abstract_exercise import AbstractExercise
+from .. import aplus_nodes
+from ..lib import (
+    translations,
+    yaml_writer,
+)
+from .abstract_exercise import AbstractExercise
 
 
 class Questionnaire(AbstractExercise):

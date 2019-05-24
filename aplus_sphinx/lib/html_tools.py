@@ -1,5 +1,7 @@
 import fnmatch
-import io, os, re
+import io
+import os
+import re
 
 
 

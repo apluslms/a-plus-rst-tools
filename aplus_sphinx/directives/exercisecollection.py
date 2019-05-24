@@ -1,13 +1,11 @@
 import os.path
-from docutils.parsers.rst import directives, Directive
 from docutils import nodes
+from docutils.parsers.rst import directives, Directive
 from sphinx.errors import SphinxError
 
-import aplus_nodes
-import lib.translations as translations
-import lib.yaml_writer as yaml_writer
-from lib.yaml_writer import ensure_unicode
-from directives.abstract_exercise import AbstractExercise
+from .. import aplus_nodes
+from .abstract_exercise import AbstractExercise
+
 
 class ExerciseCollection(AbstractExercise):
     has_content = True

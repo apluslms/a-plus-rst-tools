@@ -3,15 +3,18 @@
 Directive that places exercise submission forms.
 '''
 import os.path
-from docutils.parsers.rst import directives
+
 from docutils import nodes
+from docutils.parsers.rst import directives
 from sphinx.errors import SphinxError
 
-import aplus_nodes
-import lib.translations as translations
-import lib.yaml_writer as yaml_writer
-from lib.yaml_writer import ensure_unicode
-from directives.abstract_exercise import AbstractExercise
+from .. import aplus_nodes
+from ..lib import (
+    translations,
+    yaml_writer,
+)
+from ..lib.yaml_writer import ensure_unicode
+from .abstract_exercise import AbstractExercise
 
 
 class SubmitForm(AbstractExercise):

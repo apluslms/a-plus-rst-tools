@@ -1,13 +1,18 @@
-import re, os
+import os
+import re
 from docutils import nodes
 from sphinx import addnodes
 from sphinx.errors import SphinxError
 
-import aplus_nodes
-import directives.meta
-import lib.yaml_writer as yaml_writer
-import lib.html_tools as html_tools
-import lib.toc_languages as toc_languages
+from . import (
+    aplus_nodes,
+    directives,
+)
+from .lib import (
+    html_tools,
+    toc_languages,
+    yaml_writer,
+)
 
 
 def prepare(app):

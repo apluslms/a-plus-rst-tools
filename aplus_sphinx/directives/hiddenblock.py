@@ -10,10 +10,10 @@ Directive for creating hidden content blocks.
 
 '''
 import os.path
-from docutils.parsers.rst import Directive, directives
 from docutils import nodes
+from docutils.parsers.rst import Directive, directives
 
-import aplus_nodes
+from .. import aplus_nodes
 
 
 class HiddenBlock(Directive):

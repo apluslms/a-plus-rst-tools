@@ -3,15 +3,15 @@
 Directive that places active element output divs.
 '''
 import os.path
-from docutils.parsers.rst import directives
 from docutils import nodes
+from docutils.parsers.rst import directives
 from sphinx.errors import SphinxError
 
-import aplus_nodes
-import lib.translations as translations
-import lib.yaml_writer as yaml_writer
-from directives.abstract_exercise import AbstractExercise
-from lib.yaml_writer import ensure_unicode
+from .. import aplus_nodes
+from ..lib import translations
+from ..lib import yaml_writer
+from ..lib.yaml_writer import ensure_unicode
+from .abstract_exercise import AbstractExercise
 
 
 
