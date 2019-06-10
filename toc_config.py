@@ -159,7 +159,7 @@ def write(app, exception):
             u'name': category_names.get(key, key),
         } for key in category_keys
     }
-    for key in ['chapter', 'feedback']:
+    for key in ['chapter']:
         if key in categories:
             categories[key][u'status'] = u'nototal'
 
