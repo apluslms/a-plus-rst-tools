@@ -28,7 +28,8 @@ class ActiveElementOutput(AbstractExercise):
         'height': directives.unchanged,
         'clear': directives.unchanged,
         'type': directives.unchanged,
-        'scale-size': directives.flag
+        'scale-size': directives.flag,
+        'status': directives.unchanged,
     }
 
     def run(self):
@@ -107,7 +108,7 @@ class ActiveElementOutput(AbstractExercise):
             u'category': u'active elements',
             u'max_submissions': self.options.get('submissions', data.get('max_submissions', env.config.ae_default_submissions)),
         })
-
+        data.setdefault('status', self.options.get('status', 'unlisted'))
         if category in override:
             data.update(override[category])
             if 'url' in data:
