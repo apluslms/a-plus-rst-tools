@@ -133,7 +133,7 @@ def make_index(app, root):
             allow_assistant_viewing = config.get(u'allow_assistant_viewing', app.config.allow_assistant_viewing)
             allow_assistant_grading = config.get(u'allow_assistant_grading', app.config.allow_assistant_grading)
             exercise.update({
-                u'status': u'unlisted',
+                u'status': config.get(u'status', u'unlisted'),
                 u'allow_assistant_viewing': allow_assistant_viewing,
                 u'allow_assistant_grading': allow_assistant_grading,
             })
@@ -152,7 +152,7 @@ def make_index(app, root):
                 u'target_url': config[u'target_url'],
                 u'target_category': config[u'target_category'],
                 u'category': config[u'category'],
-                u'status': u'unlisted',
+                u'status': config.get(u'status', u'unlisted'),
                 u'title': config[u'title'],
             }
             parent.append(exercise)

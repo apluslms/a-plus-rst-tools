@@ -180,6 +180,7 @@ The questionnaire directive accepts the following options:
 * `pick_randomly`: integer. Set the pick_randomly setting for the quiz
   (select N questions randomly on each load)
 * `category`: exercise category
+* `status`: exercise status (default "unlisted"). See available [statuses](#list-of-exercise-statuses).
 
 The contents of the questionnaire directive define the questions and possible
 instructions to students.
@@ -353,6 +354,7 @@ It accepts the following options:
 * `class`: CSS class(es)
 * `title`: exercise title
 * `category`: exercise category (default "submit")
+* `status`: exercise status (default "unlisted"). See available [statuses](#list-of-exercise-statuses).
 * `ajax`: If set, the A+ chapter does not attach any JavaScript event listeners
   to the exercise and the exercise JS may control the submission itself.
   See [the chapter content documentation](https://github.com/Aalto-LeTech/a-plus/blob/master/doc/CONTENT.md)
@@ -475,6 +477,7 @@ More active element examples can be found at https://version.aalto.fi/gitlab/pii
                     active elements)
       :scale-size: no value; if this option is present, the output element
                    height will scale to match content that has a defined height
+      :status: exercise status (default "unlisted"). See available [statuses](#list-of-exercise-statuses).
 
 ### 8. Hidden block
 
@@ -631,4 +634,13 @@ the mp4 or webm format. The id argument is the filename without the extension.
   :frame-height: 500
   :frame-width: 850
 ```
+### List of exercise statuses
 
+There are 6 possible statuses for exercises:
+
+* ready: Visible exercise listed in table of contents.
+* unlisted (default): Unlisted in table of contents, otherwise same as ready.
+* hidden: Hidden from non course staff.
+* enrollment: Questions for students when they enroll to a course.
+* enrollment_ext: Same as enrollment but for external students.
+* maintenance: Hides the exercise description and prevents submissions.

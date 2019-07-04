@@ -31,6 +31,7 @@ class SubmitForm(AbstractExercise):
         'radar_tokenizer': directives.unchanged,
         'radar_minimum_match_tokens': directives.unchanged,
         'category': directives.unchanged,
+        'status': directives.unchanged,
     }
 
     def run(self):
@@ -102,6 +103,7 @@ class SubmitForm(AbstractExercise):
             u'max_group_size': data.get('max_group_size', env.config.default_max_group_size),
             u'points_to_pass': self.options.get('points-to-pass', data.get('points_to_pass', 0)),
         })
+        data.setdefault('status', self.options.get('status', 'unlisted'))
         if category in override:
             data.update(override[category])
             if 'url' in data:

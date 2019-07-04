@@ -28,6 +28,7 @@ class Questionnaire(AbstractExercise):
         'points-to-pass': directives.nonnegative_int,
         'title': directives.unchanged,
         'category': directives.unchanged,
+        'status': directives.unchanged,
     }
 
     def run(self):
@@ -103,6 +104,7 @@ class Questionnaire(AbstractExercise):
             u'feedback': is_feedback,
             u'view_type': u'access.types.stdsync.createForm',
             u'title|i18n': translations.opt('feedback') if is_feedback else translations.opt('exercise', postfix=u" {}".format(key)),
+            u'status': self.options.get('status', 'unlisted'),
             u'fieldgroups': [{
                 u'title': '',
                 u'fields': (u'#!children', None),
