@@ -28,6 +28,8 @@ class SubmitForm(AbstractExercise):
         'lti': directives.unchanged,
         'lti_context_id': directives.unchanged,
         'lti_resource_link_id': directives.unchanged,
+        'lti_aplus_get_and_post': directives.flag,
+        'lti_open_in_iframe': directives.flag,
         'radar_tokenizer': directives.unchanged,
         'radar_minimum_match_tokens': directives.unchanged,
         'category': directives.unchanged,
@@ -79,6 +81,10 @@ class SubmitForm(AbstractExercise):
                     u'lti_context_id': ensure_unicode(self.options.get('lti_context_id', u'')),
                     u'lti_resource_link_id': ensure_unicode(self.options.get('lti_resource_link_id', u'')),
                 })
+                if 'lti_aplus_get_and_post' in self.options:
+                    data.update({u'lti_aplus_get_and_post': True})
+                if 'lti_open_in_iframe' in self.options:
+                    data.update({u'lti_open_in_iframe': True})
             config_title = None
 
         config_title = self.options.get('title', config_title)

@@ -371,6 +371,11 @@ It accepts the following options:
   the LTI service that must be configured in the A+ site beforehand.
 * `lti_resource_link_id`: LTI exercise key
 * `lti_context_id`: LTI course key
+* `lti_open_in_iframe`: Open the exercise in an iframe inside the A+ page instead of a new window.
+  This option does not take any parameters.
+* `lti_aplus_get_and_post`: The exercise uses the A+ protocol to connect to the service.
+  The LTI launch parameters are appended to the A+ protocol parameters. This does not work with standard LTI services.
+  This option does not take any parameters.
 
 [Radar service]: https://github.com/Aalto-LeTech/radar
 
@@ -387,8 +392,12 @@ The LTI service must be configured beforehand in A+ by an administrator.
 The `lti` option refers to the label of the LTI service.
 The `url` option may exclude the domain of the service URL since the domain
 must be equal to the URL defined in the LTI service anyway.
-The LTI parameters may be defined in the config.yaml file linked with
-the `config` option, thus it is not required to define them in RST.
+There are two ways to define LTI exercise:
+
+* Using the config.yaml file linked with the `config` option and defining LTI options there.
+  In this case, all LTI options written in the submit directive will be ignored.
+* Writing LTI options in the submit directive. Remark that in this case the submit directive must
+  not have the `config` option set.
 
 ```
 .. submit:: 3 B50
