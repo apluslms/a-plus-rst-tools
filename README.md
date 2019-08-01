@@ -346,6 +346,9 @@ linking a YAML configuration file with the `config` option.
 Some settings may also be defined directly with the directive options.
 The directive will attach the exercise at this position in the content chapter.
 Its arguments define the exercise key and max points with the optional difficulty.
+The instructions can be written in the body of the submit directive. The body
+supports RST syntax. If the instructions field is also given in the config.yaml, the
+body of the submit directive will be prioritized.
 It accepts the following options:
 
 * `config`: path to the YAML configuration file
@@ -385,6 +388,8 @@ It accepts the following options:
 .. submit:: 2 A100
   :submissions: 100
   :config: exercises/hello_python/config.yaml
+  
+  This will be shown in aplus as the instructions.
 ```
 
 ### 4. External exercise (LTI)
@@ -400,6 +405,8 @@ There are two ways to define LTI exercise:
   In this case, all LTI options written in the submit directive will be ignored.
 * Writing LTI options in the submit directive. Remark that in this case the submit directive must
   not have the `config` option set.
+
+In LTI excercises, the instructions cannot be written in the body of the submit directive.
 
 ```
 .. submit:: 3 B50
