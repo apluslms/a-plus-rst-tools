@@ -1,5 +1,12 @@
 import itertools
-from docutils.parsers.rst import Directive
+from docutils.parsers.rst import Directive, directives
+
+
+def choice_truefalse(argument):
+    """Choice of "true" or "false".
+    This is an option conversion function for the option_spec in directives.
+    """
+    return directives.choice(argument, ('true', 'false'))
 
 
 class AbstractExercise(Directive):
@@ -23,3 +30,12 @@ class AbstractExercise(Directive):
                 else:
                     difficulty = u''.join(chars)
         return difficulty, points
+
+    def set_assistant_permissions(self, data):
+        tobool = {'true': True, 'false': False}
+
+        if 'allow-assistant-grading' in self.options:
+            data['allow_assistant_grading'] = tobool[self.options['allow-assistant-grading']]
+
+        if 'allow-assistant-viewing' in self.options:
+            data['allow_assistant_viewing'] = tobool[self.options['allow-assistant-viewing']]
