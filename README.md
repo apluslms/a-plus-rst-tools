@@ -227,7 +227,16 @@ For example, `.. freetext:: 30 string-ignorews-ignorequotes`.
 The question directives may define instructions. After the instructions,
 the contents of the directive define the choices, the correct solution, and
 possible hints. The hints are targeted to specific choices and they are shown
-after answering. See the example below.
+after answering.
+
+The body of the `freetext` question is
+expected to be its model solution. However, the question instructions can be written
+inside the body before the model answer. The instructions and the model solution must
+be separated with an empty line.
+
+If the questionnaire has the `feedback` option set, `freetext`
+questions may not have a model solution and the body of the question is shown as the
+question instructions.
 
 ```
 .. questionnaire:: 1 A60
@@ -280,11 +289,15 @@ after answering. See the example below.
 
 ### 2. Feedback questionnaire
 
-A feedback questionnaire is basically just like a graded questionnaire, but with
-the `feedback` option it uses the feedback category and CSS class by default.
+A feedback questionnaire is almost like a graded questionnaire. When the `feedback` option is set,
+the questionnaire uses the feedback category and CSS class by default.
 The options `chapter-feedback`, `weekly-feedback`, `appendix-feedback`, and
 `course-feedback` use a different CSS class (with the same name as the option).
 If points are not specified, they are set to zero.
+The `feedback` option can be set only to the last questionnaire of the RST file.
+
+The freetext questions are not expected to have a model solution, in essence the
+body of the freetext question will be shown as the question instructions.
 
 The question directives `agree-item` and `agree-item-generate` create questions
 with a 1-5 Likert scale. They take a title as the only positional argument and
