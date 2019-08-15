@@ -176,6 +176,7 @@ The questionnaire directive accepts the following options:
 * `submissions`: max submissions
 * `points-to-pass`: points to pass
 * `feedback`: If set, assumes the defaults for a feedback questionnaire
+* `title`: exercise title
 * `no-override`: If set, the conf.py override setting is ignored
 * `pick_randomly`: integer. Set the pick_randomly setting for the quiz
   (select N questions randomly on each load)
