@@ -105,7 +105,6 @@ class Questionnaire(AbstractExercise):
             u'points_to_pass': self.options.get('points-to-pass', 0),
             u'feedback': is_feedback,
             u'view_type': u'access.types.stdsync.createForm',
-            u'title|i18n': translations.opt('feedback') if is_feedback else translations.opt('exercise', postfix=u" {}".format(key)),
             u'status': self.options.get('status', 'unlisted'),
             u'fieldgroups': [{
                 u'title': '',
@@ -113,6 +112,11 @@ class Questionnaire(AbstractExercise):
             }],
         }
         self.set_assistant_permissions(data)
+
+        if 'title' in self.options:
+            data['title'] = self.options.get('title')
+        else:
+            data[u'title|i18n'] = translations.opt('feedback') if is_feedback else translations.opt('exercise', postfix=u" {}".format(key))
 
         if not 'no-override' in self.options and category in override:
             data.update(override[category])
