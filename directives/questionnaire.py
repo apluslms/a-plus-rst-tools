@@ -10,7 +10,7 @@ from sphinx.util.nodes import nested_parse_with_titles
 import aplus_nodes
 import lib.translations as translations
 import lib.yaml_writer as yaml_writer
-from directives.abstract_exercise import AbstractExercise
+from directives.abstract_exercise import AbstractExercise, choice_truefalse
 
 
 class Questionnaire(AbstractExercise):
@@ -29,6 +29,8 @@ class Questionnaire(AbstractExercise):
         'title': directives.unchanged,
         'category': directives.unchanged,
         'status': directives.unchanged,
+        'allow-assistant-viewing': choice_truefalse,
+        'allow-assistant-grading': choice_truefalse,
     }
 
     def run(self):
@@ -110,6 +112,8 @@ class Questionnaire(AbstractExercise):
                 u'fields': (u'#!children', None),
             }],
         }
+        self.set_assistant_permissions(data)
+
         if not 'no-override' in self.options and category in override:
             data.update(override[category])
             if 'url' in data:

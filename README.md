@@ -181,6 +181,10 @@ The questionnaire directive accepts the following options:
   (select N questions randomly on each load)
 * `category`: exercise category
 * `status`: exercise status (default "unlisted"). See available [statuses](#list-of-exercise-statuses).
+* `allow-assistant-viewing`: Allows assistants to view the submissions of the students.
+  Can be set to true or false. Overrides any options set in the conf.py or config.yaml files.
+* `allow-assistant-grading`: Allows assistants to grade the submissions of the students.
+  Can be set to true or false. Overrides any options set in the conf.py or config.yaml files.
 
 The contents of the questionnaire directive define the questions and possible
 instructions to students.
@@ -362,6 +366,10 @@ It accepts the following options:
   to the exercise and the exercise JS may control the submission itself.
   See [the chapter content documentation](https://github.com/Aalto-LeTech/a-plus/blob/master/doc/CONTENT.md)
   (the HTML attribute `data-aplus-ajax`).
+* `allow-assistant-viewing`: Allows assistants to view the submissions of the students.
+  Can be set to true or false. Overrides any options set in the conf.py or config.yaml files.
+* `allow-assistant-grading`: Allows assistants to grade the submissions of the students.
+  Can be set to true or false. Overrides any options set in the conf.py or config.yaml files.
 * `quiz`: If set, the exercise feedback will take the place of the exercise instructions.
   This makes sense for questionnaires since their feedback contains the submission form.
   In RST, you would usually define questionnaires with the questionnaire directive,
@@ -388,7 +396,7 @@ It accepts the following options:
 .. submit:: 2 A100
   :submissions: 100
   :config: exercises/hello_python/config.yaml
-  
+
   This will be shown in aplus as the instructions.
 ```
 

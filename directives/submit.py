@@ -12,7 +12,7 @@ import aplus_nodes
 import lib.translations as translations
 import lib.yaml_writer as yaml_writer
 from lib.yaml_writer import ensure_unicode
-from directives.abstract_exercise import AbstractExercise
+from directives.abstract_exercise import AbstractExercise, choice_truefalse
 
 
 class SubmitForm(AbstractExercise):
@@ -35,6 +35,8 @@ class SubmitForm(AbstractExercise):
         'radar_minimum_match_tokens': directives.unchanged,
         'category': directives.unchanged,
         'status': directives.unchanged,
+        'allow-assistant-viewing': choice_truefalse,
+        'allow-assistant-grading': choice_truefalse,
     }
 
     def run(self):
@@ -107,6 +109,7 @@ class SubmitForm(AbstractExercise):
             u'max_group_size': data.get('max_group_size', env.config.default_max_group_size),
             u'points_to_pass': self.options.get('points-to-pass', data.get('points_to_pass', 0)),
         })
+        self.set_assistant_permissions(data)
 
         if self.content:
             self.assert_has_content()
