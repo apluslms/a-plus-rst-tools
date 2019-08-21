@@ -14,6 +14,9 @@ from directives.ae_input import ActiveElementInput
 from directives.ae_output import ActiveElementOutput
 from directives.hiddenblock import HiddenBlock
 from directives.exercisecollection import ExerciseCollection
+from directives.div import DivDirective, DivNode
+from directives.bootstrap_styled_topic import StyledTopicDirective
+from directives.acos_submit import ACOSSubmitDirective
 
 def setup(app):
 
@@ -38,6 +41,8 @@ def setup(app):
     app.add_config_value('allow_assistant_viewing', True, 'html')
     app.add_config_value('allow_assistant_grading', False, 'html')
     app.add_config_value('course_head_urls', None, 'html')
+    app.add_config_value('bootstrap_styled_topic_classes', 'dl-horizontal topic', 'html')
+    app.add_config_value('acos_submit_base_url', 'http://172.21.0.2:3000', 'html')
 
     # Connect configuration generation to events.
     app.connect('builder-inited', toc_config.prepare)
@@ -59,6 +64,8 @@ def setup(app):
         # with the builder output even though only the visitor functions should do that.
     )
 
+
+    app.add_node(DivNode, html=(DivNode.visit_div, DivNode.depart_div))
     # The directive for injecting document meta data.
     app.add_node(
         aplus_nodes.aplusmeta,
@@ -75,6 +82,9 @@ def setup(app):
     app.add_directive('agree-group',  AgreeGroup)
     app.add_directive('agree-item',  AgreeItem)
     app.add_directive('agree-item-generate', AgreeItemGenerate)
+    app.add_directive('div', DivDirective)
+    app.add_directive('styled-topic', StyledTopicDirective)
+    app.add_directive('acos-submit', ACOSSubmitDirective)
 
     # The submit directive.
     app.add_directive('submit', SubmitForm)

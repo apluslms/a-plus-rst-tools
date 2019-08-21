@@ -627,7 +627,75 @@ This extension must be activated separately in the project conf.py
   res0: Int = 14
 ```
 
-### 13. Media directives
+### 13. Submittable ACOS exercises
+
+The custom directive acos-submit behaves almost identically to the normal
+submit directive. It is intended for exercises that are hosted outside the MOOC grader,
+such as the ACOS server. The directive option url should define the URL path of
+the exercise in the ACOS server. The URL domain is added automatically based on
+the configuration value `acos_submit_base_url` in conf.py. The acos-submit
+directive also automatically uses the `ajax` flag of the submit directive.
+
+The usage:
+
+```
+In conf.py:
+  acos_submit_base_url = 'https://acos.cs.aalto.fi'
+  acos_submit_base_url = 'http://172.21.0.4:3000'
+
+In RST:
+.. acos-submit:: somekey 100
+  :title: My title
+  :url: /aplus/draganddrop/draganddrop-example/revealdemo
+```
+
+### 14. HTML div elements
+
+The div directive can be used to insert basic `<div>` html elements into the
+generated document. This is useful for styling and other similar reasons.
+
+Any arguments given to the directive will be added as classes to the resulting
+element.
+
+This extension is originally from
+https://github.com/dnnsoftware/Docs/blob/master/common/ext/div.py
+and is licensed under the MIT license (see source file comments for the
+license text).
+
+Usage example:
+
+```
+.. div:: css-class-1 css-class-2
+
+  Element contents (_parsed_ as **RST**). Note the blank line and the
+  indentation.
+```
+
+### 15. CSS styled topics
+
+Directive that inserts `topic` elements that are more friendly to css styling
+using the bootstrap framework. Usage:
+
+```
+.. styled-topic::
+  :class: css-class-1 css-class-2
+
+  Topic must include content. All content is **parsed** _normally_ as RST.
+
+  Note the blank line between the directive and its content, and the
+  indentation.
+```
+
+An optional `:class:` option can be used to insert other css classes to the
+resulting `<div>` element.
+
+This extension also registers a conf.py value of
+`'bootstrap_styled_topic_classes'`. It can be used to set default classes that are
+added to all styled-topic directives. The default value is `dl-horizontal topic`
+where `dl-horizontal` is useful for inserting bootstrap styled `<dl>` elements
+into the div.
+
+### 16. Media directives
 
 The media directives were developed basically for a single course and they
 may not be quite reusable for other usecases, but they are listed here anyway.
