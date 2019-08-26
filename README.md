@@ -168,10 +168,11 @@ html_theme_path = ['a-plus-rst-tools/theme']
 
 ### 1. Graded questionnaire
 
-The questionnaire directive arguments define the exercise key and max points
-with the optional difficulty. For example, `.. questionnaire:: 1 A50` sets key `1`,
-max points `50` and difficulty `A`.
-The questionnaire directive accepts the following options:
+The questionnaire directive arguments define the exercise key and optional max points
+with the difficulty. For example, `.. questionnaire:: 1 A50` sets key `1`,
+max points `50` and difficulty `A`. If not set in the directive arguments, the max points will be set to
+the sum of the question points. Setting the difficulty is optional and it can be set
+even if the max points aren't defined in the argument. The questionnaire directive accepts the following options:
 
 * `submissions`: max submissions
 * `points-to-pass`: points to pass
@@ -191,8 +192,8 @@ The contents of the questionnaire directive define the questions and possible
 instructions to students.
 
 The **question directives** `pick-one`, `pick-any`, and `freetext` take the points
-of the question as the first argument. The sum of the question points should
-be equal to the questionnaire max points.
+of the question as the first argument. If the questionnaire's max points are set, the sum
+of the question points should be equal to them.
 The question directives accept the following options:
 
 * `class`: CSS class
