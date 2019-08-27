@@ -11,6 +11,8 @@ Directive for creating "point of interest" summary block.
     :height: optional fixed height for content
     :bgimage: path to background image
     :columns: relative widths of poi content columns (e.e. 2 3 3)
+    :not_in_slides: used with the presentation maker. This POI does not show in the slides when used.
+    :not_in_book: This POI does not appear in the book material when used
 
     Content of point-of-interest here
 
@@ -49,6 +51,9 @@ class PointOfInterest(Directive):
         'height': directives.length_or_percentage_or_unitless,
         'columns': directives.unchanged,
         'bgimg':directives.uri,
+        # not_in_slides and not_in_book are used with the presentation maker
+        'not_in_slides': directives.flag,
+        'not_in_book': directives.flag,
     }
 
     def run(self):
@@ -79,6 +84,11 @@ class PointOfInterest(Directive):
 
         node = nodes.container()
         title = nodes.container()
+
+        if 'not_in_book' in self.options:
+            # Ignore this point of interest in the output since it shall not be
+            # included in the A+ course materials (e-book).
+            return []
 
         # add an extra div to force content to desired height
         hcontainer_opts = {
@@ -114,7 +124,6 @@ class PointOfInterest(Directive):
             cols = list(map(int,self.options['columns'].split()))
             allcols = sum(cols)
             colwidths = [x / allcols for x in cols]
-
 
         for batch in self.content:
             l += 1

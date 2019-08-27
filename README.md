@@ -540,6 +540,10 @@ A point of interest is mostly like a normal admonition ("coloured info box"), bu
 they are also linked to each other with next/previous links. The links enable
 the user to quickly navigate between the points of interest.
 
+Point of interests may also be used to generate separate lecture slides
+(not directly included in the A+ content chapters). This requires a separate
+tool called "presentation maker".
+
 ```
 .. point-of-interest:: Title text
   :id: unique id, if not supplied a random id will be generated
@@ -550,6 +554,8 @@ the user to quickly navigate between the points of interest.
   :height: fixed height in pixels
   :columns: relative width of each column (e.g. for three columns 2 2 3)
   :bgimg: path to background image
+  :not_in_slides: a flag used with the presentation maker. This POI does not show in the slides if this is defined.
+  :not_in_book: If this flag is given, this POI does not appear in the A+ content chapter.
 
   Content of point-of-interest here.
 
@@ -558,6 +564,7 @@ the user to quickly navigate between the points of interest.
   ::newcol
 
   New column starts here. If :columns: option not present columns of equal width will be created.
+  (The presentation maker slides do not support the newcol feature.)
 ```
 
 
