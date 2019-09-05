@@ -8,7 +8,7 @@ the configuration value "acos_submit_base_url" (in conf.py). The acos-submit
 directive also automatically uses the "ajax" flag of the submit directive.
 """
 from sphinx.errors import SphinxError
-from aplus_setup import SubmitForm
+from .submit import SubmitForm
 
 class ACOSSubmitDirective(SubmitForm):
     def run(self):

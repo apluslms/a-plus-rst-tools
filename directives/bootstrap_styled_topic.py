@@ -20,7 +20,7 @@ added to all styled-topic directives. The default value is "dl-horizontal topic"
 where "dl-horizontal" is useful for inserting bootstrap styled <dl> elements
 into the div.
 '''
-from div import DivNode
+from .div import DivNode
 from docutils.parsers.rst import Directive
 from docutils.parsers.rst import directives
 
