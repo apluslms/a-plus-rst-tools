@@ -57,7 +57,6 @@
     {%- endfor %#}
 
     {%- block extrahead %} {% endblock %}
-    {%- block footer %} {% endblock %}
   </head>
 
   <body role="document">
@@ -237,6 +236,9 @@
                   <div class="content">
                     {%- block content %} {%- block document %} {%- block body %} {% endblock %} {%- endblock %} {%- endblock %}
                   </div>
+                  {# The footer is included in A+ chapter pages since it is defined inside div#exercise. #}
+                  {# Scripts do not need the data-aplus attribute here. #}
+                  {%- block footer %} {% endblock %}
                 </div>
               </div>
               {%- if not theme_use_wide_column|tobool %}
