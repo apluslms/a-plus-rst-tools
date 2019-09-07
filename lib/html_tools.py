@@ -30,7 +30,7 @@ def rewrite_file_links(path, root, chapter_dirs, static_host):
         ],
         static_host,
         chapter_dirs,
-        u'data-aplus-chapter="yes" ',
+        u'data-aplus-chapter ',
         u'data-aplus-path="/static/{course}" ',
     )
     _write_file(path, content)
