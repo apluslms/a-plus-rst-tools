@@ -43,7 +43,19 @@ def setup(app):
     app.add_config_value('course_head_urls', None, 'html')
     app.add_config_value('bootstrap_styled_topic_classes', 'dl-horizontal topic', 'html')
     app.add_config_value('acos_submit_base_url', 'http://172.21.0.2:3000', 'html')
-
+    app.add_config_value('numerate_ignoring_modules', None, 'html')
+    app.add_config_value('course_enrollment_start', None, 'html')
+    app.add_config_value('course_enrollment_end', None, 'html')
+    app.add_config_value('course_lifesupport_time', None, 'html')
+    app.add_config_value('course_archive_time', None, 'html')
+    app.add_config_value('course_enrollment_audience', None, 'html')
+    app.add_config_value('course_view_content_to', None, 'html')
+    app.add_config_value('course_index_mode', None, 'html')
+    app.add_config_value('course_content_numbering', None, 'html')
+    app.add_config_value('course_module_numbering', None, 'html')
+    app.add_config_value('course_description', None, 'html')
+    app.add_config_value('course_footer', None, 'html')
+    
     # Connect configuration generation to events.
     app.connect('builder-inited', toc_config.prepare)
     app.connect('build-finished', toc_config.write)

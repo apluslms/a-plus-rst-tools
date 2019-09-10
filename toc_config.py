@@ -66,11 +66,21 @@ def write(app, exception):
 
 def make_index(app, root):
 
-    course_title = app.config.course_title
-    course_open = app.config.course_open_date
-    course_close = app.config.course_close_date
-    course_late = app.config.default_late_date
-    course_penalty = app.config.default_late_penalty
+    def first_meta(doc):
+        metas = doc.traverse(directives.meta.aplusmeta)
+        return metas[0].options if metas else {}
+
+    course_meta = first_meta(root)
+
+    course_title = course_meta.get('name', app.config.course_title)
+    course_close = course_meta.get('course-close', app.config.course_close_date)
+    course_open = course_meta.get('course-start', app.config.course_open_date)
+    course_late = course_meta.get('course-late', app.config.default_late_date)
+    course_enrollment_start = course_meta.get('enrollment-start', app.config.course_enrollment_start)
+    course_enrollment_end = course_meta.get('enrollment-end', app.config.course_enrollment_end)
+    course_lifesupport_time = course_meta.get('lifesupport-time', app.config.course_lifesupport_time)
+    course_archive_time = course_meta.get('archive-time', app.config.course_archive_time)
+    course_penalty = course_meta.get('course-late-penalty', app.config.default_late_penalty)
     override = app.config.override
 
     modules = []
@@ -88,10 +98,6 @@ def make_index(app, root):
     def first_title(doc):
         titles = doc.traverse(nodes.title)
         return titles[0].astext() if titles else u'Unnamed'
-
-    def first_meta(doc):
-        metas = doc.traverse(directives.meta.aplusmeta)
-        return metas[0].options if metas else {}
 
     # Tries to parse date from natural text.
     def parse_date(src):
@@ -245,16 +251,58 @@ def make_index(app, root):
         u'modules': modules,
         u'categories': categories,
     }
+
     if course_open:
         index[u'start'] = parse_date(course_open)
     if course_close:
         index[u'end'] = parse_date(course_close)
-    head_urls = app.config.course_head_urls
-    if head_urls is not None:
+    if course_enrollment_start:
+        index[u'enrollment_start'] = parse_date(course_enrollment_start)
+    if course_enrollment_end:
+        index[u'enrollment_end'] = parse_date(course_enrollment_end)
+    if course_lifesupport_time:
+        index[u'lifesupport_time'] = parse_date(course_lifesupport_time)
+    if course_archive_time:
+        index[u'archive_time'] = parse_date(course_archive_time)
+
+    view_content = course_meta.get(u'view-content-to', app.config.course_view_content_to)
+    audience = course_meta.get(u'enrollment-audience', app.config.course_enrollment_audience)
+    index_mode = course_meta.get('index-mode', app.config.course_index_mode)
+    content_numbering = course_meta.get('content-numbering', app.config.course_content_numbering)
+    module_numbering = course_meta.get('module-numbering', app.config.course_module_numbering)
+    numerate_ignoring_modules = course_meta.get('numerate-ignoring-modules', app.config.numerate_ignoring_modules)
+
+    booleans = {'True': True, 'true': True, 'False': False, 'false': False} #for numerate_ignorig_modules
+
+    if view_content:
+        index[u'view_content_to'] = view_content
+    if audience:
+        index[u'enrollment_audience'] = audience
+    if index_mode:
+        index[u'index_mode'] = index_mode
+    if content_numbering:
+        index[u'content_numbering'] = content_numbering
+    if module_numbering:
+        index[u'module_numbering'] = module_numbering
+    if numerate_ignoring_modules:
+        index['numerate_ignoring_modules'] = booleans[numerate_ignoring_modules]
+
+    if app.config.course_head_urls is not None:
         # If the value is None, it is not set to the index.yaml nor aplus-json at all.
         # If the value is an empty list, it is still part of the index.yaml
         # and could be used to override a previous truthy value.
-        index[u'head_urls'] = head_urls
+        index[u'head_urls'] = app.config.course_head_urls
+
+    #the following settings can be defined to a value that would considered as False
+    if course_meta.get('course-description') is not None:
+        index[u'course_description'] = course_meta.get('course-description')
+    elif app.config.course_description is not None:
+        index[u'course_description'] = app.config.course_description
+    if course_meta.get('course-footer') is not None:
+        index[u'course_footer'] = course_meta.get('course-footer')
+    elif app.config.course_footer is not None:
+        index[u'course_footer'] = app.config.course_footer
+
 
     return index
 
