@@ -66,11 +66,18 @@ def write(app, exception):
 
 def make_index(app, root):
 
-    course_title = app.config.course_title
-    course_open = app.config.course_open_date
-    course_close = app.config.course_close_date
-    course_late = app.config.default_late_date
-    course_penalty = app.config.default_late_penalty
+
+    course_meta = app.env.metadata[app.config.master_doc]
+
+    course_title = course_meta.get('name', app.config.course_title)
+    course_close = course_meta.get('course-close', app.config.course_close_date)
+    course_open = course_meta.get('course-start', app.config.course_open_date)
+    course_late = course_meta.get('course-late', app.config.default_late_date)
+    course_enrollment_start = course_meta.get('enrollment-start')
+    course_enrollment_end = course_meta.get('enrollment-end')
+    course_lifesupport_time = course_meta.get('lifesupport-time')
+    course_archive_time = course_meta.get('archive-time')
+    course_penalty = course_meta.get('course-late-penalty', app.config.default_late_penalty)
     override = app.config.override
 
     modules = []
@@ -245,16 +252,46 @@ def make_index(app, root):
         u'modules': modules,
         u'categories': categories,
     }
+
     if course_open:
         index[u'start'] = parse_date(course_open)
     if course_close:
         index[u'end'] = parse_date(course_close)
-    head_urls = app.config.course_head_urls
-    if head_urls is not None:
+    if course_enrollment_start:
+        index[u'enrollment_start'] = parse_date(course_enrollment_start)
+    if course_enrollment_end:
+        index[u'enrollment_end'] = parse_date(course_enrollment_end)
+    if course_lifesupport_time:
+        index[u'lifesupport_time'] = parse_date(course_lifesupport_time)
+    if course_archive_time:
+        index[u'archive_time'] = parse_date(course_archive_time)
+
+    booleans = {'True': True, 'true': True, 'False': False, 'false': False} #for numerate_ignorig_modules
+
+    if course_meta.get(u'view-content-to'):
+        index[u'view_content_to'] = course_meta.get(u'view-content-to')
+    if course_meta.get(u'enrollment-audience'):
+        index[u'enrollment_audience'] = course_meta.get(u'enrollment-audience')
+    if course_meta.get('index-mode'):
+        index[u'index_mode'] = course_meta.get('index-mode')
+    if course_meta.get('content-numbering'):
+        index[u'content_numbering'] = course_meta.get('content-numbering')
+    if course_meta.get('module-numbering'):
+        index[u'module_numbering'] = course_meta.get('module-numbering')
+    if course_meta.get('numerate-ignoring-modules'):
+        index['numerate_ignoring_modules'] = booleans[course_meta.get('numerate-ignoring-modules')]
+
+    if course_meta.get('course_head_urls') is not None:
         # If the value is None, it is not set to the index.yaml nor aplus-json at all.
         # If the value is an empty list, it is still part of the index.yaml
         # and could be used to override a previous truthy value.
-        index[u'head_urls'] = head_urls
+        index[u'head_urls'] = course_meta.get('course_head_urls')
+
+    #the following settings can be defined to a value that would considered as False
+    if course_meta.get('course-description') is not None:
+        index[u'course_description'] = course_meta.get('course-description')
+    if course_meta.get('course-footer') is not None:
+        index[u'course_footer'] = course_meta.get('course-footer')
 
     return index
 
