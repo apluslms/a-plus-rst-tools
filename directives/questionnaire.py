@@ -327,6 +327,8 @@ class Choice(QuestionMixin, Directive):
         env, node, data = self.create_question()
         self.add_instructions(node, data, plain_content)
         data[u'options'] = (u'#!children', u'option')
+        if 'partial-points' in self.options:
+            data['partial_points'] = True
 
         dropdown = None
         if self.grader_field_type() == 'dropdown':
@@ -350,10 +352,13 @@ class Choice(QuestionMixin, Directive):
             if key.startswith('+'):
                 selected = True
                 key = key[1:]
-            if key.startswith(u'*'):
+            if key.startswith('*'):
                 correct = True
                 key = key[1:]
-            if key.endswith(u'.'):
+            elif key.startswith('?'):
+                correct = "neutral"
+                key = key[1:]
+            if key.endswith('.'):
                 key = key[:-1]
 
             # Add YAML configuration data.
@@ -361,7 +366,7 @@ class Choice(QuestionMixin, Directive):
                 'value': key,
             }
             if correct:
-                optdata['correct'] = True
+                optdata['correct'] = correct
             if selected:
                 optdata['selected'] = True
 
@@ -434,6 +439,10 @@ class SingleChoice(Choice):
 class MultipleChoice(Choice):
     ''' Lists options for picking all the correct ones. '''
 
+    # Inherit QuestionMixin options and add a key.
+    option_spec = dict(QuestionMixin.option_spec)
+    option_spec['partial-points'] = directives.flag
+
     def form_group_class(self):
         return u'form-pick-any'
 
@@ -459,7 +468,6 @@ class FreeText(QuestionMixin, Directive):
         'no-standard-prompt': directives.flag,
         'shorter-prompt': directives.flag,
         'class': directives.class_option,
-        'required': directives.flag,
         'key': directives.unchanged,
         'extra': directives.unchanged,
     }
