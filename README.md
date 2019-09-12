@@ -274,10 +274,19 @@ possible hints. The hints are targeted to specific choices and they are shown
 after answering.
 
 Correct answers in `pick-one` and `pick-any` directives are marked with `*`.
-Initially selected values may be set with `+`. If an option is both initially
-set and correct, `+` is written before `*`. The `pick-one` questions are
-rendered with HTML radio buttons by default, but a dropdown (select) element
-may be used with the `dropdown` option.
+A `pick-any` question may have neutral options, which are marked with `?`.
+Neutral options are always counted as correct, whether the student selected them
+or not. Initially selected options may be set with `+`. The initially selected
+options are pre-selected when the exercise is loaded. The `+` character is
+written before `*` or `?` if they are combined.
+
+The `pick-any` directive has a `partial-points` option in order to award points
+for partially correct submissions. Zero points are awarded to answers that mark
+half or less of the options (checkboxes) correctly. The points scale linearly to
+the maximum points when more than half of the options are answered correctly.
+
+The `pick-one` questions are rendered with HTML radio buttons by default, but
+a dropdown (select) element may be used with the `dropdown` option.
 
 The body of the `freetext` question is
 expected to be its model solution. However, the question instructions can be written
@@ -293,7 +302,7 @@ question instructions.
   :submissions: 4
   :points-to-pass: 0
 
-  This is a questionnaire number 1 that grants at maximum 70 points
+  This is a questionnaire with the key `1` that grants at maximum 70 points
   of difficulty A. Students can make at most 4 submissions.
   This exercise is marked passed when 0 points are reached (the default).
 
@@ -307,6 +316,7 @@ question instructions.
     c. 3
 
     !b § Count again!
+    b § That is correct!
     c § Too much
 
   (Hints can be included or omitted in any question.)
@@ -323,12 +333,18 @@ question instructions.
     *3. 3
 
   .. pick-any:: 10
+    :partial-points:
 
-    Pick the two **first**.
+    Pick the two **first**. Since the 'partial-points' option is set,
+    some points are awarded with a partially correct answer. If either one of the
+    correct options is not chosen or one of the wrong fields is chosen, 5 points are
+    still awarded. Selecting the last neutral option does not affect the points.
 
-    *a. this is the **first**
+    +*a. this is the **first**
     *b. this is the **second**
     c. this is the **third**
+    d. this is the **fourth**
+    ?e. choosing this does not affect the granted points
 
   .. freetext:: 30 string-ignorews-ignorequotes
     :length: 10
@@ -350,12 +366,15 @@ question instructions.
 
 ### 2. Feedback questionnaire
 
-A feedback questionnaire is almost like a graded questionnaire. When the `feedback` option is set,
-the questionnaire uses the feedback category and CSS class by default.
-The options `chapter-feedback`, `weekly-feedback`, `appendix-feedback`, and
-`course-feedback` use a different CSS class (with the same name as the option).
+A feedback questionnaire is almost like a graded questionnaire. When the
+`feedback` option is set, the questionnaire uses the feedback category and
+CSS class by default. Feedback questionnaires always grant full points if all
+of the required questions are answered. The questionnaire options
+`chapter-feedback`, `weekly-feedback`, `appendix-feedback`, and `course-feedback`
+use a different CSS class (with the same name as the option).
 If points are not specified, they are set to zero.
-The `feedback` option can be set only to the last questionnaire of the RST file.
+The `feedback` option can be set only to one questionnaire in an RST file because
+the exercise key is then hardcoded to `feedback`.
 
 The freetext questions are not expected to have a model solution, in essence the
 body of the freetext question will be shown as the question instructions.
