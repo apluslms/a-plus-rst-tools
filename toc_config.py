@@ -15,6 +15,29 @@ def prepare(app):
     yaml_writer.create_directory(app)
 
 
+def set_config_language_for_doc(app, docname, source):
+    '''Try to set config.language for the document (docname).
+
+    The config.language value affects string localization in lib/translations.py
+    and the Sphinx core.
+    The language is read from the filename suffix (chapter_en.rst) or
+    its parent directory (module01/en/chapter.rst). If the language can not
+    be read from those sources, then config.language is not modified.
+    '''
+    filepath = app.env.doc2path(docname)
+    folder = os.path.basename(os.path.dirname(filepath))
+
+    # If language is not found in the docname or the folder, nothing is done.
+    # Then app.env.config.language is defined in conf.py.
+    if len(docname) > 2 and docname[-3] == '_':
+        # docname has a postfix with the underscore, e.g., chapter_en.rst
+        # docname does not include the file type extension .rst
+        app.env.config.language = docname[-2:]
+    if len(folder) == 2:
+        # directory name is 2 characters long, e.g., "en"
+        app.env.config.language = folder
+
+
 def write(app, exception):
     ''' Writes the table of contents level configuration. '''
     if app.builder.name != 'html':
@@ -41,7 +64,7 @@ def write(app, exception):
                 raise SphinxError('Language postfix is required (e.g. docname_en): ' + docname)
             lang = docname[(i + 1):]
             app.info('Traverse document elements to write configuration index ({}).'.format(lang))
-            index = make_index(app, doc)
+            index = make_index(app, doc, language=lang)
             yaml_writer.write(yaml_writer.file_path(app.env, 'index_' + lang), index)
             indexes.append((lang, index))
 
@@ -64,7 +87,7 @@ def write(app, exception):
     html_tools.rewrite_outdir(app.outdir, keys, app.config.static_host)
 
 
-def make_index(app, root):
+def make_index(app, root, language=''):
 
     # metadata is defined in the field list of the RST document before any section
     # and other content. The master_doc is the main index.rst file of the course.
@@ -249,11 +272,11 @@ def make_index(app, root):
     # Build configuration index.
     index = {
         u'name': course_title,
-        u'language': app.config.language,
         u'static_dir': get_static_dir(app),
         u'modules': modules,
         u'categories': categories,
     }
+    index['language'] = language if language else app.config.language
 
     course_enrollment_start = course_meta.get('enrollment-start')
     course_enrollment_end = course_meta.get('enrollment-end')
