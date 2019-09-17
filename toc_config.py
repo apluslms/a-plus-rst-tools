@@ -66,18 +66,18 @@ def write(app, exception):
 
 def make_index(app, root):
 
-
+    # metadata is defined in the field list of the RST document before any section
+    # and other content. The master_doc is the main index.rst file of the course.
+    # The syntax for field lists in RST is like this:
+    # :course-start: 2019-09-16 12:00
     course_meta = app.env.metadata[app.config.master_doc]
 
-    course_title = course_meta.get('name', app.config.course_title)
-    course_close = course_meta.get('course-close', app.config.course_close_date)
+    course_title = app.config.course_title
     course_open = course_meta.get('course-start', app.config.course_open_date)
-    course_late = course_meta.get('course-late', app.config.default_late_date)
-    course_enrollment_start = course_meta.get('enrollment-start')
-    course_enrollment_end = course_meta.get('enrollment-end')
-    course_lifesupport_time = course_meta.get('lifesupport-time')
-    course_archive_time = course_meta.get('archive-time')
-    course_penalty = course_meta.get('course-late-penalty', app.config.default_late_penalty)
+    course_close = course_meta.get('course-end', app.config.course_close_date)
+    # default late deadline for modules: if defined, all modules allow late submissions
+    course_late = course_meta.get('course-default-late', app.config.default_late_date)
+    course_penalty = course_meta.get('course-default-late-penalty', app.config.default_late_penalty)
     override = app.config.override
 
     modules = []
@@ -101,7 +101,9 @@ def make_index(app, root):
         return metas[0].options if metas else {}
 
     # Tries to parse date from natural text.
-    def parse_date(src):
+    def parse_date(src, allow_empty=False):
+        if allow_empty and not src:
+            return None
         parts = src.split(u' ', 1)
         d = parts[0]
         t = parts[1] if len(parts) > 1 else ''
@@ -253,45 +255,56 @@ def make_index(app, root):
         u'categories': categories,
     }
 
+    course_enrollment_start = course_meta.get('enrollment-start')
+    course_enrollment_end = course_meta.get('enrollment-end')
+    course_lifesupport_time = course_meta.get('lifesupport-time')
+    course_archive_time = course_meta.get('archive-time')
+
     if course_open:
         index[u'start'] = parse_date(course_open)
     if course_close:
         index[u'end'] = parse_date(course_close)
-    if course_enrollment_start:
-        index[u'enrollment_start'] = parse_date(course_enrollment_start)
-    if course_enrollment_end:
-        index[u'enrollment_end'] = parse_date(course_enrollment_end)
-    if course_lifesupport_time:
-        index[u'lifesupport_time'] = parse_date(course_lifesupport_time)
-    if course_archive_time:
-        index[u'archive_time'] = parse_date(course_archive_time)
+    if course_enrollment_start is not None:
+        # None check separates the cases:
+        # 1) user inputs an empty value and it should be set into the YAML,
+        # 2) user does not define any value and no value should be set in YAML
+        index['enrollment_start'] = parse_date(course_enrollment_start, True)
+    if course_enrollment_end is not None:
+        index['enrollment_end'] = parse_date(course_enrollment_end, True)
+    if course_lifesupport_time is not None:
+        index['lifesupport_time'] = parse_date(course_lifesupport_time, True)
+    if course_archive_time is not None:
+        index['archive_time'] = parse_date(course_archive_time, True)
 
-    booleans = {'True': True, 'true': True, 'False': False, 'false': False} #for numerate_ignorig_modules
-
-    if course_meta.get(u'view-content-to'):
-        index[u'view_content_to'] = course_meta.get(u'view-content-to')
-    if course_meta.get(u'enrollment-audience'):
-        index[u'enrollment_audience'] = course_meta.get(u'enrollment-audience')
+    if course_meta.get('view-content-to'):
+        index['view_content_to'] = course_meta.get('view-content-to')
+    if course_meta.get('enrollment-audience'):
+        index['enrollment_audience'] = course_meta.get('enrollment-audience')
     if course_meta.get('index-mode'):
-        index[u'index_mode'] = course_meta.get('index-mode')
+        index['index_mode'] = course_meta.get('index-mode')
     if course_meta.get('content-numbering'):
-        index[u'content_numbering'] = course_meta.get('content-numbering')
+        index['content_numbering'] = course_meta.get('content-numbering')
     if course_meta.get('module-numbering'):
-        index[u'module_numbering'] = course_meta.get('module-numbering')
-    if course_meta.get('numerate-ignoring-modules'):
-        index['numerate_ignoring_modules'] = booleans[course_meta.get('numerate-ignoring-modules')]
-
-    if course_meta.get('course_head_urls') is not None:
+        index['module_numbering'] = course_meta.get('module-numbering')
+    if course_meta.get('numerate-ignoring-modules') is not None:
+        index['numerate_ignoring_modules'] = \
+            True if course_meta.get('numerate-ignoring-modules', False) not in (
+                False, 'false', 'False', 'no', 'No'
+            ) else False
+    head_urls = course_meta.get('course-head-urls', app.config.course_head_urls)
+    if head_urls is not None:
         # If the value is None, it is not set to the index.yaml nor aplus-json at all.
         # If the value is an empty list, it is still part of the index.yaml
         # and could be used to override a previous truthy value.
-        index[u'head_urls'] = course_meta.get('course_head_urls')
+        if isinstance(head_urls, str):
+            # convert to a list and remove empty strings
+            head_urls = list(filter(None, head_urls.split('\n')))
+        index['head_urls'] = head_urls
 
-    #the following settings can be defined to a value that would considered as False
     if course_meta.get('course-description') is not None:
-        index[u'course_description'] = course_meta.get('course-description')
+        index['course_description'] = course_meta.get('course-description')
     if course_meta.get('course-footer') is not None:
-        index[u'course_footer'] = course_meta.get('course-footer')
+        index['course_footer'] = course_meta.get('course-footer')
 
     return index
 
