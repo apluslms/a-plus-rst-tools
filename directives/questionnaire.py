@@ -2,6 +2,8 @@
 '''
 Directives that define automatically assessed questionnaires.
 '''
+import html
+
 from docutils import nodes
 from docutils.parsers.rst import Directive, directives
 from sphinx.errors import SphinxError
@@ -300,6 +302,14 @@ class Choice(QuestionMixin, Directive):
         self.add_instructions(node, data, plain_content)
         data[u'options'] = (u'#!children', u'option')
 
+        dropdown = None
+        if self.grader_field_type() == 'dropdown':
+            # The HTML select element has a different structure compared
+            # to the input elements (radio buttons and checkboxes).
+            dropdown = aplus_nodes.html('select', {
+                'name': 'field_{:d}'.format(env.question_count - 1),
+            })
+
         # Travel all answer options.
         for i,line in slicer(choices):
 
@@ -310,36 +320,66 @@ class Choice(QuestionMixin, Directive):
 
             # Trim the key.
             correct = False
+            selected = False
+            if key.startswith('+'):
+                selected = True
+                key = key[1:]
             if key.startswith(u'*'):
                 correct = True
                 key = key[1:]
             if key.endswith(u'.'):
                 key = key[:-1]
 
-            # Create document elements.
-            choice = aplus_nodes.html(u'div', {u'class':u'radio'})
-            label = aplus_nodes.html(u'label', {})
-            label.append(aplus_nodes.html(u'input', {
-                u'type': self.input_type(),
-                u'name': u'field_{:d}'.format(env.question_count - 1),
-                u'value': key,
-            }))
-            choice.append(label)
-            node.append(choice)
-
-            text = aplus_nodes.html(u'span', {})
-            text.store_html(u'label')
-            nested_parse_with_titles(self.state, line, text)
-            label.append(text)
-
-            # Add configuration data.
+            # Add YAML configuration data.
             optdata = {
-                u'value': key,
-                u'label': (u'#!html', u'label'),
+                'value': key,
             }
             if correct:
-                optdata[u'correct'] = True
-            choice.set_yaml(optdata, u'option')
+                optdata['correct'] = True
+            if selected:
+                optdata['selected'] = True
+
+            # Create document elements.
+            if dropdown is None:
+                # One answer alternative as a radio button or a checkbox.
+                choice = aplus_nodes.html('div', {'class': 'radio'})
+                label = aplus_nodes.html('label', {})
+                attrs = {
+                    'type': self.input_type(),
+                    'name': 'field_{:d}'.format(env.question_count - 1),
+                    'value': key,
+                }
+                if selected:
+                    attrs['checked'] = 'checked'
+                label.append(aplus_nodes.html('input', attrs))
+                choice.append(label)
+                node.append(choice)
+
+                text = aplus_nodes.html('span', {})
+                text.store_html('label')
+                nested_parse_with_titles(self.state, line, text)
+                label.append(text)
+
+                optdata['label'] = ('#!html', 'label')
+                choice.set_yaml(optdata, 'option')
+            else:
+                # Add option elements to the select.
+                # Options may only contain plain text, not formatted HTML.
+                attrs = {
+                    'value': key,
+                }
+                if selected:
+                    attrs['selected'] = 'selected'
+                option = aplus_nodes.html('option', attrs)
+                text = line[0]
+                option.append(nodes.Text(text))
+                dropdown.append(option)
+
+                optdata['label'] = html.escape(text)
+                option.set_yaml(optdata, 'option')
+
+        if dropdown is not None:
+            node.append(dropdown)
 
         self.add_feedback(node, data, feedback)
 
@@ -349,10 +389,16 @@ class Choice(QuestionMixin, Directive):
 class SingleChoice(Choice):
     ''' Lists options for picking the correct one. '''
 
+    # Inherit option_spec from QuestionMixin and add a key.
+    option_spec = dict(QuestionMixin.option_spec)
+    option_spec['dropdown'] = directives.flag
+
     def form_group_class(self):
         return u'form-pick-one'
 
     def grader_field_type(self):
+        if 'dropdown' in self.options:
+            return 'dropdown'
         return u'radio'
 
     def input_type(self):

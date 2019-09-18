@@ -273,6 +273,12 @@ the contents of the directive define the choices, the correct solution, and
 possible hints. The hints are targeted to specific choices and they are shown
 after answering.
 
+Correct answers in `pick-one` and `pick-any` directives are marked with `*`.
+Initially selected values may be set with `+`. If an option is both initially
+set and correct, `+` is written before `*`. The `pick-one` questions are
+rendered with HTML radio buttons by default, but a dropdown (select) element
+may be used with the `dropdown` option.
+
 The body of the `freetext` question is
 expected to be its model solution. However, the question instructions can be written
 inside the body before the model answer. The instructions and the model solution must
@@ -283,11 +289,11 @@ questions may not have a model solution and the body of the question is shown as
 question instructions.
 
 ```
-.. questionnaire:: 1 A60
+.. questionnaire:: 1 A
   :submissions: 4
   :points-to-pass: 0
 
-  This is a questionnaire number 1 that grants at maximum 50 points
+  This is a questionnaire number 1 that grants at maximum 70 points
   of difficulty A. Students can make at most 4 submissions.
   This exercise is marked passed when 0 points are reached (the default).
 
@@ -304,6 +310,17 @@ question instructions.
     c § Too much
 
   (Hints can be included or omitted in any question.)
+
+  .. pick-one:: 10
+    :required:
+    :dropdown:
+
+    What is 1+2?
+
+    +0. 0
+    1. 1
+    2. 2
+    *3. 3
 
   .. pick-any:: 10
 
