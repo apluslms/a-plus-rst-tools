@@ -164,6 +164,48 @@ html_theme_path = ['a-plus-rst-tools/theme']
 ```
 
 
+## A+ course settings
+
+Most A+ course settings can be set in the main index.rst of the course
+(`master_doc` in conf.py) since A+ version 1.5, autumn 2019. The course settings
+are defined as a field list **at the start of the index.rst file** before any section
+(heading). Field lists are basically just key-value pairs (for background, see syntax in
+[Docutils](http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html#field-lists)
+and [Sphinx](https://www.sphinx-doc.org/en/master/usage/restructuredtext/field-lists.html)).
+The keys for the A+ course settings are listed below:
+
+```rst
+:course-start: 2019-08-01 12:00:00
+:course-end: 2025-12-31 13:00:00
+:course-default-late: 2026-06-01 15:00
+:course-default-late-penalty: 0.60
+:course-head-urls:
+    - https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML
+:course-description: <p>Description about the course for the course front page.</p>
+    <p>More text.</p>
+    <p>HTML formatting is allowed.</p>
+:course-footer: <p>This is the course <b>footer</b> for the front page.</p>
+:enrollment-start: 2019-09-01 11:00
+:enrollment-end: 2020-01-01 12:00
+:lifesupport-time: 2026-12-31 20:00
+:archive-time: 2026-12-31 20:00
+:view-content-to: enrolled
+:enrollment-audience: internal
+:index-mode: toc
+:content-numbering: arabic
+:module-numbering: arabic
+:numerate-ignoring-modules: False
+```
+
+Some fields require a value from specific choices (see also
+[the MOOC-grader documentation about the index.yaml file](https://github.com/Aalto-LeTech/mooc-grader/blob/master/courses/README.md)):
+
+* `view-content-to`: enrolled, enrollment_audience, all_registered, public
+* `enrollment-audience`: internal, external, all
+* `index-mode`: results, toc, last, experimental
+* `content-numbering` and `module-numbering`: none, arabic, roman, hidden
+
+
 ## List of directives and examples
 
 ### 1. Graded questionnaire
