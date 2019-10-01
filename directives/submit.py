@@ -71,7 +71,7 @@ class SubmitForm(AbstractExercise):
             if not os.path.exists(path):
                 raise SphinxError('Missing config path {}'.format(self.options['config']))
             data = yaml_writer.read(path)
-            config_title = data.get(u'title', None)
+            config_title = data.get('title', '')
         else:
             data = { u'_external': True }
             if 'url' in self.options:
@@ -86,7 +86,7 @@ class SubmitForm(AbstractExercise):
                     data.update({u'lti_aplus_get_and_post': True})
                 if 'lti_open_in_iframe' in self.options:
                     data.update({u'lti_open_in_iframe': True})
-            config_title = None
+            config_title = ''
 
         config_title = self.options.get('title', config_title)
         if "radar_tokenizer" in self.options or "radar_minimum_match_tokens" in self.options:
@@ -98,9 +98,6 @@ class SubmitForm(AbstractExercise):
         category = u'submit'
         data.update({
             u'key': name,
-            u'title': env.config.submit_title.format(
-                key_title=key_title, config_title=config_title
-            ),
             u'category': u'submit',
             u'scale_points': points,
             u'difficulty': difficulty or '',
@@ -110,6 +107,24 @@ class SubmitForm(AbstractExercise):
             u'points_to_pass': self.options.get('points-to-pass', data.get('points_to_pass', 0)),
         })
         self.set_assistant_permissions(data)
+
+        if data.get('title|i18n'):
+            # Exercise config.yaml defines title|i18n for multiple languages.
+            # Do not write the field "title" to data in order to avoid conflicts.
+            if config_title:
+                # Overwrite the title for one language since the RST directive
+                # has defined the title option (or alternatively, the yaml file
+                # has "title" in addition to "title|i18n", but that does not make sense).
+                # env.config.language may be incorrect if the language can not be detected.
+                data['title|i18n'][env.config.language] = env.config.submit_title.format(
+                    key_title=key_title, config_title=config_title
+                )
+        else:
+            formatted_title = env.config.submit_title.format(
+                key_title=key_title, config_title=config_title
+            )
+            # If no title has been defined, use key_title as the default.
+            data['title'] = formatted_title if formatted_title else key_title
 
         if self.content:
             self.assert_has_content()
