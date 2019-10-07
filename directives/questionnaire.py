@@ -7,12 +7,16 @@ import html
 from docutils import nodes
 from docutils.parsers.rst import Directive, directives
 from sphinx.errors import SphinxError
+from sphinx.util import logging
 from sphinx.util.nodes import nested_parse_with_titles
 
 import aplus_nodes
 import lib.translations as translations
 import lib.yaml_writer as yaml_writer
 from directives.abstract_exercise import AbstractExercise, choice_truefalse
+
+
+logger = logging.getLogger(__name__)
 
 
 class Questionnaire(AbstractExercise):
@@ -74,7 +78,9 @@ class Questionnaire(AbstractExercise):
 
         env.questionnaire_is_feedback = is_feedback
         env.question_count = 0
+        env.aplus_single_question_points = None
         env.aplus_quiz_total_points = 0
+        env.aplus_pick_randomly_quiz = 'pick_randomly' in self.options
 
         # Create document elements.
         node = aplus_nodes.html(u'div', {
@@ -119,11 +125,20 @@ class Questionnaire(AbstractExercise):
         if len(self.arguments) == 2 and difficulty != self.arguments[1]:
             points_set_in_arguments = True
 
-        if points_set_in_arguments and env.aplus_quiz_total_points != points:
+        if 'pick_randomly' in self.options:
+            calculated_max_points = (
+                self.options.get('pick_randomly') * env.aplus_single_question_points
+                if env.aplus_single_question_points is not None
+                else 0
+            )
+        else:
+            calculated_max_points = env.aplus_quiz_total_points
+
+        if points_set_in_arguments and calculated_max_points != points:
             source, line = self.state_machine.get_source_and_line(self.lineno)
             raise SphinxError(source + ": line " + str(line) +
-            "\nThe points of the questions in the questionnaire must add up to the total points of the questionnaire!")
-        data['max_points'] = env.aplus_quiz_total_points
+                "\nThe points of the questions in the questionnaire must add up to the total points of the questionnaire!")
+        data['max_points'] = calculated_max_points
 
         if 'title' in self.options:
             data['title'] = self.options.get('title')
@@ -189,8 +204,18 @@ class QuestionMixin:
 
         # Add configuration.
         if points and len(self.arguments) > 0:
-            env.aplus_quiz_total_points += int(self.arguments[0])
-            data[u'points'] = int(self.arguments[0])
+            question_points = int(self.arguments[0])
+            data['points'] = question_points
+            env.aplus_quiz_total_points += question_points
+            if env.aplus_pick_randomly_quiz:
+                if env.aplus_single_question_points is None:
+                    env.aplus_single_question_points = question_points
+                else:
+                    if env.aplus_single_question_points != question_points:
+                        source, line = self.state_machine.get_source_and_line(self.lineno)
+                        logger.warning("Each question must have equal points when "
+                            "the questionnaire uses the 'pick randomly' option.", location=(source, line))
+
         if 'required' in self.options:
             data[u'required'] = True
         node.set_yaml(data, u'question')
