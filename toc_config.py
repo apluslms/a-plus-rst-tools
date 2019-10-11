@@ -24,6 +24,9 @@ def set_config_language_for_doc(app, docname, source):
     its parent directory (module01/en/chapter.rst). If the language can not
     be read from those sources, then config.language is not modified.
     '''
+    if not app.config.enable_rst_file_language_detection:
+        return
+
     filepath = app.env.doc2path(docname)
     folder = os.path.basename(os.path.dirname(filepath))
 

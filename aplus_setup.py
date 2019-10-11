@@ -40,6 +40,7 @@ def setup(app):
     app.add_config_value('skip_language_inconsistencies', False, 'html')
     app.add_config_value('allow_assistant_viewing', True, 'html')
     app.add_config_value('allow_assistant_grading', False, 'html')
+    app.add_config_value('enable_rst_file_language_detection', True, 'html')
     app.add_config_value('course_head_urls', None, 'html')
     app.add_config_value('bootstrap_styled_topic_classes', 'dl-horizontal topic', 'html')
     app.add_config_value('acos_submit_base_url', 'http://172.21.0.2:3000', 'html')
