@@ -128,15 +128,21 @@ class SubmitForm(AbstractExercise):
 
         if self.content:
             self.assert_has_content()
-            nested_parse_with_titles(self.state, self.content, node)
             # Sphinx can not compile the nested RST into HTML at this stage, hence
             # the HTML instructions defined in this directive body are added to
             # the exercise YAML file only at the end of the build. Sphinx calls
             # the visit functions of the nodes in the last writing phase.
             # The instructions are added to the YAML file in the depart_html
             # function in aplus_nodes.py.
+            exercise_description = aplus_nodes.html('div', {})
+            exercise_description.store_html('exercise_description')
+            nested_parse_with_titles(self.state, self.content, exercise_description)
+            node.append(exercise_description)
+            data['instructions'] = ('#!html', 'exercise_description')
         else:
-            paragraph = aplus_nodes.html(u'p', {})
+            # The placeholder text is only used in the built HTML
+            # (not in the YAML configurations).
+            paragraph = aplus_nodes.html('p', {})
             paragraph.append(nodes.Text(translations.get(env, 'submit_placeholder')))
             node.append(paragraph)
 

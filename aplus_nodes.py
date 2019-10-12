@@ -4,7 +4,6 @@ from docutils import nodes
 
 import lib.yaml_writer as yaml_writer
 import lib.html_tools as html_tools
-import lib.translations as translations
 
 
 class html(nodes.General, nodes.Element):
@@ -148,20 +147,6 @@ def depart_html(self, node):
         node._html = u"".join(self.body[(node._body_begin+1):-1])
     if hasattr(node, 'yaml_data'):
         recursive_fill(self.body, node.yaml_data, node)
-        if 'data-aplus-exercise' in node:
-            # If the body of the submit directive is used to define the exercise
-            # description in RST, store the exercise description in the HTML format
-            # into the exercise YAML configuration file.
-            # If the submit directive is used without a body, it contains
-            # a placeholder text node, in which case the instructions in YAML
-            # must not be modified.
-            has_body = not (len(node) > 0 and node[0].tagname == 'p' and len(node[0]) > 0 \
-                and node[0][0].astext() == translations.get(self.builder.env, 'submit_placeholder'))
-            if has_body:
-                # The instructions in the submit directive body have been
-                # compiled to HTML at this point.
-                # Drop the wrapper <div data-aplus-exercise> element.
-                node.yaml_data['instructions'] = ''.join(self.body[node._body_begin + 1:node._body_end - 1])
         if hasattr(node, 'yaml_write'):
             yaml_writer.write(node.yaml_write, node.pop_yaml())
     if node.no_write:
