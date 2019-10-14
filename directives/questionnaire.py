@@ -134,11 +134,14 @@ class Questionnaire(AbstractExercise):
         else:
             calculated_max_points = env.aplus_quiz_total_points
 
-        if points_set_in_arguments and calculated_max_points != points:
-            source, line = self.state_machine.get_source_and_line(self.lineno)
-            raise SphinxError(source + ": line " + str(line) +
-                "\nThe points of the questions in the questionnaire must add up to the total points of the questionnaire!")
-        data['max_points'] = calculated_max_points
+        if calculated_max_points == 0 and is_feedback:
+            data['max_points'] = points
+        else:
+            if points_set_in_arguments and calculated_max_points != points:
+                source, line = self.state_machine.get_source_and_line(self.lineno)
+                raise SphinxError(source + ": line " + str(line) +
+                    "\nThe points of the questions in the questionnaire must add up to the total points of the questionnaire!")
+            data['max_points'] = calculated_max_points
 
         if 'title' in self.options:
             data['title'] = self.options.get('title')
