@@ -121,9 +121,7 @@ class Questionnaire(AbstractExercise):
         }
         self.set_assistant_permissions(data)
 
-        points_set_in_arguments = False
-        if len(self.arguments) == 2 and difficulty != self.arguments[1]:
-            points_set_in_arguments = True
+        points_set_in_arguments = len(self.arguments) == 2 and difficulty != self.arguments[1]
 
         if 'pick_randomly' in self.options:
             calculated_max_points = (
