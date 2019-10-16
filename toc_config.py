@@ -241,6 +241,7 @@ def make_index(app, root, language=''):
         status = u'hidden' if 'hidden' in meta else (
             u'unlisted' if hidden else u'ready'
         )
+        read_open_src = meta.get('read-open-time', None)
         open_src = meta.get('open-time', course_open)
         close_src = meta.get('close-time', title_date_match.group(1) if title_date_match else course_close)
         late_src = meta.get('late-time', course_late)
@@ -256,6 +257,9 @@ def make_index(app, root, language=''):
             u'points_to_pass': meta.get('points-to-pass', 0),
             u'children': [],
         }
+
+        if read_open_src:
+            module[u'read-open'] = parse_date(read_open_src)
         if open_src:
             module[u'open'] = parse_date(open_src)
         if close_src:
