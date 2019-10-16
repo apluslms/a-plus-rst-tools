@@ -12,6 +12,7 @@ class AplusMeta(Directive):
     optional_arguments = 0
     option_spec = {
         'open-time': directives.unchanged,
+        'read-open-time': directives.unchanged,
         'close-time': directives.unchanged,
         'late-time': directives.unchanged,
         'late-penalty': directives.unchanged,
