@@ -33,6 +33,8 @@ def slicer(stringList):
 
 class annotated_node(nodes.General, nodes.Element): pass
 
+inline_anno_pattern = r"\[\[\[([^¶]+?)(?:¶(.*?))?\]\]\]"   # [[[annotation]]] or [[[annotation¶replacement]]]
+
 class AnnotatedSection(Directive):
     has_content = True
     required_arguments = 0
@@ -56,6 +58,10 @@ class AnnotatedSection(Directive):
         highest_annotation = self.assert_sanity(self.block_text)
         if not highest_annotation:
             return [self.state.document.reporter.error('Invalid annotation markers embedded in ' + self.block_text)]
+
+        # Inline annotations numbered first (before nested_parse deals with annotation directives)
+        inline_anno_count = len(re.findall(inline_anno_pattern, self.block_text))
+        env.annotated_annotation_count += inline_anno_count
 
         self.state.nested_parse(self.content, 0, node)
         node['name'] = env.annotated_name
@@ -87,11 +93,27 @@ def depart_annotated_node(self, node):
     parsed_html = self.body  # extract generated feedback line
     self.body = env.redirect # restore original output
 
-    self.body.append(postprocess(u''.join(parsed_html), node['name']))
+    postprocessed_html = postprocess_annotation_tags(u''.join(parsed_html), node['name'])
+    postprocessed_html = postprocess_inline_annotations(postprocessed_html, node['name'])
+    self.body.append(postprocessed_html)
 
     self.body.append("</div>\n")
 
-def postprocess(html, annotation_id):
+def postprocess_inline_annotations(html, annotated_section_id):
+    inline_anno_count = 0
+
+    def make_annotation_span(match):
+        nonlocal inline_anno_count
+        inline_anno_count += 1
+        annotation_text = match.group(1)
+        bit_to_insert = match.group(2)
+        replacement_attrib = ' data-replacement="' + bit_to_insert + '"' if bit_to_insert else ""
+        html_bits = (annotated_section_id, inline_anno_count, replacement_attrib, annotation_text)
+        return '<span class="codecomment comment-%s-%s"%s>%s</span>' % html_bits
+
+    return re.sub(inline_anno_pattern, make_annotation_span, html)
+
+def postprocess_annotation_tags(html, annotation_id):
     processed   = []
     openstack   = []
     selfclosing = []
