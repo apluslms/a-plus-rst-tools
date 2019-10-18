@@ -2,7 +2,7 @@
 import docutils
 from docutils import nodes
 from docutils.parsers.rst import Directive, directives
-from cgi import escape
+from html import escape
 from collections import Counter
 import re
 import os
@@ -137,7 +137,8 @@ class annotation_node(nodes.General, nodes.Element): pass
 class Annotation(Directive):
     has_content = True
     required_arguments = 0
-    optional_arguments = 0
+    optional_arguments = 1
+    final_argument_whitespace = True
     option_spec = { }
 
     def run(self):
@@ -153,10 +154,17 @@ class Annotation(Directive):
         env.annotated_annotation_count += 1
         node['annotation-number'] = env.annotated_annotation_count
         node['name-of-annotated-section'] = env.annotated_name
+        if self.arguments:
+            node['replacement'] = self.arguments[0]
         return [node]
 
 def visit_annotation_node(self, node):
-    self.body.append('<div class="container codecomment comment-%s-%s">' % (node['name-of-annotated-section'], node['annotation-number']))
+    if 'replacement' in node:
+        replacement_attrib = ' data-replacement="' + escape(node['replacement']) + '"'
+    else:
+        replacement_attrib = ""
+    html_bits = (node['name-of-annotated-section'], node['annotation-number'], replacement_attrib)
+    self.body.append('<div class="container codecomment comment-%s-%s"%s>' % html_bits)
 
 def depart_annotation_node(self, node):
     self.body.append("</div>\n")
