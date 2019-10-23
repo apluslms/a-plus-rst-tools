@@ -641,11 +641,29 @@ is not distributed in this repository (or anywhere).
 
   .. code-block:: python
 
-    1«x = "hello"»
-    2«print(x + " world")»
+    1«def func(param):»
+        2«return None»
+
+    3«x = "hello"»
+    4«print(x + " world")»
     print("Last line without any annotation")
 
-  .. annotation::
+  Annotations may be written inline within text using square brackets (``[ ]``)
+  or as blocks with the ``.. annotation::`` directive.
+  Inline annotations look like this: [[[define a **function** named ``func`` that takes one parameter *param*]]].
+  You can add a ``data-replacement`` attribute to the HTML code of the inline
+  annotation too like this:
+  [[[**return statement** ends the function execution and returns a value to the caller¶content for the replacement attribute]]]
+
+  It is up to your custom JavaScript code to do something with the data-replacement
+  attribute, but the intended use-case is that the content of the annotated code
+  would change when the user hovers over the annotation with the mouse.
+
+  The inline annotations are always numbered before the block annotations.
+  This affects the numbers in the annotated code block
+  (the sections like ``1«def func(param):»``).
+
+  .. annotation:: optional content for the data-replacement HTML attribute
 
     Assign a string to the variable x.
 
