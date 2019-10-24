@@ -221,8 +221,9 @@ even if the max points aren't defined in the argument. The questionnaire directi
 * `feedback`: If set, assumes the defaults for a feedback questionnaire
 * `title`: exercise title
 * `no-override`: If set, the conf.py override setting is ignored
-* `pick_randomly`: integer. Set the pick_randomly setting for the quiz
-  (select N questions randomly on each load)
+* `pick_randomly`: integer. The questionnaire selects N questions randomly for
+  the user instead of showing all questions. The random selection changes after
+  the user submits, but persists without changes if the user just reloads the web page.
 * `category`: exercise category
 * `status`: exercise status (default "unlisted"). See available [statuses](#list-of-exercise-statuses).
 * `allow-assistant-viewing`: Allows assistants to view the submissions of the students.
@@ -280,10 +281,22 @@ or not. Initially selected options may be set with `+`. The initially selected
 options are pre-selected when the exercise is loaded. The `+` character is
 written before `*` or `?` if they are combined.
 
-The `pick-any` directive has a `partial-points` option in order to award points
-for partially correct submissions. Zero points are awarded to answers that mark
-half or less of the options (checkboxes) correctly. The points scale linearly to
-the maximum points when more than half of the options are answered correctly.
+The `pick-any` directive has following options in addition to the common
+question options:
+
+* `partial-points`: When set, the question awards points for partially correct
+  submissions. Zero points are awarded to answers that mark
+  half or less of the options (checkboxes) correctly. The points scale linearly to
+  the maximum points when more than half of the options are answered correctly.
+* `randomized`: When this option is used, a subset of the answer choices (checkboxes)
+  is randomly selected for the user. The random selection changes after the user
+  submits, but persists when the user just reloads the web page. The value of
+  the option is an integer, which is the number of choices to randomly select
+  from all of the defined answer choices in the question. The option
+  `correct-count` should be also set when this option is used.
+* `correct-count`: The number of correct answer choices (checkboxes) to randomly
+  select in the randomized `pick-any` question. This option is used with the
+  `randomized` option.
 
 The `pick-one` questions are rendered with HTML radio buttons by default, but
 a dropdown (select) element may be used with the `dropdown` option.
