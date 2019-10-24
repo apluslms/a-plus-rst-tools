@@ -29,7 +29,7 @@ class Questionnaire(AbstractExercise):
         'course-feedback': directives.flag,
         'feedback': directives.flag,
         'no-override': directives.flag,
-        'pick_randomly': directives.nonnegative_int,
+        'pick_randomly': directives.positive_int,
         'submissions': directives.nonnegative_int,
         'points-to-pass': directives.nonnegative_int,
         'title': directives.unchanged,
@@ -81,12 +81,12 @@ class Questionnaire(AbstractExercise):
         env.aplus_single_question_points = None
         env.aplus_quiz_total_points = 0
         env.aplus_pick_randomly_quiz = 'pick_randomly' in self.options
+        env.aplus_random_question_exists = False
 
         # Create document elements.
         node = aplus_nodes.html(u'div', {
             u'class': u' '.join(classes),
             u'data-aplus-exercise': u'yes',
-            u'data-aplus-quiz': u'yes',
         })
         form = aplus_nodes.html(u'form', {
             u'action': key,
@@ -119,11 +119,28 @@ class Questionnaire(AbstractExercise):
                 u'fields': (u'#!children', None),
             }],
         }
+        if env.aplus_pick_randomly_quiz:
+            pick_randomly = self.options.get('pick_randomly', 0)
+            if pick_randomly < 1:
+                source, line = self.state_machine.get_source_and_line(self.lineno)
+                raise SphinxError(source + ": line " + str(line) +
+                    "\nNumber of fields to sample randomly should be greater than zero "
+                    "(option pick_randomly in the questionnaire directive).")
+            data['fieldgroups'][0]['pick_randomly'] = pick_randomly
+        elif not env.aplus_random_question_exists:
+            # The HTML attribute data-aplus-quiz makes the A+ frontend show the
+            # questionnaire feedback in place of the exercise description once
+            # the student has submitted at least once. In randomized questionnaires,
+            # the same form may not be submitted again due to one-time use nonce
+            # values, hence the attribute must not be used in randomized
+            # questionnaires.
+            node.attributes['data-aplus-quiz'] = 'yes'
+
         self.set_assistant_permissions(data)
 
         points_set_in_arguments = len(self.arguments) == 2 and difficulty != self.arguments[1]
 
-        if 'pick_randomly' in self.options:
+        if env.aplus_pick_randomly_quiz:
             calculated_max_points = (
                 self.options.get('pick_randomly') * env.aplus_single_question_points
                 if env.aplus_single_question_points is not None
@@ -150,11 +167,6 @@ class Questionnaire(AbstractExercise):
             data.update(override[category])
             if 'url' in data:
                 data['url'] = data['url'].format(key=name)
-        if "pick_randomly" in self.options:
-            pick_randomly = self.options.get('pick_randomly', 0)
-            if pick_randomly < 1:
-                raise SphinxError(u'Number of fields to sample randomly should greater than zero.')
-            data[u'fieldgroups'][0]['pick_randomly'] = pick_randomly
 
         form.write_yaml(env, name, data, 'exercise')
 
@@ -196,7 +208,11 @@ class QuestionMixin:
         elif env.questionnaire_is_feedback:
             data[u'title'] = title_text = u''
         else:
-            data[u'title|i18n'] = translations.opt('question', postfix=u" {:d}".format(env.question_count))
+            # "#" in the question title is converted to a number in the MOOC-grader.
+            # The questions of a "pick randomly" questionnaire should be numbered
+            # in the MOOC-grader since they are randomly selected.
+            postfix = '{#}' if env.aplus_pick_randomly_quiz else "{:d}".format(env.question_count)
+            data['title|i18n'] = translations.opt('question', postfix=postfix)
             title_text = u"{} {:d}".format(translations.get(env, 'question'), env.question_count)
         if title_text:
             title = aplus_nodes.html(u'label', {})
@@ -330,6 +346,12 @@ class Choice(QuestionMixin, Directive):
         if 'partial-points' in self.options:
             data['partial_points'] = True
 
+        if 'randomized' in self.options:
+            data['randomized'] = self.options.get('randomized', 1)
+            if 'correct-count' in self.options:
+                data['correct_count'] = self.options.get('correct-count', 0)
+            env.aplus_random_question_exists = True
+
         dropdown = None
         if self.grader_field_type() == 'dropdown':
             # The HTML select element has a different structure compared
@@ -441,7 +463,15 @@ class MultipleChoice(Choice):
 
     # Inherit QuestionMixin options and add a key.
     option_spec = dict(QuestionMixin.option_spec)
-    option_spec['partial-points'] = directives.flag
+    option_spec.update({
+        # enable partial points for partially correct answers
+        'partial-points': directives.flag,
+        # randomized and correct-count are used together:
+        # randomized defines the number of options that are chosen randomly and
+        # correct-count is the number of correct options to include
+        'randomized': directives.positive_int,
+        'correct-count': directives.nonnegative_int,
+    })
 
     def form_group_class(self):
         return u'form-pick-any'
