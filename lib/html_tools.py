@@ -40,10 +40,10 @@ def rewrite_links(content, path, root, link_elements, other_elements,
                     static_host, chapter_dirs, chapter_append, yaml_append):
     q1 = re.compile(r'^(\w+:|#)')
     q2 = re.compile(r'^(' + '|'.join(chapter_dirs) + r')(/|\\)')
-    for tag,attr in link_elements:
+    for tag, attr in link_elements:
         content = rewrite_elements(content, tag, attr, path, root,
                                     q1, static_host, q2, chapter_append, yaml_append)
-    for tag,attr in other_elements:
+    for tag, attr in other_elements:
         content = rewrite_elements(content, tag, attr, path, root,
                                     q1, static_host, None, None, yaml_append)
     return content
@@ -68,7 +68,7 @@ def rewrite_elements(content, tag, attr, path, root, q1, static_host, q2, append
             i = j
 
             full = ''
-            if dir_name.endswith('yaml'):
+            if path.endswith('.yaml'):
                 # content in yaml file
                 if val.startswith('../'):
                     # targeting a static file or a chapter in a different round
@@ -90,12 +90,24 @@ def rewrite_elements(content, tag, attr, path, root, q1, static_host, q2, append
 
                 # Links to chapters.
                 if q2 and q2.search(my_path):
-                    a = append.replace('"','\\"') if m.group('slash') else append
+                    #a = append.replace('"','\\"') if m.group('slash') else append
                     if not out.endswith(append):
-                        out += append
-                        #j = m.start('val')
-                        #out += append + content[i:j] + my_path.replace('\\','/')
-                        #i = m.end('val')
+                        split_path = my_path.split('/')
+                        module_path = '../' + split_path[0]
+                        # If the chapter RST file is in a nested directory under
+                        # the module directory (e.g., module01/material/chapter.rst
+                        # instead of module01/chapter.rst), then the chapter key
+                        # contains parts of the nested directory names in order
+                        # to be unique within the module.
+                        chapter_key = '_'.join(split_path[1:])
+                        # Remove language postfix (_en, _fi), if any.
+                        if chapter_key[-3] == '_':
+                            chapter_key = chapter_key[:-3]
+                        modified_path = module_path + '/' + chapter_key
+                        j = m.start('val')
+                        out += append + content[i:j] + modified_path.replace('\\', '/')
+                        i = m.end('val')
+
                 # Other links.
                 elif static_host:
                     j = m.start('val')
@@ -121,7 +133,6 @@ def rewrite_elements(content, tag, attr, path, root, q1, static_host, q2, append
     return out
 
 
-
 def _walk(html_dir):
     files = []
     for root, dirnames, filenames in os.walk(html_dir):
@@ -140,4 +151,3 @@ def _read_file(file_path):
 def _write_file(file_path, content):
     with io.open(file_path, 'w', encoding='utf-8') as f:
         f.write(content)
-
