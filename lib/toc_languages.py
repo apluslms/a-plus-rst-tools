@@ -283,8 +283,14 @@ def join_keys(lang1, key1, lang2, key2):
         if i < l2 and c == key2[i]:
             if not c in SEP or k == "" or k[-1] != c:
                 k += c
+    if not k or k in SEP:
+        raise SphinxError(
+            "Corresponding RST file names must match in multilingual courses:\n"
+            + key1 + "\n" + key2)
     if k[-1] in SEP:
         k = k[:-1]
+    if k[0] in SEP:
+        k = k[1:]
     return k
 
 

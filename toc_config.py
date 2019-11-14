@@ -202,7 +202,6 @@ def make_index(app, root, language=''):
                 u'unlisted' if hidden else u'ready'
             )
             chapter = {
-                u'key': name.split(u'/')[-1],#name.replace('/', '_'),
                 u'status': status,
                 u'name': first_title(child),
                 u'static_content': name + u'.html',
@@ -210,6 +209,14 @@ def make_index(app, root, language=''):
                 u'use_wide_column': app.config.use_wide_column,
                 u'children': [],
             }
+            # If the chapter RST file is in a nested directory under the module
+            # directory (e.g., module01/material/chapter.rst instead of
+            # module01/chapter.rst), then the chapter key must contain parts of
+            # the nested directory names in order to be unique within the module.
+            # Different directories could contain files with the same names.
+            key_parts = name.split('/')
+            chapter['key'] = '_'.join(key_parts[1:])
+
             if meta:
                 audience = meta.get('audience')
                 if audience:
