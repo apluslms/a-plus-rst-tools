@@ -346,12 +346,6 @@ class Choice(QuestionMixin, Directive):
         if 'partial-points' in self.options:
             data['partial_points'] = True
 
-        if 'randomized' in self.options:
-            data['randomized'] = self.options.get('randomized', 1)
-            if 'correct-count' in self.options:
-                data['correct_count'] = self.options.get('correct-count', 0)
-            env.aplus_random_question_exists = True
-
         dropdown = None
         if self.grader_field_type() == 'dropdown':
             # The HTML select element has a different structure compared
@@ -360,6 +354,7 @@ class Choice(QuestionMixin, Directive):
                 'name': 'field_{:d}'.format(env.question_count - 1),
             })
 
+        correct_count = 0
         # Travel all answer options.
         for i,line in slicer(choices):
 
@@ -377,6 +372,7 @@ class Choice(QuestionMixin, Directive):
             if key.startswith('*'):
                 correct = True
                 key = key[1:]
+                correct_count += 1
             elif key.startswith('?'):
                 correct = "neutral"
                 key = key[1:]
@@ -433,6 +429,21 @@ class Choice(QuestionMixin, Directive):
 
         if dropdown is not None:
             node.append(dropdown)
+
+        if 'randomized' in self.options:
+            data['randomized'] = self.options.get('randomized', 1)
+            if data['randomized'] > len(choices):
+                source, line = self.state_machine.get_source_and_line(self.lineno)
+                raise SphinxError(source + ": line " + str(line) +
+                    "\nThe option 'randomized' can not be greater than the number of answer choices!")
+            if 'correct-count' in self.options:
+                data['correct_count'] = self.options.get('correct-count', 0)
+                if data['correct_count'] > correct_count or data['correct_count'] > data['randomized']:
+                    source, line = self.state_machine.get_source_and_line(self.lineno)
+                    raise SphinxError(source + ": line " + str(line) +
+                        "\nThe option 'correct-count' can not be greater than "
+                        "the number of correct choices or the value of 'randomized'!")
+            env.aplus_random_question_exists = True
 
         self.add_feedback(node, data, feedback)
 

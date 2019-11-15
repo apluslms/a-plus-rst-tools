@@ -224,6 +224,8 @@ even if the max points aren't defined in the argument. The questionnaire directi
 * `pick_randomly`: integer. The questionnaire selects N questions randomly for
   the user instead of showing all questions. The random selection changes after
   the user submits, but persists without changes if the user just reloads the web page.
+  (The questionnaire should not include any static text fields between the questions
+  since the text fields are part of the pool from which the questions are randomly selected.)
 * `category`: exercise category
 * `status`: exercise status (default "unlisted"). See available [statuses](#list-of-exercise-statuses).
 * `allow-assistant-viewing`: Allows assistants to view the submissions of the students.
