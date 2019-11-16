@@ -13,7 +13,7 @@ from sphinx.util.nodes import nested_parse_with_titles
 import aplus_nodes
 import lib.translations as translations
 import lib.yaml_writer as yaml_writer
-from directives.abstract_exercise import AbstractExercise, choice_truefalse
+from directives.abstract_exercise import AbstractExercise, choice_truefalse, str_to_bool
 
 
 logger = logging.getLogger(__name__)
@@ -35,6 +35,7 @@ class Questionnaire(AbstractExercise):
         'title': directives.unchanged,
         'category': directives.unchanged,
         'status': directives.unchanged,
+        'reveal-model-at-max-submissions': choice_truefalse,
         'allow-assistant-viewing': choice_truefalse,
         'allow-assistant-grading': choice_truefalse,
     }
@@ -119,6 +120,17 @@ class Questionnaire(AbstractExercise):
                 u'fields': (u'#!children', None),
             }],
         }
+
+        meta_data = env.metadata[env.app.config.master_doc]
+        if 'reveal-model-at-max-submissions' in self.options:
+            data['reveal_model_at_max_submissions'] = str_to_bool(self.options['reveal-model-at-max-submissions'])
+        else:
+            default_reveal = str_to_bool(meta_data.get(
+                'questionnaire-default-reveal-model-at-max-submissions', 'false'),
+                error_msg_prefix=env.app.config.master_doc + " questionnaire-default-reveal-model-at-max-submissions: ")
+            if default_reveal:
+                data['reveal_model_at_max_submissions'] = default_reveal
+
         if env.aplus_pick_randomly_quiz:
             pick_randomly = self.options.get('pick_randomly', 0)
             if pick_randomly < 1:
