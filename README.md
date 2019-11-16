@@ -195,6 +195,7 @@ The keys for the A+ course settings are listed below:
 :content-numbering: arabic
 :module-numbering: arabic
 :numerate-ignoring-modules: False
+:questionnaire-default-reveal-model-at-max-submissions: False
 ```
 
 Some fields require a value from specific choices (see also
@@ -228,6 +229,11 @@ even if the max points aren't defined in the argument. The questionnaire directi
   since the text fields are part of the pool from which the questions are randomly selected.)
 * `category`: exercise category
 * `status`: exercise status (default "unlisted"). See available [statuses](#list-of-exercise-statuses).
+* `reveal-model-at-max-submissions`: If true, the questionnaire feedback reveals
+  the model solution after the user has consumed all submission attempts.
+  The feedback may reveal the model solution even before the exercise deadline.
+  Note that A+ has a separate feature for showing exercise model solutions after
+  the deadline.
 * `allow-assistant-viewing`: Allows assistants to view the submissions of the students.
   Can be set to true or false. Overrides any options set in the conf.py or config.yaml files.
 * `allow-assistant-grading`: Allows assistants to grade the submissions of the students.

@@ -1,12 +1,26 @@
 import itertools
+
 from docutils.parsers.rst import Directive, directives
+from sphinx.errors import SphinxError
 
 
 def choice_truefalse(argument):
     """Choice of "true" or "false".
     This is an option conversion function for the option_spec in directives.
     """
-    return directives.choice(argument, ('true', 'false'))
+    return directives.choice(argument, ('true', 'false', 'True', 'False'))
+
+def str_to_bool(string, error_msg_prefix=''):
+    booleans = {
+        'true': True,
+        'True': True,
+        'false': False,
+        'False': False,
+    }
+    try:
+        return booleans[string]
+    except KeyError:
+        raise SphinxError(error_msg_prefix + "{value} is not a boolean".format(value=string))
 
 
 class AbstractExercise(Directive):
@@ -32,10 +46,8 @@ class AbstractExercise(Directive):
         return difficulty, points
 
     def set_assistant_permissions(self, data):
-        tobool = {'true': True, 'false': False}
-
         if 'allow-assistant-grading' in self.options:
-            data['allow_assistant_grading'] = tobool[self.options['allow-assistant-grading']]
+            data['allow_assistant_grading'] = str_to_bool(self.options['allow-assistant-grading'])
 
         if 'allow-assistant-viewing' in self.options:
-            data['allow_assistant_viewing'] = tobool[self.options['allow-assistant-viewing']]
+            data['allow_assistant_viewing'] = str_to_bool(self.options['allow-assistant-viewing'])
