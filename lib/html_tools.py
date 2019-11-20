@@ -1,6 +1,7 @@
 import fnmatch
 import io, os, re
 
+import yaml
 
 
 def rewrite_outdir(out_dir, chapter_dirs, static_host):
@@ -13,26 +14,46 @@ def rewrite_outdir(out_dir, chapter_dirs, static_host):
 
 def rewrite_file_links(path, root, chapter_dirs, static_host):
     content = _read_file(path)
-    content = rewrite_links(
-        content,
-        path,
-        root,
-        [
-            (u'a',u'href'),
-        ],
-        [
-            (u'img',u'src'),
-            (u'script',u'src'),
-            (u'iframe',u'src'),
-            (u'link',u'href'),
-            (u'video',u'poster'),
-            (u'source',u'src'),
-        ],
-        static_host,
-        chapter_dirs,
-        u'data-aplus-chapter ',
-        u'data-aplus-path="/static/{course}" ',
-    )
+    link_elements = [
+        ('a', 'href'),
+    ]
+    other_elements = [
+        ('img', 'src'),
+        ('script', 'src'),
+        ('iframe', 'src'),
+        ('link', 'href'),
+        ('video', 'poster'),
+        ('source', 'src'),
+    ]
+    if path.endswith(".yaml"):
+        # YAML files are handled separately because rewriting links with
+        # a regexp could add YAML syntax errors to the file if quotes are not
+        # escaped properly. Escaping is now taken care of by the YAML module.
+        yaml_data_dict = yaml.load(content)
+        recursive_rewrite_links(
+            yaml_data_dict,
+            path,
+            root,
+            link_elements,
+            other_elements,
+            static_host,
+            chapter_dirs,
+            'data-aplus-chapter ',
+            'data-aplus-path="/static/{course}" ',
+        )
+        content = yaml.dump(yaml_data_dict, default_flow_style=False)
+    else:
+        content = rewrite_links(
+            content,
+            path,
+            root,
+            link_elements,
+            other_elements,
+            static_host,
+            chapter_dirs,
+            'data-aplus-chapter ',
+            'data-aplus-path="/static/{course}" ',
+        )
     _write_file(path, content)
 
 
@@ -151,3 +172,30 @@ def _read_file(file_path):
 def _write_file(file_path, content):
     with io.open(file_path, 'w', encoding='utf-8') as f:
         f.write(content)
+
+
+def recursive_rewrite_links(data_dict, path, root, link_elements, other_elements,
+        static_host, chapter_dirs, chapter_append, yaml_append):
+    '''Rewrite links in the string values inside the data_dict.'''
+    # YAML file may have a list or a dictionary in the topmost level.
+    if isinstance(data_dict, dict):
+        for key, val in data_dict.items():
+            if isinstance(val, dict) or isinstance(val, list):
+                recursive_rewrite_links(val, path, root, link_elements,
+                    other_elements, static_host, chapter_dirs, chapter_append,
+                    yaml_append)
+            elif isinstance(val, str):
+                data_dict[key] = rewrite_links(val, path, root, link_elements,
+                    other_elements, static_host, chapter_dirs, chapter_append,
+                    yaml_append)
+
+    elif isinstance(data_dict, list):
+        for i, a in enumerate(data_dict):
+            if isinstance(a, dict) or isinstance(a, list):
+                recursive_rewrite_links(a, path, root, link_elements,
+                    other_elements, static_host, chapter_dirs,
+                    chapter_append, yaml_append)
+            elif isinstance(a, str):
+                data_dict[i] = rewrite_links(a, path, root, link_elements,
+                    other_elements, static_host, chapter_dirs,
+                    chapter_append, yaml_append)
