@@ -227,6 +227,9 @@ even if the max points aren't defined in the argument. The questionnaire directi
   the user submits, but persists without changes if the user just reloads the web page.
   (The questionnaire should not include any static text fields between the questions
   since the text fields are part of the pool from which the questions are randomly selected.)
+* `preserve-questions-between-attempts`: If set, the questions in a `pick_randomly`
+  questionnaire are preserved between submission attempts (instead of being
+  resampled after each attempt).
 * `category`: exercise category
 * `status`: exercise status (default "unlisted"). See available [statuses](#list-of-exercise-statuses).
 * `reveal-model-at-max-submissions`: If true, the questionnaire feedback reveals
@@ -305,6 +308,9 @@ question options:
 * `correct-count`: The number of correct answer choices (checkboxes) to randomly
   select in the randomized `pick-any` question. This option is used with the
   `randomized` option.
+* `preserve-questions-between-attempts`: If set, the answer choices in a `randomized`
+  question are preserved between submission attempts (instead of being
+  resampled after each attempt).
 
 The `pick-one` questions are rendered with HTML radio buttons by default, but
 a dropdown (select) element may be used with the `dropdown` option.

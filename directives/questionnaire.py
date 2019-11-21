@@ -30,6 +30,9 @@ class Questionnaire(AbstractExercise):
         'feedback': directives.flag,
         'no-override': directives.flag,
         'pick_randomly': directives.positive_int,
+        # Random questions may be resampled after each submission attempt or
+        # the questions may be preserved.
+        'preserve-questions-between-attempts': directives.flag,
         'submissions': directives.nonnegative_int,
         'points-to-pass': directives.nonnegative_int,
         'title': directives.unchanged,
@@ -139,6 +142,8 @@ class Questionnaire(AbstractExercise):
                     "\nNumber of fields to sample randomly should be greater than zero "
                     "(option pick_randomly in the questionnaire directive).")
             data['fieldgroups'][0]['pick_randomly'] = pick_randomly
+            if 'preserve-questions-between-attempts' in self.options:
+                data['fieldgroups'][0]['resample_after_attempt'] = False
         elif not env.aplus_random_question_exists:
             # The HTML attribute data-aplus-quiz makes the A+ frontend show the
             # questionnaire feedback in place of the exercise description once
@@ -455,6 +460,8 @@ class Choice(QuestionMixin, Directive):
                     raise SphinxError(source + ": line " + str(line) +
                         "\nThe option 'correct-count' can not be greater than "
                         "the number of correct choices or the value of 'randomized'!")
+            if 'preserve-questions-between-attempts' in self.options:
+                data['resample_after_attempt'] = False
             env.aplus_random_question_exists = True
 
         self.add_feedback(node, data, feedback)
@@ -494,6 +501,9 @@ class MultipleChoice(Choice):
         # correct-count is the number of correct options to include
         'randomized': directives.positive_int,
         'correct-count': directives.nonnegative_int,
+        # Random questions may be resampled after each submission attempt or
+        # the questions may be preserved.
+        'preserve-questions-between-attempts': directives.flag,
     })
 
     def form_group_class(self):
