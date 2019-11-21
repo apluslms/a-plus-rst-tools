@@ -267,23 +267,34 @@ the common question options:
 
 The `freetext` directive accepts a second positional argument after the points.
 It defines the compare method for the model solution.
-A textual input can be compared with the model solution as `int`, `float`, `string`,
-or `unsortedchars` (unsorted character set).
-Another option is `regexp` that takes the correct answer as a regular
+A textual input can be compared with the model solution as `int`, `float`,
+`string`, `subdiff`, `regexp` or `unsortedchars` (unsorted character set).
+The `regexp` compare method takes the correct answer as a regular
 expression and tries to match the submission with it.
-Strings have comparison modifiers that are separated with a hyphen.
-For example, `.. freetext:: 30 string-ignorews-ignorequotes`.
+The `subdiff` method works almost like the `string` method, but it can have
+multiple correct answers separated with `|` and if the answer is incorrect, it
+shows the difference of the answer to each correct answer as a hint.
+For example, when the correct answer is 'cat' and the student answers 'car',
+the student receives feedback `Correct parts in your answer: ca-`.
+String methods have comparison modifiers that are separated with a hyphen.
+For example, `.. freetext:: 30 string-ignorews-ignorequotes`. The following
+modifiers are available:
 
 * `ignorews`: ignore white space (applies to regexp too)
 * `ignorequotes`: iqnore "quotes" around
-* `requirecase`: require identical lower and upper cases (only with the string type)
+* `requirecase`: require identical lower and upper cases (only with the string
+  and subdiff types)
 * `ignorerepl`: ignore REPL prefixes
 * `ignoreparenthesis`: ignore parenthesis "( )"
 
 The question directives may define instructions. After the instructions,
 the contents of the directive define the choices, the correct solution, and
 possible hints. The hints are targeted to specific choices and they are shown
-after answering.
+after answering. The format of the hints is `value § Feedback text`. The value
+is the student's submission and it may be prepended with `!` in order to show
+the feedback when the student did not answer that value. In freetext questions,
+the value may be prepended with `regexp:` in order to use regular expressions
+for matching the student's submission.
 
 Correct answers in `pick-one` and `pick-any` directives are marked with `*`.
 A `pick-any` question may have neutral options, which are marked with `?`.
@@ -373,7 +384,7 @@ question instructions.
     d. this is the **fourth**
     ?e. choosing this does not affect the granted points
 
-  .. freetext:: 30 string-ignorews-ignorequotes
+  .. freetext:: 30 string-ignorews-ignorequotes-requirecase
     :length: 10
 
     A textual input can be compared with the model solution as integer, float or string.
@@ -382,6 +393,7 @@ question instructions.
 
     test
     !test § Follow the instruction.
+    regexp:Test|TEST § Use the lower case!
 
   .. freetext:: 10 regexp
 
