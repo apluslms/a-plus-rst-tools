@@ -285,9 +285,13 @@ class QuestionMixin:
             value = value.strip()
             line[0] = content.strip()
             isnot = False
-            if value.startswith(u'!'):
+            compare_regexp = False
+            if value.startswith('!'):
                 isnot = True
                 value = value[1:]
+            if value.startswith('regexp:'):
+                compare_regexp = True
+                value = value[7:]
 
             # Create document elements.
             hint = aplus_nodes.html(u'div')
@@ -304,6 +308,8 @@ class QuestionMixin:
             }
             if isnot:
                 fbdata[u'not'] = True
+            if compare_regexp:
+                fbdata['compare_regexp'] = True
             hint.set_yaml(fbdata, u'feedback')
 
         node.append(feedbacks)
@@ -635,7 +641,7 @@ class FreeText(QuestionMixin, Directive):
     def _validate_compare_method(self, method):
         # valid_t and valid_mods should reflect those specified in mooc-grader
         # See also mooc-grader/README.md and mooc-grader/access/forms.py method compare_values
-        valid_t = {'array', 'unsortedchars', 'string', 'regexp', 'int', 'float'}
+        valid_t = {'array', 'unsortedchars', 'string', 'regexp', 'int', 'float', 'subdiff'}
         # 'requirecase' has an effect only when used with 'string'.
         # TODO: raise an exception when using 'requirecase' with something else
         valid_mods = {'ignorerepl', 'ignorews', 'ignorequotes', 'ignoreparenthesis', 'requirecase'}
