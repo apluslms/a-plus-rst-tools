@@ -122,6 +122,9 @@ class Questionnaire(AbstractExercise):
                 u'title': '',
                 u'fields': (u'#!children', None),
             }],
+            # The RST source file path is needed for fixing relative URLs
+            # in the exercise description.
+            '_rst_srcpath': env.doc2path(env.docname, None),
         }
 
         meta_data = env.metadata[env.app.config.master_doc]

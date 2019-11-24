@@ -28,6 +28,9 @@ IDENTICAL_EXERCISE_KEYS = [
     'category', 'max_points', 'difficulty', 'max_submissions',
     'min_group_size', 'max_group_size', 'points_to_pass', 'feedback',
 ]
+# Internal keys that may be joined in the |i18n format. Internal keys are only
+# used inside the a-plus-rst-tools to pass information forward.
+INTERNAL_KEYS_TO_JOIN = ['_rst_srcpath']
 
 
 def join(app, indexes):
@@ -152,6 +155,8 @@ class IndexJoiner:
                     c[k] = key + '.yaml'
                 elif k == 'children':
                     c[k] = self.join_children(c_path, lang1, v, lang2, c2.get(k, []))
+                elif k in INTERNAL_KEYS_TO_JOIN:
+                    c[k + '|i18n'] = join_values(lang1, v, lang2, c2.get(k, v))
                 elif deep_equals(v, c2.get(k, v)):
                     c[k] = v
                 else:
