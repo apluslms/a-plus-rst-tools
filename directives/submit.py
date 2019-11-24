@@ -105,6 +105,9 @@ class SubmitForm(AbstractExercise):
             u'min_group_size': data.get('min_group_size', env.config.default_min_group_size),
             u'max_group_size': data.get('max_group_size', env.config.default_max_group_size),
             u'points_to_pass': self.options.get('points-to-pass', data.get('points_to_pass', 0)),
+            # The RST source file path is needed for fixing relative URLs
+            # in the exercise description.
+            '_rst_srcpath': env.doc2path(env.docname, None),
         })
         self.set_assistant_permissions(data)
 
