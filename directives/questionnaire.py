@@ -38,6 +38,7 @@ class Questionnaire(AbstractExercise):
         'title': directives.unchanged,
         'category': directives.unchanged,
         'status': directives.unchanged,
+        'show-model': choice_truefalse,
         'reveal-model-at-max-submissions': choice_truefalse,
         'allow-assistant-viewing': choice_truefalse,
         'allow-assistant-grading': choice_truefalse,
@@ -128,6 +129,7 @@ class Questionnaire(AbstractExercise):
         }
 
         meta_data = env.metadata[env.app.config.master_doc]
+        # Show the model answer after the last submission.
         if 'reveal-model-at-max-submissions' in self.options:
             data['reveal_model_at_max_submissions'] = str_to_bool(self.options['reveal-model-at-max-submissions'])
         else:
@@ -136,6 +138,15 @@ class Questionnaire(AbstractExercise):
                 error_msg_prefix=env.app.config.master_doc + " questionnaire-default-reveal-model-at-max-submissions: ")
             if default_reveal:
                 data['reveal_model_at_max_submissions'] = default_reveal
+        # Show the model answer after the module deadline.
+        if 'show-model' in self.options:
+            data['show_model_answer'] = str_to_bool(self.options['show-model'])
+        else:
+            show_default = str_to_bool(meta_data.get(
+                'questionnaire-default-show-model', 'true'),
+                error_msg_prefix=env.app.config.master_doc + " questionnaire-default-show-model: ")
+            if not show_default:
+                data['show_model_answer'] = show_default
 
         if env.aplus_pick_randomly_quiz:
             pick_randomly = self.options.get('pick_randomly', 0)
