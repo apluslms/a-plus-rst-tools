@@ -298,9 +298,10 @@ the contents of the directive define the choices, the correct solution, and
 possible hints. The hints are targeted to specific choices and they are shown
 after answering. The format of the hints is `value § Feedback text`. The value
 is the student's submission and it may be prepended with `!` in order to show
-the feedback when the student did not answer that value. In freetext questions,
-the value may be prepended with `regexp:` in order to use regular expressions
-for matching the student's submission.
+the feedback when the student did not answer that value. The special value
+`%100%` shows the hint when the student answers the question correctly.
+In freetext questions, the value may be prepended with `regexp:` in order to
+use regular expressions for matching the student's submission.
 
 Correct answers in `pick-one` and `pick-any` directives are marked with `*`.
 A `pick-any` question may have neutral options, which are marked with `?`.
