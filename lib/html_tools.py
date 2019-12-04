@@ -89,8 +89,6 @@ def rewrite_elements(content, tag, attr, path, root, q1, static_host, q2, append
         r'<' + tag + r'\s+[^<>]*'
         r'(?P<attr>' + attr + r')=(?P<slash>\\?)"(?P<val>[^"?#]*)'
     )
-    re_remove_lang = re.compile(r'_[a-z]{2}(\.html)?(#.+)?$')
-    # match strings ending with the language identifier: "_en", "_en.html", "_en#id", "_en.html#id"
     i = 0
     for m in p.finditer(content):
         val = m.group('val')
@@ -127,23 +125,11 @@ def rewrite_elements(content, tag, attr, path, root, q1, static_host, q2, append
 
                 # Links to chapters.
                 if q2 and q2.search(my_path):
-                    #a = append.replace('"','\\"') if m.group('slash') else append
+
                     if not out.endswith(append):
-                        my_path = my_path.replace('\\', '/')
-                        split_path = my_path.split('/')
-                        module_path = '../' + split_path[0]
-                        # If the chapter RST file is in a nested directory under
-                        # the module directory (e.g., module01/material/chapter.rst
-                        # instead of module01/chapter.rst), then the chapter key
-                        # contains parts of the nested directory names in order
-                        # to be unique within the module.
-                        chapter_key = '_'.join(split_path[1:])
-                        # Remove language postfix (_en, _fi), if any exist.
-                        # Preserve ".html" and "#id" if they exist.
-                        chapter_key = re_remove_lang.sub(r'\1\2', chapter_key, count=1)
-                        modified_path = module_path + '/' + chapter_key
+                        my_path = '../' + my_path
                         j = m.start('val')
-                        out += append + content[i:j] + modified_path
+                        out += append + content[i:j] + my_path.replace('\\', '/')
                         i = m.end('val')
 
                 # Other links.

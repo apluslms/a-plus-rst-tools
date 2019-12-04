@@ -44,12 +44,15 @@ def setup(app):
     app.add_config_value('course_head_urls', None, 'html')
     app.add_config_value('bootstrap_styled_topic_classes', 'dl-horizontal topic', 'html')
     app.add_config_value('acos_submit_base_url', 'http://172.21.0.2:3000', 'html')
+    app.add_config_value('no_link_correction', None, 'html')
 
     # Connect configuration generation to events.
     app.connect('builder-inited', toc_config.prepare)
     app.connect('source-read', toc_config.set_config_language_for_doc)
-    app.connect('doctree-resolved',
-        lambda app, doctree, docname: toc_config.set_config_language_for_doc(app, docname, None))
+    app.connect('source-read', lambda app, docname, source:
+                toc_config.add_lang_postfixes_to_links(app, docname, source))
+    app.connect('doctree-resolved', lambda app, doctree, docname:
+                toc_config.set_config_language_for_doc(app, docname, None))
     app.connect('build-finished', toc_config.write)
 
     # Add node type that can describe HTML elements and store configurations.
