@@ -391,8 +391,8 @@ def add_lang_postfixes_to_links(app, docname, source):
         postfix = docname[-3:]
         if postfix[0] == '_':
             # Links of the form :doc:`link text <path/file>` or `link text <path/file>`_
-            source[0] = re.sub(r"<([a-zA-Z0-9_/.]+/)?([a-zA-Z0-9_]+[^_]..)>",
-                                r"<\0\1\2" + postfix + ">",
+            source[0] = re.sub(r"<([a-zA-Z0-9_/.]+/)?([a-zA-Z0-9_]+[^_]..)>`([^_])",
+                                r"<\0\1\2" + postfix + r">`\3",
                                 source[0])
             # Links of the form :doc:`path/file`
             source[0] = re.sub(r":doc:`([a-zA-Z0-9_/.]+/)?([a-zA-Z0-9_]+[^_]..)`",
