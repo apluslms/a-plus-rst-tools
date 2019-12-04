@@ -381,15 +381,20 @@ def traverse_tocs(app, doc):
 # this post fix is removed in the rewrite_outdir function in html_tools, since
 # a-plus uses chapter keys in the url:s, and the postfixes are removed from
 # chapter keys when the language indexes are merged.
-def add_lang_postfixes_to_links(docname, source):
-    # The source argument is a list whose single element is the contents of the source file
-    postfix = docname[-3:]
-    if postfix[0] == '_':
-        # Links of the form :doc:`link text <path/file>` or `link text <path/file>`_
-        source[0] = re.sub(r"<([a-zA-Z0-9_/.]+/)?([a-zA-Z0-9_]+[^_]..)>",
-                            r"<\0\1\2" + postfix + ">",
-                            source[0])
-        # Links of the form :doc:`path/file`
-        source[0] = re.sub(r":doc:`([a-zA-Z0-9_/.]+/)?([a-zA-Z0-9_]+[^_]..)`",
-                            r":doc:`\0\1\2" + postfix + "`",
-                            source[0])
+# The source argument is a list whose single element is the contents of the source file
+def add_lang_postfixes_to_links(app, docname, source):
+    # If the course use different format in links or for some other reason links
+    # need to stay untouched, add no_link_correction to conf.py or
+    # no-link-correction to the main index
+    if ("no_link_correction" not in app.env.metadata[app.config.master_doc]
+            and not app.config.no_link_correction):
+        postfix = docname[-3:]
+        if postfix[0] == '_':
+            # Links of the form :doc:`link text <path/file>` or `link text <path/file>`_
+            source[0] = re.sub(r"<([a-zA-Z0-9_/.]+/)?([a-zA-Z0-9_]+[^_]..)>",
+                                r"<\0\1\2" + postfix + ">",
+                                source[0])
+            # Links of the form :doc:`path/file`
+            source[0] = re.sub(r":doc:`([a-zA-Z0-9_/.]+/)?([a-zA-Z0-9_]+[^_]..)`",
+                                r":doc:`\0\1\2" + postfix + "`",
+                                source[0])
