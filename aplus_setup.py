@@ -48,8 +48,10 @@ def setup(app):
     # Connect configuration generation to events.
     app.connect('builder-inited', toc_config.prepare)
     app.connect('source-read', toc_config.set_config_language_for_doc)
-    app.connect('doctree-resolved',
-        lambda app, doctree, docname: toc_config.set_config_language_for_doc(app, docname, None))
+    app.connect('source-read', lambda app, docname, source:
+                toc_config.add_lang_postfixes_to_links(docname, source))
+    app.connect('doctree-resolved', lambda app, doctree, docname:
+                toc_config.set_config_language_for_doc(app, docname, None))
     app.connect('build-finished', toc_config.write)
 
     # Add node type that can describe HTML elements and store configurations.

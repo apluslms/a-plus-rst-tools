@@ -370,6 +370,26 @@ def traverse_tocs(app, doc):
     names = []
     for toc in doc.traverse(addnodes.toctree):
         hidden = toc.get('hidden', False)
-        for _,docname in toc.get('entries', []):
-            names.append((docname,hidden))
-    return [(name,hidden,app.env.get_doctree(name)) for name,hidden in names]
+        for _, docname in toc.get('entries', []):
+            names.append((docname, hidden))
+    return [(name, hidden, app.env.get_doctree(name)) for name, hidden in names]
+
+
+# This function adds the language postfix to chapterlinks in multilingual
+# courses, if it hasn't been manually added. This is necessary, since Sphinx
+# requires, that the file needs to exists, in order to make the link. However,
+# this post fix is removed in the rewrite_outdir function in html_tools, since
+# a-plus uses chapter keys in the url:s, and the postfixes are removed from
+# chapter keys when the language indexes are merged.
+def add_lang_postfixes_to_links(docname, source):
+    # The source argument is a list whose single element is the contents of the source file
+    postfix = docname[-3:]
+    if postfix[0] == '_':
+        # Links of the form :doc:`link text <path/file>` or `link text <path/file>`_
+        source[0] = re.sub(r"<([a-zA-Z0-9_/.]+/)?([a-zA-Z0-9_]+[^_]..)>",
+                            r"<\0\1\2" + postfix + ">",
+                            source[0])
+        # Links of the form :doc:`path/file`
+        source[0] = re.sub(r":doc:`([a-zA-Z0-9_/.]+/)?([a-zA-Z0-9_]+[^_]..)`",
+                            r":doc:`\0\1\2" + postfix + "`",
+                            source[0])
