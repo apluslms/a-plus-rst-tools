@@ -36,7 +36,7 @@ def set_config_language_for_doc(app, docname, source):
         # docname has a postfix with the underscore, e.g., chapter_en.rst
         # docname does not include the file type extension .rst
         app.env.config.language = docname[-2:]
-    if len(folder) == 2:
+    elif len(folder) == 2:
         # directory name is 2 characters long, e.g., "en"
         app.env.config.language = folder
 
