@@ -3,6 +3,7 @@
 Directives that define automatically assessed questionnaires.
 '''
 import html
+import string
 
 from docutils import nodes
 from docutils.parsers.rst import Directive, directives
@@ -213,7 +214,7 @@ def slicer(string_list):
 class QuestionMixin:
     ''' Common functions for all question directives. '''
     option_spec = {
-        'class' : directives.class_option,
+        'class': directives.class_option,
         'required': directives.flag,
         'key': directives.unchanged,
     }
@@ -433,9 +434,14 @@ class Choice(QuestionMixin, Directive):
                 optdata['selected'] = True
 
             if "enumerate" in self.options:
-                prefix = str(i+1) + ": "
+                if self.options['enumerate'] == 'numeric':
+                    prefix = str(i+1) + ": "
+                else:
+                    # Start over if there are more than 26 options.
+                    prefix = list(string.ascii_lowercase)[i % 26] + ": "
                 line[0] = prefix + line[0]
                 enumeration_of_choices[key] = prefix
+
             # Create document elements.
             if dropdown is None:
                 # One answer alternative as a radio button or a checkbox.
@@ -502,7 +508,7 @@ class Choice(QuestionMixin, Directive):
 class SingleChoice(Choice):
     ''' Lists options for picking the correct one. '''
 
-    # Inherit option_spec from QuestionMixin and add a key.
+    # Inherit option_spec from Choice and add a key.
     option_spec = dict(Choice.option_spec)
     option_spec['dropdown'] = directives.flag
 
@@ -521,7 +527,7 @@ class SingleChoice(Choice):
 class MultipleChoice(Choice):
     ''' Lists options for picking all the correct ones. '''
 
-    # Inherit QuestionMixin options and add a key.
+    # Inherit Choice options and add a key.
     option_spec = dict(Choice.option_spec)
     option_spec.update({
         # enable partial points for partially correct answers
