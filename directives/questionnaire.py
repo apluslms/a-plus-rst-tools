@@ -304,7 +304,7 @@ class QuestionMixin:
             if value.startswith('regexp:'):
                 compare_regexp = True
                 value = value[7:]
-            if enumeration_of_choices:
+            if enumeration_of_choices and not isnot:
                 line[0] = enumeration_of_choices[value] + content.strip()
             else:
                 line[0] = content.strip()
