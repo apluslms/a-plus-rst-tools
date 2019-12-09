@@ -13,7 +13,8 @@ from sphinx.util.nodes import nested_parse_with_titles
 import aplus_nodes
 import lib.translations as translations
 import lib.yaml_writer as yaml_writer
-from directives.abstract_exercise import AbstractExercise, choice_truefalse, str_to_bool
+from directives.abstract_exercise import (AbstractExercise, choice_truefalse,
+                                            str_to_bool, choice_enumerate)
 
 
 logger = logging.getLogger(__name__)
@@ -234,7 +235,7 @@ class QuestionMixin:
             data[u'key'] = yaml_writer.ensure_unicode(key)
 
         # Add title.
-        if not title_text is None:
+        if title_text is not None:
             data[u'title'] = title_text
         elif env.questionnaire_is_feedback:
             data[u'title'] = title_text = u''
@@ -281,7 +282,7 @@ class QuestionMixin:
 
         data[u'more'] = (u'#!html', u'more')
 
-    def add_feedback(self, node, data, paragraph):
+    def add_feedback(self, node, data, paragraph, enumeration_of_choices=None):
         if not paragraph:
             return
 
@@ -289,12 +290,11 @@ class QuestionMixin:
         data[u'feedback'] = (u'#!children', u'feedback')
         feedbacks = aplus_nodes.html(u'p', {u'class':u'feedback-holder'}, no_write=True)
 
-        for i,line in slicer(paragraph):
-            if not u'§' in line[0]:
+        for i, line in slicer(paragraph):
+            if u'§' not in line[0]:
                 raise SphinxError(u'Feedback separator § exptected: {}'.format(line[0]))
-            value,content = line[0].split(u'§', 1)
+            value, content = line[0].split(u'§', 1)
             value = value.strip()
-            line[0] = content.strip()
             isnot = False
             compare_regexp = False
             if value.startswith('!'):
@@ -303,6 +303,10 @@ class QuestionMixin:
             if value.startswith('regexp:'):
                 compare_regexp = True
                 value = value[7:]
+            if enumeration_of_choices:
+                line[0] = enumeration_of_choices[value] + content.strip()
+            else:
+                line[0] = content.strip()
 
             # Create document elements.
             hint = aplus_nodes.html(u'div')
@@ -342,6 +346,8 @@ class QuestionMixin:
 
 class Choice(QuestionMixin, Directive):
     ''' Abstract directive that includes answer options. '''
+    option_spec = dict(QuestionMixin.option_spec)
+    option_spec['enumerate'] = choice_enumerate
     has_content = True
     required_arguments = 0
     optional_arguments = 1
@@ -393,10 +399,11 @@ class Choice(QuestionMixin, Directive):
 
         correct_count = 0
         # Travel all answer options.
-        for i,line in slicer(choices):
+        enumeration_of_choices = {}
+        for i, line in slicer(choices):
 
             # Split choice key off.
-            key,content = line[0].split(u' ', 1)
+            key, content = line[0].split(u' ', 1)
             key = key.strip()
             line[0] = content.strip()
 
@@ -425,6 +432,10 @@ class Choice(QuestionMixin, Directive):
             if selected:
                 optdata['selected'] = True
 
+            if "enumerate" in self.options:
+                prefix = str(i+1) + ": "
+                line[0] = prefix + line[0]
+                enumeration_of_choices[key] = prefix
             # Create document elements.
             if dropdown is None:
                 # One answer alternative as a radio button or a checkbox.
@@ -460,7 +471,6 @@ class Choice(QuestionMixin, Directive):
                 text = line[0]
                 option.append(nodes.Text(text))
                 dropdown.append(option)
-
                 optdata['label'] = html.escape(text)
                 option.set_yaml(optdata, 'option')
 
@@ -484,7 +494,7 @@ class Choice(QuestionMixin, Directive):
                 data['resample_after_attempt'] = False
             env.aplus_random_question_exists = True
 
-        self.add_feedback(node, data, feedback)
+        self.add_feedback(node, data, feedback, enumeration_of_choices)
 
         return [node]
 
@@ -493,7 +503,7 @@ class SingleChoice(Choice):
     ''' Lists options for picking the correct one. '''
 
     # Inherit option_spec from QuestionMixin and add a key.
-    option_spec = dict(QuestionMixin.option_spec)
+    option_spec = dict(Choice.option_spec)
     option_spec['dropdown'] = directives.flag
 
     def form_group_class(self):
@@ -512,7 +522,7 @@ class MultipleChoice(Choice):
     ''' Lists options for picking all the correct ones. '''
 
     # Inherit QuestionMixin options and add a key.
-    option_spec = dict(QuestionMixin.option_spec)
+    option_spec = dict(Choice.option_spec)
     option_spec.update({
         # enable partial points for partially correct answers
         'partial-points': directives.flag,

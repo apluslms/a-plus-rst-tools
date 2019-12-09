@@ -10,6 +10,14 @@ def choice_truefalse(argument):
     """
     return directives.choice(argument, ('true', 'false', 'True', 'False'))
 
+
+def choice_enumerate(argument):
+    """Choice of "numeric" or "alphabet".
+    Used in the enumeration of choices in pick-any and pick-one directives.
+    """
+    return directives.choice(argument, ('numeric', 'alphabet'))
+
+
 def str_to_bool(string, error_msg_prefix=''):
     booleans = {
         'true': True,
