@@ -129,6 +129,7 @@ def rewrite_elements(content, tag, attr, path, root, q1, static_host, q2, append
                 if q2 and q2.search(my_path):
                     #a = append.replace('"','\\"') if m.group('slash') else append
                     if not out.endswith(append):
+                        my_path = my_path.replace('\\', '/')
                         split_path = my_path.split('/')
                         module_path = '../' + split_path[0]
                         # If the chapter RST file is in a nested directory under
@@ -142,7 +143,7 @@ def rewrite_elements(content, tag, attr, path, root, q1, static_host, q2, append
                         chapter_key = re_remove_lang.sub(r'\1\2', chapter_key, count=1)
                         modified_path = module_path + '/' + chapter_key
                         j = m.start('val')
-                        out += append + content[i:j] + modified_path.replace('\\', '/')
+                        out += append + content[i:j] + modified_path
                         i = m.end('val')
 
                 # Other links.
@@ -231,4 +232,3 @@ def recursive_rewrite_links(data_dict, path, root, link_elements, other_elements
                 data_dict[i] = rewrite_links(a, path, root, link_elements,
                     other_elements, static_host, chapter_dirs,
                     chapter_append, yaml_append, lang_rst_src_path)
-
