@@ -13,6 +13,7 @@ Directive for creating "point of interest" summary block.
     :columns: relative widths of poi content columns (e.e. 2 3 3)
     :not_in_slides: used with the presentation maker. This POI does not show in the slides when used.
     :not_in_book: This POI does not appear in the book material when used
+    :no_poi_box: Removes surrounding box and navigation
 
     Content of point-of-interest here
 
@@ -54,6 +55,7 @@ class PointOfInterest(Directive):
         # not_in_slides and not_in_book are used with the presentation maker
         'not_in_slides': directives.flag,
         'not_in_book': directives.flag,
+        'no_poi_box': directives.flag,
     }
 
     def run(self):
@@ -79,9 +81,6 @@ class PointOfInterest(Directive):
                         break
             title_text = self.arguments[0]
 
-        container_class = 'poi-container'
-        content_name = name + '-content'
-
         node = nodes.container()
         title = nodes.container()
 
@@ -90,11 +89,23 @@ class PointOfInterest(Directive):
             # included in the A+ course materials (e-book).
             return []
 
-        # add an extra div to force content to desired height
-        hcontainer_opts = {
-            u'style':'height:'+self.options.get('height', '')+';',
-            u'class': container_class +' poi-content row',
-        }
+        if 'no_poi_box' not in self.options:
+            container_class = 'poi-container'
+            content_name = name + '-content'
+
+            # add an extra div to force content to desired height
+            hcontainer_opts = {
+                u'style': 'height:' + self.options.get('height', '') + ';',
+                u'class': container_class + ' poi-content row',
+            }
+        else:
+            container_class = 'no-poi-box'
+            content_name = name
+            hcontainer_opts = {
+                u'style': 'height:' + self.options.get('height', '') + ';',
+                u'class': 'row',
+            }
+
         if 'bgimg' in self.options:
             static_host = os.environ.get('STATIC_CONTENT_HOST', None)
             if not static_host:
@@ -174,7 +185,9 @@ class PointOfInterest(Directive):
         links.append(text)
         nav.append(links)
 
-        node.append(nav)
+        if 'no_poi_box' not in self.options:
+            node.append(nav)
+
         node.append(collapsible)
         collapsible.append(hcontainer)
 
@@ -193,7 +206,6 @@ class PointOfInterest(Directive):
         self.add_name(node)
         collapsible['ids'].append(content_name)
         collapsible['classes'].extend([container_class, 'collapse'])
-
         node['classes'].extend(['poi'])
         if 'class' in self.options:
             node['classes'].extend(self.options['class'])

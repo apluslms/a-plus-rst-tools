@@ -680,6 +680,7 @@ tool called "presentation maker".
   :bgimg: path to background image
   :not_in_slides: a flag used with the presentation maker. This POI does not show in the slides if this is defined.
   :not_in_book: If this flag is given, this POI does not appear in the A+ content chapter.
+  :no_poi_box: Removes surrounding box and navigation
 
   Content of point-of-interest here.
 
