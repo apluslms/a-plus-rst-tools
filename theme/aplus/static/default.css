@@ -510,6 +510,12 @@ div.math:hover a.headerlink {
     width:inherit;
 }
 
+.no-poi-box {
+    margin: 0;
+    padding: 0;
+    width: inherit;
+}
+
 .poi-container {
     width:100%;
     padding:0;
