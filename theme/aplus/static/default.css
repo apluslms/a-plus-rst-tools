@@ -553,4 +553,11 @@ div.math:hover a.headerlink {
 
 .borderless .poi-content {
     border: 0;
-} 
+}
+
+.poi-container.poi-content {
+    border: 1px solid #e7f2fa;
+    border-top: 2px solid #3c763d;
+    border-bottom: 2px solid #3c763d;
+    background: #ebf5e7;
+}

@@ -168,11 +168,14 @@ class PointOfInterest(Directive):
         # need to be within a TextElement-node
         text = nodes.inline()
         poinav = poi_nav()
-        icon = aplus_nodes.html(u'img', {
-            u'src':u'../_static/poi.png',
-            u'alt':u'Point of interest icon',
-            u'class':u'poi-icon',
-            })
+        # Create a relative path to the _build/html/_static/poi.png file
+        # from the built HTML file of the current RST document.
+        dir_depth = len(os.path.dirname(env.doc2path(env.docname, None)).split(os.path.sep))
+        icon = aplus_nodes.html('img', {
+            'src': ('../' * dir_depth) + '_static/poi.png',
+            'alt': 'Point of interest icon',
+            'class': 'poi-icon',
+        })
         hidelink = aplus_nodes.html(u'a', {
             u'href':u'#' + content_name,
             u'data-toggle':u'collapse'})
