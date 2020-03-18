@@ -9,17 +9,14 @@ Directive for creating "point of interest" summary block.
     :hidden: (if this flag is present, the content of this poi is hidden by default)
     :class: any additional css classes
     :height: optional fixed height for content
+    :columns: relative widths of poi content columns (e.e. 2 3 3) DEPRECATED, this is used with ::newcol
     :bgimage: path to background image
-    :columns: relative widths of poi content columns (e.e. 2 3 3)
     :not_in_slides: used with the presentation maker. This POI does not show in the slides when used.
     :not_in_book: This POI does not appear in the book material when used
     :no_poi_box: Removes surrounding box and navigation
 
     Content of point-of-interest here
 
-    ::newcol
-
-    Using ::newcol separated by line breaks starts a new column
 
 '''
 import os.path, random, string
@@ -179,11 +176,19 @@ class PointOfInterest(Directive):
         hidelink = aplus_nodes.html(u'a', {
             u'href':u'#' + content_name,
             u'data-toggle':u'collapse'})
-
         hidelink.append(icon)
-        hidelink.append(nodes.Text(title_text))
-        title.append(hidelink)
-        nav.append(title)
+
+        if ":math:" in title_text:
+            math_eq = title_text.split('`')[1]
+            math_node = nodes.math()
+            math_node['latex'] = math_eq
+            hidelink.append(math_node)
+            title.append(hidelink)
+            nav.append(title)
+        else:
+            hidelink.append(nodes.Text(title_text))
+            title.append(hidelink)
+            nav.append(title)
         text.append(poinav)
         links.append(text)
         nav.append(links)
@@ -198,9 +203,9 @@ class PointOfInterest(Directive):
         for cont, offset, cnode, cwidth in contentnodes:
             # Bootstrap uses 12 unit grid
             if not cwidth:
-                cwidth = int(12/numcols)
+                cwidth = int(12 / numcols)
             cnode['classes'] = ['col-sm-' + str(cwidth)]
-            self.state.nested_parse(cont, offset, cnode)
+            self.state.nested_parse(cont, offset, cnode, hcontainer)
 
         # poinav id needs to be added so that we can identify the node later when processing
         poinav['ids'].append(name)

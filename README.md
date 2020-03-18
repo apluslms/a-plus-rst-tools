@@ -713,6 +713,7 @@ Point of interests may also be used to generate separate lecture slides
 (not directly included in the A+ content chapters). This requires a separate
 tool called "presentation maker".
 
+More information about [Columns and rows](#17-columns-and-rows).
 ```
 .. point-of-interest:: Title text
   :id: unique id, if not supplied a random id will be generated
@@ -721,20 +722,31 @@ tool called "presentation maker".
   :hidden: (if this flag is present, the content of this poi is hidden by default)
   :class: any additional css classes
   :height: fixed height in pixels
-  :columns: relative width of each column (e.g. for three columns 2 2 3)
   :bgimg: path to background image
+  :columns: relative widths of poi content columns (e.e. 2 3 3) Deprecated, since it is used with the newcol columns
   :not_in_slides: a flag used with the presentation maker. This POI does not show in the slides if this is defined.
   :not_in_book: If this flag is given, this POI does not appear in the A+ content chapter.
   :no_poi_box: Removes surrounding box and navigation
 
   Content of point-of-interest here.
 
-  Use ::newcol to start a new column:
+  Use row and column directives to start a new row and column. More information about columns and rows in this documentation.
+  Note: ::newcol columns are deprecated.
 
-  ::newcol
+  .. row::
 
-  New column starts here. If :columns: option not present columns of equal width will be created.
-  (The presentation maker slides do not support the newcol feature.)
+     .. column::
+       :width: 6
+       :column-class: bg-success
+
+       Column content 1
+
+     .. column::
+       :width: 6
+       :column-class: bg-warning
+
+       Column content 2. Here goes the content.
+
 ```
 
 
@@ -949,6 +961,62 @@ the mp4 or webm format. The id argument is the filename without the extension.
   :frame-height: 500
   :frame-width: 850
 ```
+
+### 17. Columns and rows
+
+Directive for creating columns and rows. Primarily designed to be used with "point of interest" summary blocks. But should also work independently to layout content. 
+
+This extension must be activated separately in the project conf.py (extensions = ["aplus_setup", "row"]).
+
+**Note**
+
+Column (`:columns:`) options in the point of interest directive do not work with these columns. Use it with the columns created with `::newcol`.
+
+```
+Example with point-of-interest directive.
+
+Available options:
+:width: sets column width. Maximum value of 12 when using one column. If not set it will use full width (12).
+:column-class: Bootstrap classes can be applied. See example below.
+
+
+.. point-of-interest:: Test
+
+   .. row::
+
+     .. column::
+       :width: 8
+       :column-class: bg-warning text-center
+
+       .col-8 this is column's content.
+
+       .. row::
+
+         .. column::
+           :width: 6
+           :column-class: bg-light
+
+           .col-6
+
+         .. column::
+           :width: 6
+           :column-class: bg-secondary
+
+           .col-6
+
+     .. column::
+       :width: 4
+       :column-class: bg-success
+
+       .col-4
+
+```
+Width is not mandatory, but if it is not given then it uses the width of 12 automatically.
+
+**Note - newcol is deprecated**
+
+Older columns (`::newcol`) work, but they are deprecated. Column and row directives should be used instead.  
+
 ### List of exercise statuses
 
 There are 6 possible statuses for exercises:
