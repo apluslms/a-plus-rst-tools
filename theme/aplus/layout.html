@@ -37,6 +37,14 @@
     <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
     {%- endif %}
 
+    {% if '_static/css/annotated.css' in css_files %}
+    <link rel="stylesheet" href="{{ pathto('_static/css/annotated.css', 1) }}" type="text/css" data-aplus="yes"/>
+    {% endif %}
+
+    {% if '_static/js/annotated.js' in script_files %}
+    <script rel="stylesheet" src="{{ pathto('_static/js/annotated.js', 1) }}" type="text/javascript" data-aplus="yes"></script>
+    {% endif %}
+
     <link rel="stylesheet" href="https://plus.cs.hut.fi/static/css/main.css" />
 
     {%- if style %}

@@ -1,0 +1,107 @@
+/* hover highlights for the annotated a-plus-rst directive */
+.content div.codecomment,
+.content div.container.guicomment {
+  border-radius: 7px;
+  -webkit-border-radius: 7px;
+  -khtml-border-radius: 7px;
+  -moz-border-radius: 7px;
+  border-style: solid;
+  border-width: 1px 0px 1px 0px;
+  width: 80%;
+  padding: 10px 15px 10px 15px;
+  margin: 0px 12px 12px 95px;
+  background: #d9eecf;
+  box-shadow: 2px 2px 2px 0px #bfc2a1;
+  border-color: #bfc2a1;
+  font-size: 0.9em;
+  line-height: 1.5;
+}
+.content span.codecomment {
+  border-radius: 7px;
+  -webkit-border-radius: 7px;
+  -khtml-border-radius: 7px;
+  -moz-border-radius: 7px;
+  border-style: solid;
+  border-width: 1px 0px 1px 0px;
+  margin: 0px 1px 0px 1pxs;
+  padding: 0px 2px 1px 2px;
+  background: #d9eecf;
+  box-shadow: 1px 1px 1px 0px #bfc2a1;
+  border-color: #bfc2a1;
+  white-space: nowrap;
+}
+.content div.admonition.aside div.codecomment {
+  width: 90%;
+  font-size: 0.85em;
+}
+.content div.codecomment + p,
+.content div.guicomment + p {
+  margin-top: 18px;
+}
+.content div.codecomment.comment-now-highlighted,
+.content div.guicomment.comment-now-highlighted {
+  box-shadow: 0px 0px 3px 3px #1ea780;
+}
+.content span.codecomment.comment-now-highlighted {
+  box-shadow: 0px 0px 2px 2px #1ea780;
+}
+.content span.loc-now-highlighted,
+.content div.highlight pre span.loc-now-highlighted,
+.content pre.repl span.loc-now-highlighted,
+.content pre.repl span.loc-now-highlighted strong,
+.content pre.repl span.loc-now-highlighted em,
+.content pre.pseudocode span.loc-now-highlighted,
+.content pre.pseudocode span.loc-now-highlighted em,
+.content div.console pre span.loc-now-highlighted,
+.content div.console pre span.loc-now-highlighted em,
+.content div.animation div.loc-now-highlighted {
+  background: #bb2c02 !important;
+  color: white !important;
+}
+.content span.loc-now-highlighted.loc-now-inserted,
+.content div.highlight pre span.loc-now-highlighted.loc-now-inserted,
+.content pre.repl span.loc-now-highlighted.loc-now-inserted,
+.content pre.repl span.loc-now-highlighted.loc-now-inserted strong,
+.content pre.repl span.loc-now-highlighted.loc-now-inserted em,
+.content pre.pseudocode span.loc-now-highlighted.loc-now-inserted,
+.content pre.pseudocode span.loc-now-highlighted.loc-now-inserted em,
+.content div.console pre span.loc-now-highlighted.loc-now-inserted,
+.content div.console pre span.loc-now-highlighted.loc-now-inserted em,
+.content div.animation div.loc-now-highlighted.loc-now-inserted {
+  background: #1155cc !important;
+  font-weight: bold !important;
+  color: white !important;
+}
+.content div.codecomment.comment-now-locked {
+  box-shadow: 0px 0px 3px 3px #3e9770;
+  background: #c9debf;
+}
+.content span.codecomment.comment-now-locked {
+  box-shadow: 0px 0px 2px 2px #3e9770;
+  background: #c9debf;
+}
+.content div.highlight pre span.loc-now-locked,
+.content pre.repl span.loc-now-locked,
+.content pre.repl span.loc-now-locked strong,
+.content pre.repl span.loc-now-locked em,
+.content pre.pseudocode span.loc-now-locked,
+.content pre.pseudocode span.loc-now-locked em,
+.content div.console pre span.loc-now-locked,
+.content div.console pre span.loc-now-locked em,
+.content div.animation div.loc-now-locked {
+  background: #bb2222;
+  color: #e0e0e0;
+}
+.content div.highlight pre span.loc-now-locked.loc-now-inserted,
+.content pre.repl span.loc-now-locked.loc-now-inserted,
+.content pre.repl span.loc-now-locked.loc-now-inserted strong,
+.content pre.repl span.loc-now-locked.loc-now-inserted em,
+.content pre.pseudocode span.loc-now-locked.loc-now-inserted,
+.content pre.pseudocode span.loc-now-locked.loc-now-inserted em,
+.content div.console pre span.loc-now-locked.loc-now-inserted,
+.content div.console pre span.loc-now-locked.loc-now-inserted em,
+.content div.animation div.loc-now-locked.loc-now-inserted {
+  background: #0145cc;
+  font-weight: bold;
+  color: #e0e0e0;
+}

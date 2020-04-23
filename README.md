@@ -741,11 +741,24 @@ tool called "presentation maker".
 ### 10. Annotated code blocks
 
 Code blocks may be annotated with comments for specific lines. This extension
-must be activated separately in the project conf.py
-(`extensions = ["aplus_setup", "annotated"]`).
-This extension requires custom JavaScript code and CSS styles in order to
-highlight the annotations on mouse hover in the web browser. The frontend code
-is not distributed in this repository (or anywhere).
+must be activated separately in the project by adding the following settings to
+the **conf.py** file located in the root of your course directory.
+
+```python
+extensions = ["aplus_setup", "annotated"]
+...
+include_annotated_js = True
+include_annotated_css = True
+```
+
+This directive requires a custom JavaScript and CSS implementation for
+highlighting the annotated code when the mouse hover events of the annotations
+are fired in the web browser. Therefore, we have added a default implementation
+that allow you to make use of the annotated directive without having to write
+your own JS or CSS. However, if you want to remove the default JavaScript and
+CSS implementation, you can change the value of `include_annotated_js` and
+`include_annotated_css` to `False`. By doing so, you could write your own CSS
+and JS code to interact with the annotated directive.
 
 ```
 .. annotated::
