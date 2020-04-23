@@ -8,9 +8,18 @@ import re
 import os
 from sphinx.directives.code import CodeBlock
 from sphinx.errors import SphinxError
+from sphinx.util.fileutil import copy_asset
+from sphinx.util import logging
 from operator import itemgetter
 
 import aplus_nodes
+
+CSS_FILE = 'css/annotated.css'
+JS_FILE = 'js/annotated.js'
+
+assets_path = 'static'
+
+logger = logging.getLogger(__name__)
 
 annotated_section_counts = Counter()
 
@@ -357,10 +366,41 @@ def annotate(html, section_name, annotations):
     content = u''.join(result)
     return u''.join([parts[0], parts[1], content, parts[3], parts[4]])
 
+def add_assets(app):
+    # This method reads the `include_annotated_css` and `include_annotated_js`
+    # settings from the conf.py file located in the course directory. If such
+    # settings are not found, the default settings defined in the setup()
+    #  method will be used instead
+    app.config.include_annotated_css and app.add_stylesheet(CSS_FILE)
+    app.config.include_annotated_js and app.add_javascript(JS_FILE)
 
+def copy_asset_files(app, exc):
+
+    if exc:
+        return
+        
+    # The files are added to the _build/html/_static/css folder. 
+    if app.config.include_annotated_css:
+        logger.info('Copying CSS files from the annotated directive to the _static folder... ')
+        html_static_path_css = os.path.join(assets_path, CSS_FILE)
+        local_path_css = os.path.join(os.path.dirname(__file__), html_static_path_css)
+        copy_asset(local_path_css, os.path.join(app.outdir, '_static', 'css'))
+        logger.info('done')
+    
+    # The files are added to the _build/html/_static/js folder. 
+    if app.config.include_annotated_js:
+        logger.info('Copying JS files from the annotated directive to the _static folder... ')
+        html_static_path_js = os.path.join(assets_path, JS_FILE)
+        local_path_js = os.path.join(os.path.dirname(__file__), html_static_path_js)
+        copy_asset(local_path_js, os.path.join(app.outdir, '_static', 'js'))
+        logger.info('done')
+        
 def setup(app):
 
     ignore_visitors = (aplus_nodes.visit_ignore, aplus_nodes.depart_ignore)
+
+    app.add_config_value('include_annotated_css', False, 'html')
+    app.add_config_value('include_annotated_js', False, 'html')
 
     app.add_node(annotated_node, html=(visit_annotated_node, depart_annotated_node),
             latex=ignore_visitors)
@@ -373,3 +413,7 @@ def setup(app):
     app.add_node(altered_node, html=(visit_altered_node, depart_altered_node),
             latex=ignore_visitors)
     app.add_directive('altered-code-block', AlteredCodeBlock)
+
+    app.connect('builder-inited', add_assets)
+
+    app.connect('build-finished', copy_asset_files)
