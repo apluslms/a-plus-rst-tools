@@ -964,7 +964,7 @@ the mp4 or webm format. The id argument is the filename without the extension.
 
 ### 17. Columns and rows
 
-Directive for creating columns and rows. Primarily designed to be used with "point of interest" summary blocks. But should also work independently to layout content. 
+Directive for creating columns and rows. Primarily designed to be used with "point of interest" summary blocks. But should also work independently to layout content.
 
 This extension must be activated separately in the project conf.py (extensions = ["aplus_setup", "row"]).
 
@@ -1015,7 +1015,56 @@ Width is not mandatory, but if it is not given then it uses the width of 12 auto
 
 **Note - newcol is deprecated**
 
-Older columns (`::newcol`) work, but they are deprecated. Column and row directives should be used instead.  
+Older columns (`::newcol`) work, but they are deprecated. Column and row directives should be used instead.
+
+### 18. Tabs
+
+The `rst-tabs` directive is designed to add tabbed content. Tabs separate content into different panels so that one
+panel is displayed at a time.
+
+The following snippet of code is an example on how you can use `rst-tabs` directive. As you can see in the example,
+the `rst-tabs` directive can contain one or more `tab-content` directives. Each `tab-content` requires one argument,
+which is used internally to identify individual `tab-content`. Therefore, this argument must be unique and cannot contain
+any whitespace. You must also add the option `title` to the `tab-content` directive since it is the title that will be shown
+in your tabs. The content of each `tab-content` can be any RST directive.
+
+```rst
+
+.. rst-tabs::
+
+  .. tab-content:: tab-html-render
+    :title: HTML visualisation
+
+    .. raw:: html
+
+      <h1>Title</h1>
+
+    :menuselection:`Action 1 --> Action 2`
+
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus hendrerit
+    auctor quam at maximus. Phasellus ornare suscipit tortor et aliquet. Aliquam
+    erat volutpat. Aliquam at orci vel nibh tincidunt lacinia. Cras gravida,
+    mauris eget vulputate ullamcorper, turpis est commodo velit, consequat
+    pulvinar augue mi malesuada metus. Maecenas ac diam et augue placerat
+    faucibus. Nullam ut iaculis nisi.
+
+  .. tab-content:: tab-code
+    :title: RST Code
+
+    .. code-block:: rst
+
+      Title
+      =====
+
+      :menuselection:`Action 1 --> Action 2`
+
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus hendrerit
+      auctor quam at maximus. Phasellus ornare suscipit tortor et aliquet. Aliquam
+      erat volutpat. Aliquam at orci vel nibh tincidunt lacinia. Cras gravida,
+      mauris eget vulputate ullamcorper, turpis est commodo velit, consequat
+      pulvinar augue mi malesuada metus. Maecenas ac diam et augue placerat
+      faucibus. Nullam ut iaculis nisi.
+```
 
 ### List of exercise statuses
 
