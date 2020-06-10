@@ -394,6 +394,8 @@ acronym {
 /* -- code displays --------------------------------------------------------- */
 
 pre {
+  color: inherit;
+  background-color: inherit;
   overflow: auto;
   overflow-y: hidden; /* fixes display issues on Chrome browsers */
 }
