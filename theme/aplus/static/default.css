@@ -42,7 +42,9 @@ special components. Generic and body-level rules come from the A+ system. */
 
 /* Specialized admonitions use different colours */
 .admonition.success,
-.admonition.meta {
+.admonition.meta,
+.admonition.tip,
+.admonition.hint {
   color: #3c763d;
   background-color: #dff0d8;
   border-color: #d6e9c6;
@@ -183,12 +185,22 @@ div.topic {
   border: 1px solid #ccc;
   padding: 7px 7px 0 7px;
   margin: 10px 0 10px 0;
+  background-color: #ddf1fb;
+}
+
+div.topic a {
+  color: #33a1ff;
+  font-weight: 400;
 }
 
 p.topic-title {
   font-size: 1.1em;
   font-weight: bold;
   margin-top: 10px;
+}
+
+.topic.dl-horizontal dd {
+  margin-bottom: 0px;
 }
 
 /* -- admonitions ----------------------------------------------------------- */
@@ -465,6 +477,14 @@ code.xref,
 a code {
   background-color: transparent;
   font-weight: bold;
+}
+
+/* Change the appearance of the download role */
+a.download > code > span.pre {
+  color: #2491EE;
+  font-weight: 500;
+  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif; 
+  font-size: 14px;
 }
 
 h1 code,
