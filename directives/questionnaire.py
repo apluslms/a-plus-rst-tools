@@ -304,10 +304,14 @@ class QuestionMixin:
             if value.startswith('regexp:'):
                 compare_regexp = True
                 value = value[7:]
-            if enumeration_of_choices and not isnot:
-                line[0] = enumeration_of_choices[value] + content.strip()
-            else:
-                line[0] = content.strip()
+
+            line[0] = content.strip()
+
+            if enumeration_of_choices:
+                if value.startswith('%100%'):
+                    line[0] = enumeration_of_choices[value[5:]] + line[0]
+                else:
+                    line[0] = enumeration_of_choices[value] + line[0]
 
             # Create document elements.
             hint = aplus_nodes.html(u'div')
@@ -435,7 +439,7 @@ class Choice(QuestionMixin, Directive):
 
             if "enumerate" in self.options:
                 if self.options['enumerate'] == 'numeric':
-                    prefix = str(i+1) + ": "
+                    prefix = str(i+1) + ". "
                 else:
                     # Start over if there are more than 26 options.
                     prefix = list(string.ascii_lowercase)[i % 26] + ": "
