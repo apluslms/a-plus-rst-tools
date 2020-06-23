@@ -20,6 +20,10 @@ import os
 # -- Aplus configuration --------------------------------------------------
 course_open_date = '2016-01-01'
 course_close_date = '2017-01-01'
+aplusmeta_substitutions = {
+    'open01': '2016-01-02 12:00',
+    'close01': '2016-03-01 12:00'
+}
 questionnaire_default_submissions = 5
 program_default_submissions = 10
 ae_default_submissions = 0
