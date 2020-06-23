@@ -25,6 +25,7 @@ def setup(app):
     app.add_config_value('submit_title', "{config_title}", 'html')
     app.add_config_value('course_open_date', None, 'html')
     app.add_config_value('course_close_date', None, 'html')
+    app.add_config_value('aplusmeta_substitutions', {}, 'html')
     app.add_config_value('questionnaire_default_submissions', 5, 'html')
     app.add_config_value('program_default_submissions', 10, 'html')
     app.add_config_value('default_min_group_size', 1, 'html')

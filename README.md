@@ -596,6 +596,36 @@ Module 1 - Introduction
   :close-time: 2020-09-30 14:00
 ```
 
+Alternatively, one can also define these options in the conf.py file of the
+course in the following way.
+
+1. Add the `aplusmeta_substitutions` variable in the conf.py file.
+
+```python
+    aplusmeta_substitutions = {
+        'open01': '2020-09-10 10:01'
+    }
+```
+
+This variable is a dictionary where keys are strings and values are dates
+in the usual format (see above). In the example above, you have defined a
+shortcut text "open01" for date "2020-09-10 10:01".
+
+2. Use the shortcut texts in the aplusmeta directive in a module index.rst:
+
+```rst
+    .. aplusmeta::
+      :open-time: open01
+      :close-time: 2019-09-20 12:00
+      :late-time: 2019-12-20 09:00
+```
+
+3. When the course is compiled, the aplusmeta directive looks for substitution
+strings in the `aplusmeta_substitutions` dictionary. The substitutions can be
+named freely as long as they are not RST markup (e.g. '|open01|' will not
+work). The substitutions can be used with any option of the meta directive.
+
+
 ### 6. Active element input
 
 This creates an input field for active element.
