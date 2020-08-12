@@ -564,12 +564,12 @@ In LTI excercises, the instructions cannot be written in the body of the submit 
 
 ### 5. Meta (exercise round settings)
 
-The meta directive is used to define module (exercise round) settings.
+The aplusmeta directive is used to define module (exercise round) settings.
 It should be defined in the RST file that defines the `toctree` of the module
 (module index). Furthermore, it may be used in chapters to hide them (i.e., set status hidden)
 with the `hidden` option or to set the chapter audience with the `audience` option.
 
-The meta directive does not have any content and it accepts the following options:
+The aplusmeta directive does not have any content and it accepts the following options:
 
 * `open-time`: module open time, e.g., 2019-01-31 23:59:00 (the time defaults to 12:00 if excluded)
 * `close-time`: module close time
@@ -580,6 +580,21 @@ The meta directive does not have any content and it accepts the following option
 * `points-to-pass`: module points to pass
 * `introduction`: module introduction as an HTML string
 
+Example module index.rst file:
+
+```rst
+Module 1 - Introduction
+=======================
+
+.. toctree::
+
+  introduction
+  topic
+
+.. aplusmeta::
+  :open-time: 2020-09-01 10:00
+  :close-time: 2020-09-30 14:00
+```
 
 ### 6. Active element input
 
