@@ -711,7 +711,7 @@ the user to quickly navigate between the points of interest.
 
 Point of interests may also be used to generate separate lecture slides
 (not directly included in the A+ content chapters). This requires a separate
-tool called "presentation maker".
+tool called [Presentation maker](https://github.com/apluslms/presentation-maker).
 
 More information about [Columns and rows](#17-columns-and-rows).
 ```
