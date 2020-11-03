@@ -1020,13 +1020,24 @@ Older columns (`::newcol`) work, but they are deprecated. Column and row directi
 ### 18. Tabs
 
 The `rst-tabs` directive is designed to add tabbed content. Tabs separate content into different panels so that one
-panel is displayed at a time.
+panel is displayed at a time. This extension must be activated separately in the project by adding the following
+settings to the **conf.py** file located in the root of your course directory.
 
-The following snippet of code is an example on how you can use `rst-tabs` directive. As you can see in the example,
-the `rst-tabs` directive can contain one or more `tab-content` directives. Each `tab-content` requires one argument,
-which is used internally to identify individual `tab-content`. Therefore, this argument must be unique and cannot contain
-any whitespace. You must also add the option `title` to the `tab-content` directive since it is the title that will be shown
-in your tabs. The content of each `tab-content` can be any RST directive.
+```python
+extensions = ["aplus_setup", "tabs"]
+...
+include_tab_js = True
+include_tab_css = True
+```
+
+This directive requires a custom JavaScript and CSS implementation for interacting with the tabs and the tab content.
+Therefore, we have added a default implementation that allow you to make use of the `rst-tabs` directive without having
+to write your own JS or CSS. However, if you want to remove the default JavaScript and CSS implementation, you can
+change the value of `include_tab_js` and `include_tab_css` to `False`. By doing so, you could write your own CSS and JS
+code to interact with the `rst-tabs` directive.
+
+The following snippet of code is an example on how you can use the `tabs` extension. As you can see in the example
+below.
 
 ```rst
 
@@ -1065,6 +1076,11 @@ in your tabs. The content of each `tab-content` can be any RST directive.
       pulvinar augue mi malesuada metus. Maecenas ac diam et augue placerat
       faucibus. Nullam ut iaculis nisi.
 ```
+
+The `rst-tabs` directive should contain one or more `tab-content` directives. Each `tab-content` requires one argument,
+which is used internally to identify individual `tab-content`. Therefore, this argument must be unique and cannot
+contain any whitespace. You must also add the option `title` to the `tab-content` directive since it is the title that
+will be shown in your tabs. The content of each `tab-content` can be any anything.
 
 ### List of exercise statuses
 
