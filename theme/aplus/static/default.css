@@ -429,6 +429,7 @@ td.linenos pre {
 table.highlighttable {
   width: 100%;
   margin: 0px;
+  table-layout: fixed;
 }
 
 table.highlighttable td.linenos {
@@ -459,10 +460,12 @@ div.code-block-caption span.caption-number {
 }
 
 div.code-block-caption span.caption-text {
+  font-size: 1.1em;
 }
 
 div.literal-block-wrapper {
   padding: 1em 1em 0;
+  display: contents;
 }
 
 div.literal-block-wrapper div.highlight {
