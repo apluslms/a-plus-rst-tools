@@ -68,8 +68,8 @@ def rewrite_file_links(path, root, chapter_dirs, static_host):
 def rewrite_links(content, path, root, link_elements, other_elements,
                     static_host, chapter_dirs, chapter_append, yaml_append,
                     rst_src_path=None):
-    q1 = re.compile(r'^(\w+:|#)')
-    q2 = re.compile(r'^(' + '|'.join(chapter_dirs) + r')(/|\\)')
+    q1 = re.compile(r'^(\w+:|//|#)') # Starts with "https:", "//" or "#".
+    q2 = re.compile(r'^(' + '|'.join(chapter_dirs) + r')(/|\\)') # Starts with a module directory name.
     for tag, attr in link_elements:
         content = rewrite_elements(content, tag, attr, path, root,
                                     q1, static_host, q2, chapter_append,
@@ -89,8 +89,6 @@ def rewrite_elements(content, tag, attr, path, root, q1, static_host, q2, append
         r'<' + tag + r'\s+[^<>]*'
         r'(?P<attr>' + attr + r')=(?P<slash>\\?)"(?P<val>[^"?#]*)'
     )
-    re_remove_lang = re.compile(r'_[a-z]{2}(\.html)?(#.+)?$')
-    # match strings ending with the language identifier: "_en", "_en.html", "_en#id", "_en.html#id"
     i = 0
     for m in p.finditer(content):
         val = m.group('val')
@@ -123,33 +121,34 @@ def rewrite_elements(content, tag, attr, path, root, q1, static_host, q2, append
                 full = os.path.realpath(os.path.join(dir_name, val))
 
             if full.startswith(root): # NB: root ends with "_build/html"
-                my_path = full[len(root)+1:]
+                val_path_from_root = full[len(root)+1:].replace('\\', '/')
+                # Replace Windows path separator backslash to the forward slash.
 
                 # Links to chapters.
-                if q2 and q2.search(my_path):
-                    #a = append.replace('"','\\"') if m.group('slash') else append
+                if q2 and q2.search(val_path_from_root):
+
                     if not out.endswith(append):
-                        my_path = my_path.replace('\\', '/')
-                        split_path = my_path.split('/')
-                        module_path = '../' + split_path[0]
-                        # If the chapter RST file is in a nested directory under
-                        # the module directory (e.g., module01/material/chapter.rst
-                        # instead of module01/chapter.rst), then the chapter key
-                        # contains parts of the nested directory names in order
-                        # to be unique within the module.
-                        chapter_key = '_'.join(split_path[1:])
-                        # Remove language postfix (_en, _fi), if any exist.
-                        # Preserve ".html" and "#id" if they exist.
-                        chapter_key = re_remove_lang.sub(r'\1\2', chapter_key, count=1)
-                        modified_path = module_path + '/' + chapter_key
+                        # Directory depth (starting from _build/html) of the source file
+                        # that contains the link val.
+                        if path.endswith('.yaml'):
+                            # yaml files are always directly under _build/yaml,
+                            # but A+ can fix the URL when we prepend "../" once.
+                            # Most courses place chapters and exercises directly
+                            # under the module directory, in which case one
+                            # "../" is logical.
+                            dir_depth = 1
+                        else:
+                            dir_depth = path[len(root)+1:].count(os.sep)
+
+                        val_path_from_root = ('../' * dir_depth) + val_path_from_root
                         j = m.start('val')
-                        out += append + content[i:j] + modified_path
+                        out += append + content[i:j] + val_path_from_root
                         i = m.end('val')
 
                 # Other links.
                 elif static_host:
                     j = m.start('val')
-                    out += content[i:j] + static_host + my_path.replace('\\','/')
+                    out += content[i:j] + static_host + val_path_from_root
                     i = m.end('val')
 
                 elif path.endswith('.yaml') and yaml_append and not out.endswith(yaml_append):
