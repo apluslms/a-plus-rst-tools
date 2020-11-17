@@ -1,4 +1,6 @@
-import re, os
+import os
+import re
+
 from docutils import nodes
 from sphinx import addnodes
 from sphinx.errors import SphinxError
@@ -32,11 +34,11 @@ def set_config_language_for_doc(app, docname, source):
 
     # If language is not found in the docname or the folder, nothing is done.
     # Then app.env.config.language is defined in conf.py.
-    if len(docname) > 2 and docname[-3] == '_':
+    if re.search(r"_[a-z]{2}$", docname):
         # docname has a postfix with the underscore, e.g., chapter_en.rst
         # docname does not include the file type extension .rst
         app.env.config.language = docname[-2:]
-    elif len(folder) == 2:
+    elif re.fullmatch(r"^[a-z]{2}$", folder):
         # directory name is 2 characters long, e.g., "en"
         app.env.config.language = folder
 
