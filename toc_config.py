@@ -43,6 +43,84 @@ def set_config_language_for_doc(app, docname, source):
         app.env.config.language = folder
 
 
+def _is_multilingual_course(app):
+    root = app.env.get_doctree(app.config.master_doc)
+    tocs = root.traverse(addnodes.toctree)
+    return tocs and tocs[0].get('rawcaption') == 'Select language'
+
+
+def add_lang_suffix_to_links(app, docname, source):
+    '''Add the language suffix to doc and ref link targets as well as ref link
+    labels in multilingual courses.
+
+    It is more convenient to write doc links without manually added language
+    suffixes, e.g., :doc:`chapter1` instead of :doc:`chapter1_en`. This function
+    adds the language suffixes automatically since Sphinx can not compile
+    the link if the target file does not exist.
+
+    Likewise, it is convenient to write identical ref link labels in the same
+    place in all language versions of the chapter. Sphinx requires that labels
+    are unique, thus language suffixes are automatically appended to the labels.
+    The ref links in the RST chapters also refer to the labels without the
+    language suffixes. The language suffixes are added automatically to
+    the ref links.
+
+    If the course uses a different format in links or for some other reason links
+    need to stay untouched, set enable_doc_link_multilang_suffix_correction to
+    False in order to disable doc link modifications and
+    enable_ref_link_multilang_suffix_correction to False in order to disable
+    ref link and label modifications. The variables are defined in conf.py.
+    '''
+    if (not app.config.enable_doc_link_multilang_suffix_correction and
+            not app.config.enable_ref_link_multilang_suffix_correction):
+        return
+
+    lang_suffix = docname[-3:]
+    # Check that the suffix is like _[a-z]{2}, for example, "_en".
+    if not re.fullmatch(r"^_[a-z]{2}$", lang_suffix):
+        return
+
+    # Check that this is a multilingual course.
+    if not _is_multilingual_course(app):
+        return
+
+    # The source argument is a list whose only element is the content of the source file.
+    if app.config.enable_doc_link_multilang_suffix_correction:
+        # Links of the form :doc:`link text <path/file>` (no language suffix _en in the file path)
+        source[0] = re.sub(
+            r":doc:`([^`<>]+)<([^`<>]+)(?<!_[a-z]{2})>`",
+            r":doc:`\1<\2" + lang_suffix + r">`",
+            source[0])
+        # Links of the form :doc:`path/file` (no language suffix _en in the file path)
+        source[0] = re.sub(
+            r":doc:`([^`<>]+)(?<!_[a-z]{2})`",
+            r":doc:`\1" + lang_suffix + r"`",
+            source[0])
+
+    if not app.config.enable_ref_link_multilang_suffix_correction:
+        return
+
+    # Add language suffixes to label definitions (if they haven't been added manually).
+    # .. _mylabel:
+    # Labels are defined on their own lines, but there may be whitespace before them (indentation).
+    source[0] = re.sub(
+        r"^(\s*)..\s+_([\w-]+)(?<!_[a-z]{2}):(\s*)$",
+        r"\1.. _\2" + lang_suffix + r":\3",
+        source[0],
+        flags=re.MULTILINE)
+
+    # Links of the form :ref:`link text <label-name>` (no language suffix _en in the label)
+    source[0] = re.sub(
+        r":ref:`([^`<>]+)<([^`<>]+)(?<!_[a-z]{2})>`",
+        r":ref:`\1<\2" + lang_suffix + r">`",
+        source[0])
+    # Links of the form :ref:`label-name` (no language suffix _en in the label)
+    source[0] = re.sub(
+        r":ref:`([^`<>]+)(?<!_[a-z]{2})`",
+        r":ref:`\1" + lang_suffix + r"`",
+        source[0])
+
+
 def write(app, exception):
     ''' Writes the table of contents level configuration. '''
     if app.builder.name != 'html':
@@ -57,9 +135,8 @@ def write(app, exception):
     root = app.env.get_doctree(app.config.master_doc)
 
     # Check for language tree.
-    tocs = root.traverse(addnodes.toctree)
     keys = set()
-    if tocs and tocs[0].get('rawcaption') == u'Select language':
+    if _is_multilingual_course(app):
         app.info('Detected language tree.')
 
         indexes = []
