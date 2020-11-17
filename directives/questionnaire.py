@@ -125,7 +125,8 @@ class Questionnaire(AbstractExercise):
             }],
             # The RST source file path is needed for fixing relative URLs
             # in the exercise description.
-            '_rst_srcpath': env.doc2path(env.docname, None),
+            # Replace the Windows path separator backslash \ with the Unix forward slash /.
+            '_rst_srcpath': env.doc2path(env.docname, None).replace('\\', '/'),
         }
 
         meta_data = env.metadata[env.app.config.master_doc]
