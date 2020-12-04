@@ -130,6 +130,43 @@ skip_language_inconsistencies = False # for debugging multilanguage courses
 # Default values for allow assistant viewing and grading settings in exercises
 allow_assistant_viewing = True # May assistants view submissions?
 allow_assistant_grading = False # May assistants grade submissions?
+
+# List of JavaScript and CSS URLs for the A+ head URLs course setting.
+# A+ adds these to every course page.
+course_head_urls = [
+    "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS_CHTML-full",
+]
+
+# a-plus-rst-tools try to detect the language of the chapter from the language
+# suffix in the file name, e.g., chapter_en.rst. This detection can be disabled
+# with this setting. If the course is multilingual, but the chapter files do not
+# have language suffixes, it may be best to disable this. The detected language
+# is used to translate strings that are part of a-plus-rst-tools and Sphinx.
+# The language may also be detected from a language subdirectory (such as en)
+# under the module directory, but using language subdirectories is not recommended.
+# If the language can not be detected from the filename or the subdirectory,
+# then the language set in conf.py is not modified.
+enable_rst_file_language_detection = True
+
+# Add the language suffix to doc and ref link targets as well as ref link
+# labels in multilingual courses.
+# It is more convenient to write doc links without manually added language
+# suffixes, e.g., :doc:`chapter1` instead of :doc:`chapter1_en`. This function
+# adds the language suffixes automatically since Sphinx can not compile
+# the link if the target file does not exist.
+# Likewise, it is convenient to write identical ref link labels in the same
+# place in all language versions of the chapter. Sphinx requires that labels
+# are unique, thus language suffixes are automatically appended to the labels.
+# The ref links in the RST chapters also refer to the labels without the
+# language suffixes. The language suffixes are added automatically to
+# the ref links.
+# If the course uses a different format in links or for some other reason links
+# need to stay untouched, set enable_doc_link_multilang_suffix_correction to
+# False in order to disable doc link modifications and
+# enable_ref_link_multilang_suffix_correction to False in order to disable
+# ref link and label modifications.
+enable_doc_link_multilang_suffix_correction = True
+enable_ref_link_multilang_suffix_correction = True
 ```
 
 ### Sphinx configurations that should be modified with a-plus-rst-tools
