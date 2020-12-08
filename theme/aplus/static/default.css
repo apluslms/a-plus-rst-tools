@@ -188,6 +188,20 @@ div.topic {
   background-color: #ddf1fb;
 }
 
+.admonition, .topic {
+  min-height: 42px;
+  padding: 15px;
+  margin-bottom: 20px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  margin-left: 0em;
+  margin-right: 0em;
+  margin-top: 15px;
+  background-color: #d9edf7;
+  border-color: #bce8f1;
+  color: #31708f;
+}
+
 p.topic-title {
   font-size: 1.1em;
   font-weight: bold;
@@ -197,6 +211,26 @@ p.topic-title {
 .topic.dl-horizontal dd {
   margin-bottom: 0px;
 }
+
+.topic.dl-horizontal .topic-title {
+  display: none;
+}
+
+.topic.dl-horizontal dt {
+  width: 250px;
+  margin-top: 0.5em;
+}
+
+.topic.dl-horizontal dd {
+  margin-left: 270px;
+  margin-top: 0.5em;
+}
+
+.topic.dl-horizontal dt:first-of-type,
+.topic.dl-horizontal dd:first-of-type {
+  margin-top: 0;
+}
+
 
 /* -- admonitions ----------------------------------------------------------- */
 
