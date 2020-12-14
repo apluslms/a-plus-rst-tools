@@ -612,6 +612,8 @@ The aplusmeta directive does not have any content and it accepts the following o
 * `close-time`: module close time
 * `late-time`: module late submission time
 * `late-penalty`: module late penalty between 0-1, e.g., 0.5 (50%)
+* `read-open-time`: module read open time. The reading materials can be opened for reading before the exercises are opened for submissions.
+  The exercise descriptions are hidden and submissions are disabled between the read open time and open time.
 * `audience`: chapter audience (internal, external, or registered. Defaults to the course audience)
 * `hidden`: If set, set status hidden for the module or chapter
 * `points-to-pass`: module points to pass
