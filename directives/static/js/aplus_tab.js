@@ -1,40 +1,299 @@
 jQuery(function ($) {
+  // Create tab and tab-content Elements
   $("div.rst-tabs").each(function () {
-    let tabNav = $("<ul />", { class: "tab-nav-aplus" });
     let i = 0;
+    let index = 0;
 
-    $(".tab-content", this).each(function () {
-      var sel_item = $("<li />", {
-        class: $(this).attr("id"),
-        text: $(this).find(".tab-title").text(),
-      });
-      $(this).find(".tab-title").remove();
-      if (i++) {
-        $(this).hide();
-      } else {
-        sel_item.addClass("selected");
-      }
-      tabNav.append(sel_item);
-      $(this).addClass("tab-content-aplus");
+    // Set role to tabs
+    $(this)[0].setAttribute("role", "tabs");
+
+    //Create a <ul> to arrange all the tab elements
+    let tablistSelector = $("<ul />", {
+      class: "tab-nav-aplus",
+      role: "tablist",
     });
 
-    $(".tab-content", this).eq(0).before(tabNav);
-    tabNav = null;
-    i = null;
+    // Create all the tab elements to handle the visualisation of the different tab-content elements
+    $(".tab-content", this).each(function () {
+      // Set role to tabpanel
+      $(this)[0].setAttribute("role", "tabpanel");
+
+      // Create tab elements
+      var tab = $("<li />", {
+        class: $(this).attr("id"),
+        text: $(this).find(".tab-title").text(),
+        tabindex: 0,
+        role: "tab",
+        "aria-controls": $(this).attr("id"),
+      });
+
+      tab[0].addEventListener("click", clickEventListener);
+      tab[0].addEventListener("keydown", keydownEventListener);
+      tab[0].addEventListener("keyup", keyupEventListener);
+
+      // Build an array with all tabs (<li>s) in it
+      tab[0].index = index;
+
+      if (index++) {
+        // The tabs that are not selected must have a tabindex="-1" and must be marked with aria-selected="false"
+        tab[0].setAttribute("tabindex", "-1");
+        tab[0].setAttribute("aria-selected", "false");
+
+        // The tabpanel that are not selected must be hidden
+        $(this)[0].setAttribute("hidden", "hidden");
+      } else {
+        // The tab that is selected by default must be marked with aria-selected="true"
+        tab[0].setAttribute("aria-selected", "true");
+        tab.addClass("selected");
+      }
+
+      tablistSelector.append(tab);
+      $(this).addClass("tab-content-aplus");
+
+      // Remove title added in the Python code
+      $(this).find(".tab-title").remove();
+    });
+
+    $(".tab-content", this).eq(0).before(tablistSelector);
+
+    tablistSelector = null;
+    i = 0;
   });
 
-  $(".tab-nav-aplus li").click(function (evt) {
-    evt.preventDefault();
+  /*
+   *   This content below is licensed according to the W3C Software License at
+   *   https://www.w3.org/Consortium/Legal/2015/copyright-software-and-document
+   *   This software or document includes material copied from or derived from
+   *   tabs.js https://www.w3.org/TR/wai-aria-practices/examples/tabs/tabs-1/js/tabs.js.
+   *   Copyright © [2015] W3C® (MIT, ERCIM, Keio, Beihang). You can find the License
+   *   at the bottom of this file.
+   *
+   *   The Following script was modified by Jhosimar Aguacia on the 08.02.2021 in
+   *   order to fullfil rhe needs of the https://github.com/apluslms/a-plus-rst-tools
+   *   project.
+   */
 
-    var tabsblock = $(this).parents(".rst-tabs");
+  let tablist;
+  let tabs;
+  let panels;
+  var delay = 0;
 
-    var sel_class = $(this).attr("class");
-    $("div.tab-content-aplus", tabsblock).hide();
-    $("div#" + sel_class, tabsblock).show();
+  // For easy reference
+  var keys = {
+    end: 35,
+    home: 36,
+    left: 37,
+    up: 38,
+    right: 39,
+    down: 40,
+    delete: 46,
+  };
 
-    $("ul.tab-nav-aplus li", tabsblock).removeClass("selected");
-    $("ul.tab-nav-aplus li." + sel_class, tabsblock).addClass("selected");
+  // Add or substract depending on key pressed
+  var direction = {
+    37: -1,
+    38: -1,
+    39: 1,
+    40: 1,
+  };
 
-    sel_class = null;
-  });
+  // When a tab is clicked, activateTab is fired to activate it
+  function clickEventListener(event) {
+    tablist = this.parentElement;
+    tabs = this.parentElement.childNodes;
+    panels = this.parentElement.parentNode.querySelectorAll(".tab-content");
+
+    var tab = event.target;
+    activateTab(tab, false);
+  }
+
+  // Handle keydown on tabs
+  function keydownEventListener(event) {
+    tablist = this.parentElement;
+    tabs = this.parentElement.childNodes;
+    panels = this.parentElement.parentNode.querySelectorAll(".tab-content");
+
+    var key = event.keyCode;
+
+    switch (key) {
+      case keys.end:
+        event.preventDefault();
+        // Activate last tab
+        activateTab(tabs[tabs.length - 1]);
+        break;
+      case keys.home:
+        event.preventDefault();
+        // Activate first tab
+        activateTab(tabs[0]);
+        break;
+
+      // Up and down are in keydown
+      // because we need to prevent page scroll >:)
+      case keys.up:
+      case keys.down:
+        determineOrientation(event);
+        break;
+    }
+  }
+
+  // Handle keyup on tabs
+  function keyupEventListener(event) {
+    tablist = this.parentElement;
+    tabs = this.parentElement.childNodes;
+    panels = this.parentElement.parentNode.querySelectorAll(".tab-content");
+
+    var key = event.keyCode;
+
+    switch (key) {
+      case keys.left:
+      case keys.right:
+        determineOrientation(event);
+        break;
+    }
+  }
+
+  // When a tablist’s aria-orientation is set to vertical,
+  // only up and down arrow should function.
+  // In all other cases only left and right arrow function.
+  function determineOrientation(event) {
+    var key = event.keyCode;
+    var vertical = tablist.getAttribute("aria-orientation") == "vertical";
+    var proceed = false;
+
+    if (vertical) {
+      if (key === keys.up || key === keys.down) {
+        event.preventDefault();
+        proceed = true;
+      }
+    } else {
+      if (key === keys.left || key === keys.right) {
+        proceed = true;
+      }
+    }
+
+    if (proceed) {
+      switchTabOnArrowPress(event);
+    }
+  }
+
+  // Either focus the next, previous, first, or last tab
+  // depening on key pressed
+  function switchTabOnArrowPress(event) {
+    var pressed = event.keyCode;
+
+    for (x = 0; x < tabs.length; x++) {
+      tabs[x].addEventListener("focus", focusEventHandler);
+    }
+
+    if (direction[pressed]) {
+      var target = event.target;
+      if (target.index !== undefined) {
+        if (tabs[target.index + direction[pressed]]) {
+          tabs[target.index + direction[pressed]].focus();
+        } else if (pressed === keys.left || pressed === keys.up) {
+          focusLastTab();
+        } else if (pressed === keys.right || pressed == keys.down) {
+          focusFirstTab();
+        }
+      }
+    }
+  }
+
+  // Activates any given tab panel
+  function activateTab(tab, setFocus) {
+    setFocus = setFocus || true;
+    // Deactivate all other tabs
+    deactivateTabs();
+
+    // Remove tabindex attribute
+    tab.setAttribute("tabindex", "0");
+
+    // Set the tab as selected
+    tab.setAttribute("aria-selected", "true");
+    tab.classList.add("selected");
+
+    // Get the value of aria-controls (which is an ID)
+    var controls = tab.getAttribute("aria-controls");
+
+    // Remove hidden attribute from tab panel to make it visible
+    document.getElementById(controls).removeAttribute("hidden");
+
+    // Set focus when required
+    if (setFocus) {
+      tab.focus();
+    }
+  }
+
+  // Deactivate all tabs and tab panels
+  function deactivateTabs() {
+    for (t = 0; t < tabs.length; t++) {
+      tabs[t].setAttribute("tabindex", "-1");
+      tabs[t].setAttribute("aria-selected", "false");
+      tabs[t].classList.remove("selected");
+      tabs[t].removeEventListener("focus", focusEventHandler);
+    }
+
+    for (p = 0; p < panels.length; p++) {
+      panels[p].setAttribute("hidden", "hidden");
+    }
+  }
+
+  // Make a guess
+  function focusFirstTab() {
+    tabs[0].focus();
+  }
+
+  // Make a guess
+  function focusLastTab() {
+    tabs[tabs.length - 1].focus();
+  }
+
+  //
+  function focusEventHandler(event) {
+    var target = event.target;
+
+    setTimeout(checkTabFocus, delay, target);
+  }
+
+  // Only activate tab on focus if it still has focus after the delay
+  function checkTabFocus(target) {
+    focused = document.activeElement;
+
+    if (target === focused) {
+      activateTab(target, false);
+    }
+  }
 });
+
+/* LICENSE
+
+This work is being provided by the copyright holders under the following license.
+
+License
+By obtaining and/or copying this work, you (the licensee) agree that you have read, understood, and will comply
+with the following terms and conditions.
+
+Permission to copy, modify, and distribute this work, with or without modification, for any purpose and without
+fee or royalty is hereby granted, provided that you include the following on ALL copies of the work or portions
+thereof, including modifications:
+
+The full text of this NOTICE in a location viewable to users of the redistributed or derivative work.
+Any pre-existing intellectual property disclaimers, notices, or terms and conditions. If none exist, the W3C
+Software and Document Short Notice should be included.
+Notice of any changes or modifications, through a copyright statement on the new code or document such as "This
+software or document includes material copied from or derived from [title and URI of the W3C document].
+Copyright © [YEAR] W3C® (MIT, ERCIM, Keio, Beihang)."
+
+Disclaimers
+
+THIS WORK IS PROVIDED "AS IS," AND COPYRIGHT HOLDERS MAKE NO REPRESENTATIONS OR WARRANTIES, EXPRESS OR IMPLIED,
+INCLUDING BUT NOT LIMITED TO, WARRANTIES OF MERCHANTABILITY OR FITNESS FOR ANY PARTICULAR PURPOSE OR THAT THE
+USE OF THE SOFTWARE OR DOCUMENT WILL NOT INFRINGE ANY THIRD PARTY PATENTS, COPYRIGHTS, TRADEMARKS OR OTHER RIGHTS.
+
+COPYRIGHT HOLDERS WILL NOT BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES ARISING OUT OF
+ANY USE OF THE SOFTWARE OR DOCUMENT.
+
+The name and trademarks of copyright holders may NOT be used in advertising or publicity pertaining to the work
+without specific, written prior permission. Title to copyright in this work will at all times remain with
+copyright holders.
+ */
