@@ -102,10 +102,10 @@ class Row(Directive):
         self.assert_has_content()
         container_class = 'row'
         row_container_opts = {
-            u'class': container_class,
+            'class': container_class,
         }
 
-        row_container = aplus_nodes.html(u'div', row_container_opts)
+        row_container = aplus_nodes.html('div', row_container_opts)
         self.state.nested_parse(self.content, self.content_offset, row_container)
 
         return [row_container]

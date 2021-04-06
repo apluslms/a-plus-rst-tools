@@ -199,7 +199,7 @@ def make_index(app, root, language=''):
 
     def first_title(doc):
         titles = doc.traverse(nodes.title)
-        return titles[0].astext() if titles else u'Unnamed'
+        return titles[0].astext() if titles else 'Unnamed'
 
     def first_meta(doc):
         metas = doc.traverse(directives.meta.aplusmeta)
@@ -209,84 +209,84 @@ def make_index(app, root, language=''):
     def parse_date(src, allow_empty=False):
         if allow_empty and not src:
             return None
-        parts = src.split(u' ', 1)
+        parts = src.split(' ', 1)
         d = parts[0]
         t = parts[1] if len(parts) > 1 else ''
         if re.match(r'^\d\d.\d\d.\d\d\d\d$', d):
             ds = d.split('.')
-            d = ds[2] + u'-' + ds[1] + u'-' + ds[0]
+            d = ds[2] + '-' + ds[1] + '-' + ds[0]
         elif not re.match(r'^\d\d\d\d-\d\d-\d\d$', d):
-            raise SphinxError(u'Invalid date ' + d)
+            raise SphinxError('Invalid date ' + d)
         if not re.match(r'^\d\d(:\d\d(:\d\d)?)?$', t):
-            t = u'12:00'
-        return d + u' ' + t
+            t = '12:00'
+        return d + ' ' + t
 
     def parse_float(src, default):
         return float(src) if src else default
 
     # Recursive chapter parsing.
     def parse_chapter(docname, doc, parent):
-        for config_file in [e.yaml_write for e in doc.traverse(aplus_nodes.html) if e.has_yaml(u'exercise')]:
+        for config_file in [e.yaml_write for e in doc.traverse(aplus_nodes.html) if e.has_yaml('exercise')]:
             config = yaml_writer.read(config_file)
-            if config.get(u'_external', False):
+            if config.get('_external', False):
                 exercise = config.copy()
-                del exercise[u'_external']
+                del exercise['_external']
             else:
                 exercise = {
-                    u'key': config[u'key'],
-                    u'config': config[u'key'] + u'.yaml',
-                    u'max_submissions': config.get(u'max_submissions', 0),
-                    u'max_points': config.get(u'max_points', 0),
-                    u'difficulty': config.get(u'difficulty', ''),
-                    u'points_to_pass': config.get(u'points_to_pass', 0),
-                    u'category': config[u'category'],
-                    u'min_group_size': config.get(u'min_group_size', 1),
-                    u'max_group_size': config.get(u'max_group_size', 1),
-                    u'confirm_the_level': config.get(u'confirm_the_level', False),
+                    'key': config['key'],
+                    'config': config['key'] + '.yaml',
+                    'max_submissions': config.get('max_submissions', 0),
+                    'max_points': config.get('max_points', 0),
+                    'difficulty': config.get('difficulty', ''),
+                    'points_to_pass': config.get('points_to_pass', 0),
+                    'category': config['category'],
+                    'min_group_size': config.get('min_group_size', 1),
+                    'max_group_size': config.get('max_group_size', 1),
+                    'confirm_the_level': config.get('confirm_the_level', False),
                 }
-            allow_assistant_viewing = config.get(u'allow_assistant_viewing', app.config.allow_assistant_viewing)
-            allow_assistant_grading = config.get(u'allow_assistant_grading', app.config.allow_assistant_grading)
+            allow_assistant_viewing = config.get('allow_assistant_viewing', app.config.allow_assistant_viewing)
+            allow_assistant_grading = config.get('allow_assistant_grading', app.config.allow_assistant_grading)
             exercise.update({
-                u'status': config.get(u'status', u'unlisted'),
-                u'allow_assistant_viewing': allow_assistant_viewing,
-                u'allow_assistant_grading': allow_assistant_grading,
+                'status': config.get('status', 'unlisted'),
+                'allow_assistant_viewing': allow_assistant_viewing,
+                'allow_assistant_grading': allow_assistant_grading,
             })
-            if u'scale_points' in config:
-                exercise[u'max_points'] = config.pop(u'scale_points')
+            if 'scale_points' in config:
+                exercise['max_points'] = config.pop('scale_points')
             parent.append(exercise)
-            if not config[u'category'] in category_keys:
-                category_keys.append(config[u'category'])
+            if not config['category'] in category_keys:
+                category_keys.append(config['category'])
 
-        for config_file in [e.yaml_write for e in doc.traverse(aplus_nodes.html) if e.has_yaml(u'exercisecollection')]:
+        for config_file in [e.yaml_write for e in doc.traverse(aplus_nodes.html) if e.has_yaml('exercisecollection')]:
             config = yaml_writer.read(config_file)
             exercise = {
-                u'key': config[u'key'],
-                u'max_points': config.get(u'max_points', 0),
-                u'points_to_pass': config.get(u'points_to_pass', 0),
-                u'target_url': config[u'target_url'],
-                u'target_category': config[u'target_category'],
-                u'category': config[u'category'],
-                u'status': config.get(u'status', u'unlisted'),
-                u'title': config[u'title'],
+                'key': config['key'],
+                'max_points': config.get('max_points', 0),
+                'points_to_pass': config.get('points_to_pass', 0),
+                'target_url': config['target_url'],
+                'target_category': config['target_category'],
+                'category': config['category'],
+                'status': config.get('status', 'unlisted'),
+                'title': config['title'],
             }
             parent.append(exercise)
-            if not config[u'category'] in category_keys:
-                category_keys.append(config[u'category'])
+            if not config['category'] in category_keys:
+                category_keys.append(config['category'])
 
 
-        category = u'chapter'
+        category = 'chapter'
         for name,hidden,child in traverse_tocs(app, doc):
             meta = first_meta(child)
-            status = u'hidden' if 'hidden' in meta else (
-                u'unlisted' if hidden else u'ready'
+            status = 'hidden' if 'hidden' in meta else (
+                'unlisted' if hidden else 'ready'
             )
             chapter = {
-                u'status': status,
-                u'name': first_title(child),
-                u'static_content': name + u'.html',
-                u'category': category,
-                u'use_wide_column': app.config.use_wide_column,
-                u'children': [],
+                'status': status,
+                'name': first_title(child),
+                'static_content': name + '.html',
+                'category': category,
+                'use_wide_column': app.config.use_wide_column,
+                'children': [],
             }
             # If the chapter RST file is in a nested directory under the module
             # directory (e.g., module01/material/chapter.rst instead of
@@ -299,13 +299,13 @@ def make_index(app, root, language=''):
             if meta:
                 audience = meta.get('audience')
                 if audience:
-                    chapter[u'audience'] = yaml_writer.ensure_unicode(audience)
+                    chapter['audience'] = yaml_writer.ensure_unicode(audience)
             if category in override:
                 chapter.update(override[category])
             parent.append(chapter)
-            if not u'chapter' in category_keys:
-                category_keys.append(u'chapter')
-            parse_chapter(name, child, chapter[u'children'])
+            if not 'chapter' in category_keys:
+                category_keys.append('chapter')
+            parse_chapter(name, child, chapter['children'])
 
     # Read title from document.
     if not course_title:
@@ -317,8 +317,8 @@ def make_index(app, root, language=''):
         title = first_title(doc)
         title_date_match = title_date_re.match(title)
         meta = first_meta(doc)
-        status = u'hidden' if 'hidden' in meta else (
-            u'unlisted' if hidden else u'ready'
+        status = 'hidden' if 'hidden' in meta else (
+            'unlisted' if hidden else 'ready'
         )
         read_open_src = meta.get('read-open-time', None)
         open_src = meta.get('open-time', course_open)
@@ -330,44 +330,44 @@ def make_index(app, root, language=''):
             # modules/01/index -> modules_01
             # modules/01/n/index -> modules_01_n
             # ...
-            u'key': docname if u'/' not in docname else u'_'.join(docname.split(u'/')[:-1]),
-            u'status': status,
-            u'name': title,
-            u'points_to_pass': meta.get('points-to-pass', 0),
-            u'children': [],
+            'key': docname if '/' not in docname else '_'.join(docname.split('/')[:-1]),
+            'status': status,
+            'name': title,
+            'points_to_pass': meta.get('points-to-pass', 0),
+            'children': [],
         }
 
         if read_open_src:
-            module[u'read-open'] = parse_date(read_open_src)
+            module['read-open'] = parse_date(read_open_src)
         if open_src:
-            module[u'open'] = parse_date(open_src)
+            module['open'] = parse_date(open_src)
         if close_src:
-            module[u'close'] = parse_date(close_src)
+            module['close'] = parse_date(close_src)
         if late_src:
-            module[u'late_close'] = parse_date(late_src)
-            module[u'late_penalty'] = parse_float(meta.get('late-penalty', course_penalty), 0.0)
+            module['late_close'] = parse_date(late_src)
+            module['late_penalty'] = parse_float(meta.get('late-penalty', course_penalty), 0.0)
         if introduction is not None:
-            module[u'introduction'] = introduction
+            module['introduction'] = introduction
         modules.append(module)
-        parse_chapter(docname, doc, module[u'children'])
+        parse_chapter(docname, doc, module['children'])
 
     # Create categories.
     category_names = app.config.category_names
     categories = {
         key: {
-            u'name': category_names.get(key, key),
+            'name': category_names.get(key, key),
         } for key in category_keys
     }
     for key in ['chapter', 'feedback']:
         if key in categories:
-            categories[key][u'status'] = u'nototal'
+            categories[key]['status'] = 'nototal'
 
     # Build configuration index.
     index = {
-        u'name': course_title,
-        u'static_dir': get_static_dir(app),
-        u'modules': modules,
-        u'categories': categories,
+        'name': course_title,
+        'static_dir': get_static_dir(app),
+        'modules': modules,
+        'categories': categories,
     }
     index['language'] = language if language else app.config.language
 
@@ -377,9 +377,9 @@ def make_index(app, root, language=''):
     course_archive_time = course_meta.get('archive-time')
 
     if course_open:
-        index[u'start'] = parse_date(course_open)
+        index['start'] = parse_date(course_open)
     if course_close:
-        index[u'end'] = parse_date(course_close)
+        index['end'] = parse_date(course_close)
     if course_enrollment_start is not None:
         # None check separates the cases:
         # 1) user inputs an empty value and it should be set into the YAML,

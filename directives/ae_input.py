@@ -40,7 +40,7 @@ class ActiveElementInput(AbstractExercise):
 
         env = self.state.document.settings.env
 
-        name = u"{}_{}".format(env.docname.replace(u'/', u'_'), key)
+        name = "{}_{}".format(env.docname.replace('/', '_'), key)
         override = env.config.override
 
         classes = []
@@ -49,9 +49,9 @@ class ActiveElementInput(AbstractExercise):
 
         # Add document nodes.
         args = {
-            u'class': u' '.join(classes),
-            u'data-aplus-active-element': u'in',
-            u'id': u''+ key,
+            'class': ' '.join(classes),
+            'data-aplus-active-element': 'in',
+            'id': ''+ key,
         }
 
         if 'title' in self.options:
@@ -75,8 +75,8 @@ class ActiveElementInput(AbstractExercise):
         if 'clear' in self.options:
           args['style'] = args['style'] + 'clear:'+ self.options['clear'] + ';'
 
-        node = aplus_nodes.html(u'div', args)
-        paragraph = aplus_nodes.html(u'p', {})
+        node = aplus_nodes.html('div', args)
+        paragraph = aplus_nodes.html('p', {})
         paragraph.append(nodes.Text(translations.get(env, 'active_element_placeholder')))
         node.append(paragraph)
 
@@ -98,19 +98,19 @@ class ActiveElementInput(AbstractExercise):
                                         encoding=self.state.document.settings.input_encoding,
                                         error_handler=self.state.document.settings.input_encoding_error_handler)
             except IOError as error:
-                logger.error(u'Problem with "%s" directive:\n%s.'
+                logger.error('Problem with "%s" directive:\n%s.'
                                   % (self.name, ErrorString(error)), location=node)
                 return []
             try:
                 text = raw_file.read()
             except UnicodeError as error:
-                logger.error(u'Problem with "%s" directive:\n%s.'
+                logger.error('Problem with "%s" directive:\n%s.'
                                   % (self.name, ErrorString(error)), location=node)
                 return []
 
             # Generate raw node
             rawnode = nodes.raw('', text, **{'format':'html'})
-            wrapnode = aplus_nodes.html(u'div', {u'id': u''+ key + '-wrap',u'class': u'clickable-ae-wrapper'})
+            wrapnode = aplus_nodes.html('div', {'id': ''+ key + '-wrap','class': 'clickable-ae-wrapper'})
             wrapnode.append(node)
             wrapnode.append(rawnode)
             return [wrapnode]

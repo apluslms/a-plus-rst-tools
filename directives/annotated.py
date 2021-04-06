@@ -82,7 +82,7 @@ class AnnotatedSection(Directive):
         return [node]
 
     def assert_sanity(self, content):
-        annotation_numbers_present = set(map(lambda matching: int(matching[0]), re.findall(u"\d«", content)))
+        annotation_numbers_present = set(map(lambda matching: int(matching[0]), re.findall("\d«", content)))
         highest_present = max(annotation_numbers_present)
         all_until_highest = set(range(1, highest_present + 1))
         if annotation_numbers_present != all_until_highest:
@@ -102,7 +102,7 @@ def depart_annotated_node(self, node):
     parsed_html = self.body  # extract generated feedback line
     self.body = env.redirect # restore original output
 
-    postprocessed_html = postprocess_annotation_tags(u''.join(parsed_html), node['name'])
+    postprocessed_html = postprocess_annotation_tags(''.join(parsed_html), node['name'])
     postprocessed_html = postprocess_inline_annotations(postprocessed_html, node['name'])
     self.body.append(postprocessed_html)
 
@@ -127,41 +127,41 @@ def postprocess_annotation_tags(html, annotation_id):
     openstack   = []
     selfclosing = []
 
-    for part in re.split(u'(\d«» |\d«|»|\n)', html):
-        if u'«» ' in part:
-            if (len(part) != 4) or (not part[0].isdigit()) or (part[3] != u' '):
-                raise AnnotationError(u"Encountered illegal self-closing annotation tag in %s." % (annotation_id))
+    for part in re.split('(\d«» |\d«|»|\n)', html):
+        if '«» ' in part:
+            if (len(part) != 4) or (not part[0].isdigit()) or (part[3] != ' '):
+                raise AnnotationError("Encountered illegal self-closing annotation tag in %s." % (annotation_id))
             processed.append('<span class="ex-%s loc%s">' % (annotation_id, part[0]))
             openstack.append(part[0])
             selfclosing.append(part[0])
-        elif u'«' in part:
+        elif '«' in part:
             if (len(part) != 2) or (not part[0].isdigit()):
-                raise AnnotationError(u"Encountered illegal annotation open tag in %s." % (annotation_id))
+                raise AnnotationError("Encountered illegal annotation open tag in %s." % (annotation_id))
             processed.append('<span class="ex-%s loc%s">' % (annotation_id, part[0]))
             openstack.append(part[0])
-        elif part == u'»':
+        elif part == '»':
             if len(openstack) == 0:
-                raise AnnotationError(u"Unbalanced annotation markers in %s." % (annotation_id))
+                raise AnnotationError("Unbalanced annotation markers in %s." % (annotation_id))
             openstack.pop()
             processed.append('</span>')
         elif part == '\n':
             for tag in selfclosing:
                 if len(openstack) == 0:
-                    raise AnnotationError(u"Unbalanced annotation markers in %s." % (annotation_id))
+                    raise AnnotationError("Unbalanced annotation markers in %s." % (annotation_id))
                 openstack.pop()
                 processed.append('</span>')
             selfclosing = []
             processed.append(part)
         else:
-            if  (u'«' in part) or (u'»' in part):
-                raise AnnotationError(u"Encountered illegal annotation tag in %s." % (annotation_id))
+            if  ('«' in part) or ('»' in part):
+                raise AnnotationError("Encountered illegal annotation tag in %s." % (annotation_id))
 
             processed.append(part)
 
     if len(openstack) != 0:
-        raise AnnotationError(u"Unbalanced annotation markers in %s." % (annotation_id)) ##
+        raise AnnotationError("Unbalanced annotation markers in %s." % (annotation_id)) ##
 
-    return u''.join(processed)
+    return ''.join(processed)
 
 class annotation_node(nodes.General, nodes.Element): pass
 
@@ -215,13 +215,13 @@ class AlteredCodeBlock(CodeBlock):
         for line in slicer(self.content):
             processed   = []
 
-            for part in re.split(u'(\d«» |\d«|»)', line[0]):
-                if u'«» ' in part:
+            for part in re.split('(\d«» |\d«|»)', line[0]):
+                if '«» ' in part:
                     openstack.append((part[0], line_num, loc))
                     selfclosing.append(part[0])
-                elif u'«' in part:
+                elif '«' in part:
                     openstack.append((part[0], line_num, loc))
-                elif u'»' in part:
+                elif '»' in part:
                     start = openstack.pop()
                     annotations.append((start[0], start[1], start[2], line_num, loc))
                 else:
@@ -236,7 +236,7 @@ class AlteredCodeBlock(CodeBlock):
             line_num += 1
             loc = 0
 
-            line[0] = u''.join(processed)
+            line[0] = ''.join(processed)
 
         # run the original code-block on the now cleaned content
         originals = CodeBlock.run(self)
@@ -260,16 +260,16 @@ def depart_altered_node(self, node):
     parsed_html = self.body  # extract generated feedback line
     self.body = env.inner_redirect # restore original output
 
-    self.body.append(annotate(u''.join(parsed_html), node.parent['name'], node['annotations']))
+    self.body.append(annotate(''.join(parsed_html), node.parent['name'], node['annotations']))
 
 def create_open_tag(number, section_name):
-    return u'<span class="ex-%s loc%s">' % (section_name, number)
+    return '<span class="ex-%s loc%s">' % (section_name, number)
 
 def create_close_tag(number, section_name):
-    return u'</span>'
+    return '</span>'
 
 def turn_to_close_tag(tag):
-    return u'</%s>' % re.findall(u'<(\w+).*?>', tag)[0]
+    return '</%s>' % re.findall('<(\w+).*?>', tag)[0]
 
 def annotate(html, section_name, annotations):
     # sorting the annotations by their ending points correctly orders the starting points
@@ -290,29 +290,29 @@ def annotate(html, section_name, annotations):
 
 
     html = html.replace("<span></span>", "") # temporary workaround for extra span created by Sphinx in Python 3
-    parts = re.split(u'(<pre.*?>|</pre>)', html)
+    parts = re.split('(<pre.*?>|</pre>)', html)
 
     # separate tags from text
-    original = re.split(u'(<.*?>|\n)', parts[2])
+    original = re.split('(<.*?>|\n)', parts[2])
 
     #add splits
     line = 0
     loc  = 0
     result = []
-    last_open  = u''
+    last_open  = ''
 
     for item in original:
-        if u'</' in item:
+        if '</' in item:
             # closing tag
 
             result.append(item)
-            last_open = u''
+            last_open = ''
 
             # add any closing tags
             for number in endpoint_map[(line, loc)]:
                 result.append(create_close_tag(number, section_name))
 
-        elif u'<' in item:
+        elif '<' in item:
             # opening tag
 
             # add tags for opening annotations
@@ -321,7 +321,7 @@ def annotate(html, section_name, annotations):
 
             last_open = item
             result.append(item)
-        elif u'\n' in item:
+        elif '\n' in item:
             # line change
 
             line += 1
@@ -363,8 +363,8 @@ def annotate(html, section_name, annotations):
                 for number in endpoint_map[(line, loc)]:
                     result.append(create_close_tag(number, section_name))
 
-    content = u''.join(result)
-    return u''.join([parts[0], parts[1], content, parts[3], parts[4]])
+    content = ''.join(result)
+    return ''.join([parts[0], parts[1], content, parts[3], parts[4]])
 
 def add_assets(app):
     # This method reads the `include_annotated_css` and `include_annotated_js`

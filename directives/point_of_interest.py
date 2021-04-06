@@ -65,7 +65,7 @@ class PointOfInterest(Directive):
 
         if 'title' in self.options:
             if 'id' in self.options:
-                raise SphinxError(u'Point of interest options can\'t contain both "title" and "id"; one of them should be provided as an argument instead')
+                raise SphinxError('Point of interest options can\'t contain both "title" and "id"; one of them should be provided as an argument instead')
             name = self.arguments[0]
             title_text = self.options['title']
         else:
@@ -92,15 +92,15 @@ class PointOfInterest(Directive):
 
             # add an extra div to force content to desired height
             hcontainer_opts = {
-                u'style': 'height:' + self.options.get('height', '') + ';',
-                u'class': container_class + ' poi-content row',
+                'style': 'height:' + self.options.get('height', '') + ';',
+                'class': container_class + ' poi-content row',
             }
         else:
             container_class = 'no-poi-box'
             content_name = name
             hcontainer_opts = {
-                u'style': 'height:' + self.options.get('height', '') + ';',
-                u'class': 'row',
+                'style': 'height:' + self.options.get('height', '') + ';',
+                'class': 'row',
             }
 
         if 'bgimg' in self.options:
@@ -118,7 +118,7 @@ class PointOfInterest(Directive):
                 env.images[imgpath] = ({docname}, imgname)
                 env.app.builder.images[imgpath] = imgname
 
-        hcontainer = aplus_nodes.html(u'div', hcontainer_opts)
+        hcontainer = aplus_nodes.html('div', hcontainer_opts)
         collapsible = nodes.container()
 
         contentnodes = []
@@ -173,9 +173,9 @@ class PointOfInterest(Directive):
             'alt': 'Point of interest icon',
             'class': 'poi-icon',
         })
-        hidelink = aplus_nodes.html(u'a', {
-            u'href':u'#' + content_name,
-            u'data-toggle':u'collapse'})
+        hidelink = aplus_nodes.html('a', {
+            'href':'#' + content_name,
+            'data-toggle':'collapse'})
         hidelink.append(icon)
 
         if ":math:" in title_text:

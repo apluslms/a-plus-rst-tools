@@ -34,24 +34,24 @@ class ExerciseCollection(AbstractExercise):
 
         assert not errors, '\n'.join(errors)
 
-        name = u"{}_{}".format(env.docname.replace(u'/', u'_'), key)
+        name = "{}_{}".format(env.docname.replace('/', '_'), key)
 
 
-        node = aplus_nodes.html(u'div',{
-            u'class': 'exercisecollection',
-            u'data-aplus-exercise': u'yes',
+        node = aplus_nodes.html('div',{
+            'class': 'exercisecollection',
+            'data-aplus-exercise': 'yes',
         })
 
 
 
         data = {
-            u'key': name,
-            u'category': self.options.get('category', 'prerequisit'),
-            u'max_points': self.options.get('max_points', 10),
-            u'points_to_pass': self.options.get('points-to-pass', 0),
-            u'target_url': self.options.get('target_url', None),
-            u'target_category': self.options.get('target_category', None),
-            u'title': self.arguments[0]
+            'key': name,
+            'category': self.options.get('category', 'prerequisit'),
+            'max_points': self.options.get('max_points', 10),
+            'points_to_pass': self.options.get('points-to-pass', 0),
+            'target_url': self.options.get('target_url', None),
+            'target_category': self.options.get('target_category', None),
+            'title': self.arguments[0]
         }
 
         node.write_yaml(env, name, data, 'exercisecollection')

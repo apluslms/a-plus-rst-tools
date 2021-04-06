@@ -31,14 +31,14 @@ def visit_repl_node(self, node):
     previouslyInInputBlock = False
     for line in node.content:
         htmlLine = ""
-        if line.startswith(u"> "):
+        if line.startswith("> "):
             if previouslyInInputBlock:
                 htmlLine += '\n'
             else:
                 htmlLine += '<em>'
             htmlLine += escape(line[2:])
             previouslyInInputBlock = True
-        elif line == u"ø":                        # ø marks the non-output that the REPL provides when the result is Unit
+        elif line == "ø":                        # ø marks the non-output that the REPL provides when the result is Unit
             if previouslyInInputBlock:
                 htmlLine += '</em>'
             previouslyInInputBlock = False
@@ -53,7 +53,7 @@ def visit_repl_node(self, node):
                 return line
             if previouslyInInputBlock:
                 htmlLine += '</em>'
-            if line.startswith(u"¡"):
+            if line.startswith("¡"):
                 htmlLine += '<strong>'
                 htmlLine += clean_output(line[1:])
                 htmlLine += '</strong>'

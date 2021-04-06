@@ -30,9 +30,9 @@ class HiddenBlock(Directive):
         node = nodes.container()
         name = self.arguments[0]
         # TODO: maybe use sphinx/docutils node instead of aplus_node for the link
-        link = aplus_nodes.html(u'a', {
-            u'href':u'#' + name, 
-            u'data-toggle':u'collapse'})
+        link = aplus_nodes.html('a', {
+            'href':'#' + name, 
+            'data-toggle':'collapse'})
         label = 'Show/Hide'
         if 'label' in self.options:
             label = self.options['label']

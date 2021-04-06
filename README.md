@@ -479,8 +479,8 @@ file. For example:
 
 ```python
 override = {
-    u'feedback': {
-        u'url': u'https://jutut-server.org/feedback/coursekey/{key}',
+    'feedback': {
+        'url': 'https://jutut-server.org/feedback/coursekey/{key}',
     },
 }
 ```

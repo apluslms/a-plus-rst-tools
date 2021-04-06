@@ -30,7 +30,7 @@ class html(nodes.General, nodes.Element):
         self.skip_html = skip_html
         attrs = other_attributes.copy()
         attrs.update(attributes) # attributes dict gets prioritized if the same key exists in both dicts
-        super(html, self).__init__(u"", *children, **attrs)
+        super(html, self).__init__("", *children, **attrs)
 
     def write_yaml(self, env, name, data_dict, data_type=None):
         ''' Adds configuration data and requests write into a file. '''
@@ -81,9 +81,9 @@ def collect_data(body, node, data_type=None):
     def add_static_block(from_body, last_body):
         if data_type is None and last_body > from_body:
             data.append({
-                u'type': u'static',
-                u'title': u"",
-                u'more': u"".join(body[from_body:last_body]),
+                'type': 'static',
+                'title': "",
+                'more': "".join(body[from_body:last_body]),
             })
 
     def recursive_collect(parent, from_body):
@@ -111,15 +111,15 @@ def collect_html(node, name):
         if hasattr(n, 'html_extract') and n.html_extract == name:
             html.append(n._html)
         html.append(collect_html(n, name))
-    return u"".join(html)
+    return "".join(html)
 
 
 def recursive_fill(body, data_dict, node):
     for key,val in data_dict.items():
         if isinstance(val, tuple):
-            if val[0] == u'#!children':
+            if val[0] == '#!children':
                 data_dict[key] = collect_data(body, node, val[1])
-            elif val[0] == u'#!html':
+            elif val[0] == '#!html':
                 data_dict[key] = collect_html(node, val[1])
         elif isinstance(data_dict[key], dict):
             recursive_fill(body, data_dict[key], node)
@@ -144,7 +144,7 @@ def depart_html(self, node):
     self.body.append(node.endtag())
     node._body_end = len(self.body)
     if hasattr(node, 'html_extract'):
-        node._html = u"".join(self.body[(node._body_begin+1):-1])
+        node._html = "".join(self.body[(node._body_begin+1):-1])
     if hasattr(node, 'yaml_data'):
         recursive_fill(self.body, node.yaml_data, node)
         if hasattr(node, 'yaml_write'):
@@ -159,7 +159,7 @@ class aplusmeta(nodes.General, nodes.Element):
     def __init__(self, options={}, *children, **attributes):
         assert len(children) == 0, "aplusmeta node may not have children"
         self.options = options
-        super(aplusmeta, self).__init__(rawsource=u"", **attributes)
+        super(aplusmeta, self).__init__(rawsource="", **attributes)
 
     def copy(self):
         '''sphinx.util.nodes (function _new_copy) monkey-patches the Element.copy method

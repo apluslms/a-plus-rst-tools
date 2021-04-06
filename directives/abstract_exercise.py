@@ -40,9 +40,9 @@ class AbstractExercise(Directive):
         if not arg is None:
             for is_number, chars in itertools.groupby(arg, key=lambda a: str.isdigit(str(a))):
                 if is_number:
-                    points = int(u''.join(chars))
+                    points = int(''.join(chars))
                 else:
-                    difficulty = u''.join(chars)
+                    difficulty = ''.join(chars)
         return difficulty, points
 
     def set_assistant_permissions(self, data):

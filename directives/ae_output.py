@@ -34,19 +34,19 @@ class ActiveElementOutput(AbstractExercise):
         key, difficulty, points = self.extract_exercise_arguments()
 
         env = self.state.document.settings.env
-        name = u"{}_{}".format(env.docname.replace(u'/', u'_'), key)
+        name = "{}_{}".format(env.docname.replace('/', '_'), key)
         override = env.config.override
 
-        classes = [u'exercise']
+        classes = ['exercise']
         if 'class' in self.options:
             classes.extend(self.options['class'])
 
         # Add document nodes.
         args = {
-            u'class': u' '.join(classes),
-            u'data-aplus-exercise': u'yes',
-            u'data-aplus-active-element': u'out',
-            u'data-inputs': u''+ self.options.get('inputs', ''),
+            'class': ' '.join(classes),
+            'data-aplus-exercise': 'yes',
+            'data-aplus-active-element': 'out',
+            'data-inputs': ''+ self.options.get('inputs', ''),
         }
 
         if 'inputs' not in self.options:
@@ -75,12 +75,12 @@ class ActiveElementOutput(AbstractExercise):
         if 'clear' in self.options:
             args['style'] = args['style'] + 'clear:'+ self.options['clear'] + ';'
 
-        node = aplus_nodes.html(u'div', args)
-        paragraph = aplus_nodes.html(u'p', {})
+        node = aplus_nodes.html('div', args)
+        paragraph = aplus_nodes.html('p', {})
         paragraph.append(nodes.Text(translations.get(env, 'submit_placeholder')))
         node.append(paragraph)
 
-        key_title = u"{} {}".format(translations.get(env, 'exercise'), key)
+        key_title = "{} {}".format(translations.get(env, 'exercise'), key)
 
         # Load or create exercise configuration.
         if 'config' in self.options:
@@ -88,23 +88,23 @@ class ActiveElementOutput(AbstractExercise):
             if not os.path.exists(path):
                 raise SphinxError('Missing config path {}'.format(self.options['config']))
             data = yaml_writer.read(path)
-            config_title = data.get(u'title', None)
+            config_title = data.get('title', None)
         else:
-            data = { u'_external': True }
+            data = { '_external': True }
             if 'url' in self.options:
-                data[u'url'] = self.options['url']
+                data['url'] = self.options['url']
             config_title = None
 
         config_title = self.options.get('title', config_title)
 
-        category = u'submit'
+        category = 'submit'
         data.update({
-            u'key': name,
-            u'title': env.config.submit_title.format(
+            'key': name,
+            'title': env.config.submit_title.format(
                 key_title=key_title, config_title=config_title
             ),
-            u'category': u'active elements',
-            u'max_submissions': self.options.get('submissions', data.get('max_submissions', env.config.ae_default_submissions)),
+            'category': 'active elements',
+            'max_submissions': self.options.get('submissions', data.get('max_submissions', env.config.ae_default_submissions)),
         })
         data.setdefault('status', self.options.get('status', 'unlisted'))
         if category in override:

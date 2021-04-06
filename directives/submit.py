@@ -42,27 +42,27 @@ class SubmitForm(AbstractExercise):
         key, difficulty, points = self.extract_exercise_arguments()
 
         env = self.state.document.settings.env
-        name = u"{}_{}".format(env.docname.replace(u'/', u'_'), key)
+        name = "{}_{}".format(env.docname.replace('/', '_'), key)
         override = env.config.override
 
-        classes = [u'exercise']
+        classes = ['exercise']
         if 'class' in self.options:
             classes.extend(self.options['class'])
         if difficulty:
-            classes.append(u'difficulty-' + difficulty)
+            classes.append('difficulty-' + difficulty)
 
         # Add document nodes.
         args = {
-            u'class': u' '.join(classes),
-            u'data-aplus-exercise': u'yes',
+            'class': ' '.join(classes),
+            'data-aplus-exercise': 'yes',
         }
         if 'quiz' in self.options:
-            args[u'data-aplus-quiz'] = u'yes'
+            args['data-aplus-quiz'] = 'yes'
         if 'ajax' in self.options:
-            args[u'data-aplus-ajax'] = u'yes'
-        node = aplus_nodes.html(u'div', args)
+            args['data-aplus-ajax'] = 'yes'
+        node = aplus_nodes.html('div', args)
 
-        key_title = u"{} {}".format(translations.get(env, 'exercise'), key)
+        key_title = "{} {}".format(translations.get(env, 'exercise'), key)
 
         # Load or create exercise configuration.
         if 'config' in self.options:
@@ -72,38 +72,38 @@ class SubmitForm(AbstractExercise):
             data = yaml_writer.read(path)
             config_title = data.get('title', '')
         else:
-            data = { u'_external': True }
+            data = { '_external': True }
             if 'url' in self.options:
-                data[u'url'] = self.options['url']
+                data['url'] = self.options['url']
             if 'lti' in self.options:
                 data.update({
-                    u'lti': self.options['lti'],
-                    u'lti_context_id': self.options.get('lti_context_id', u''),
-                    u'lti_resource_link_id': self.options.get('lti_resource_link_id', u''),
+                    'lti': self.options['lti'],
+                    'lti_context_id': self.options.get('lti_context_id', ''),
+                    'lti_resource_link_id': self.options.get('lti_resource_link_id', ''),
                 })
                 if 'lti_aplus_get_and_post' in self.options:
-                    data.update({u'lti_aplus_get_and_post': True})
+                    data.update({'lti_aplus_get_and_post': True})
                 if 'lti_open_in_iframe' in self.options:
-                    data.update({u'lti_open_in_iframe': True})
+                    data.update({'lti_open_in_iframe': True})
             config_title = ''
 
         config_title = self.options.get('title', config_title)
         if "radar_tokenizer" in self.options or "radar_minimum_match_tokens" in self.options:
-            data[u'radar_info'] = {
-                u'tokenizer': self.options.get("radar_tokenizer"),
-                u'minimum_match_tokens': self.options.get("radar_minimum_match_tokens"),
+            data['radar_info'] = {
+                'tokenizer': self.options.get("radar_tokenizer"),
+                'minimum_match_tokens': self.options.get("radar_minimum_match_tokens"),
             }
 
-        category = u'submit'
+        category = 'submit'
         data.update({
-            u'key': name,
-            u'category': u'submit',
-            u'scale_points': points,
-            u'difficulty': difficulty or '',
-            u'max_submissions': self.options.get('submissions', data.get('max_submissions', env.config.program_default_submissions)),
-            u'min_group_size': data.get('min_group_size', env.config.default_min_group_size),
-            u'max_group_size': data.get('max_group_size', env.config.default_max_group_size),
-            u'points_to_pass': self.options.get('points-to-pass', data.get('points_to_pass', 0)),
+            'key': name,
+            'category': 'submit',
+            'scale_points': points,
+            'difficulty': difficulty or '',
+            'max_submissions': self.options.get('submissions', data.get('max_submissions', env.config.program_default_submissions)),
+            'min_group_size': data.get('min_group_size', env.config.default_min_group_size),
+            'max_group_size': data.get('max_group_size', env.config.default_max_group_size),
+            'points_to_pass': self.options.get('points-to-pass', data.get('points_to_pass', 0)),
             # The RST source file path is needed for fixing relative URLs
             # in the exercise description.
             # Replace the Windows path separator backslash \ with the Unix forward slash /.
