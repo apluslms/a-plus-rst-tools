@@ -87,8 +87,8 @@ def add_assets(app):
     # settings from the conf.py file located in the course directory. If such
     # settings are not found, the default settings defined in the setup()
     #  method will be used instead
-    app.config.include_tab_css and app.add_stylesheet(CSS_FILE)
-    app.config.include_tab_js and app.add_javascript(JS_FILE)
+    app.config.include_tab_css and app.add_css_file(CSS_FILE)
+    app.config.include_tab_js and app.add_js_file(JS_FILE)
 
 
 def copy_asset_files(app, exception):
