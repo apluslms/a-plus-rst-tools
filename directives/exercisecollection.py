@@ -6,7 +6,6 @@ from sphinx.errors import SphinxError
 import aplus_nodes
 import lib.translations as translations
 import lib.yaml_writer as yaml_writer
-from lib.yaml_writer import ensure_unicode
 from directives.abstract_exercise import AbstractExercise
 
 class ExerciseCollection(AbstractExercise):

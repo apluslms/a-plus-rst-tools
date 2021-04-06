@@ -35,11 +35,3 @@ def read(file_path):
     with io.open(file_path, 'r', encoding='utf-8') as f:
         return yaml.safe_load(f.read())
 
-
-def ensure_unicode(value):
-    try:
-        unicode
-    except NameError:
-        return value
-    else:
-        return unicode(value)

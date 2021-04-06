@@ -11,7 +11,6 @@ from sphinx.util.nodes import nested_parse_with_titles
 import aplus_nodes
 import lib.translations as translations
 import lib.yaml_writer as yaml_writer
-from lib.yaml_writer import ensure_unicode
 from directives.abstract_exercise import AbstractExercise, choice_truefalse
 
 
@@ -75,12 +74,12 @@ class SubmitForm(AbstractExercise):
         else:
             data = { u'_external': True }
             if 'url' in self.options:
-                data[u'url'] = ensure_unicode(self.options['url'])
+                data[u'url'] = self.options['url']
             if 'lti' in self.options:
                 data.update({
-                    u'lti': ensure_unicode(self.options['lti']),
-                    u'lti_context_id': ensure_unicode(self.options.get('lti_context_id', u'')),
-                    u'lti_resource_link_id': ensure_unicode(self.options.get('lti_resource_link_id', u'')),
+                    u'lti': self.options['lti'],
+                    u'lti_context_id': self.options.get('lti_context_id', u''),
+                    u'lti_resource_link_id': self.options.get('lti_resource_link_id', u''),
                 })
                 if 'lti_aplus_get_and_post' in self.options:
                     data.update({u'lti_aplus_get_and_post': True})

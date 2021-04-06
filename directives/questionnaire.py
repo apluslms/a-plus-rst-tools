@@ -232,7 +232,7 @@ class QuestionMixin:
         }
         key = self.options.get('key', None)
         if key:
-            data[u'key'] = yaml_writer.ensure_unicode(key)
+            data[u'key'] = key
 
         # Add title.
         if not title_text is None:

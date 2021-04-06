@@ -12,7 +12,6 @@ import aplus_nodes
 import lib.translations as translations
 import lib.yaml_writer as yaml_writer
 from directives.abstract_exercise import AbstractExercise
-from lib.yaml_writer import ensure_unicode
 
 from docutils.utils.error_reporting import SafeString, ErrorString
 

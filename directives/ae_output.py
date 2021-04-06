@@ -11,8 +11,6 @@ import aplus_nodes
 import lib.translations as translations
 import lib.yaml_writer as yaml_writer
 from directives.abstract_exercise import AbstractExercise
-from lib.yaml_writer import ensure_unicode
-
 
 
 class ActiveElementOutput(AbstractExercise):
@@ -94,7 +92,7 @@ class ActiveElementOutput(AbstractExercise):
         else:
             data = { u'_external': True }
             if 'url' in self.options:
-                data[u'url'] = ensure_unicode(self.options['url'])
+                data[u'url'] = self.options['url']
             config_title = None
 
         config_title = self.options.get('title', config_title)
