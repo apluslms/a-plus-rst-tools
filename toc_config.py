@@ -2,14 +2,19 @@ import os
 import re
 
 from docutils import nodes
+
 from sphinx import addnodes
 from sphinx.errors import SphinxError
+from sphinx.util import logging
 
 import aplus_nodes
 import directives.meta
 import lib.yaml_writer as yaml_writer
 import lib.html_tools as html_tools
 import lib.toc_languages as toc_languages
+
+
+logger = logging.getLogger(__name__)
 
 
 def prepare(app):
@@ -137,7 +142,7 @@ def write(app, exception):
     # Check for language tree.
     keys = set()
     if _is_multilingual_course(app):
-        app.info('Detected language tree.')
+        logger.info('Detected language tree.')
 
         indexes = []
         for docname,_,doc in traverse_tocs(app, root):
@@ -145,26 +150,25 @@ def write(app, exception):
             if i < 0:
                 raise SphinxError('Language postfix is required (e.g. docname_en): ' + docname)
             lang = docname[(i + 1):]
-            app.info('Traverse document elements to write configuration index ({}).'.format(lang))
+            logger.info('Traverse document elements to write configuration index ({}).'.format(lang))
             index = make_index(app, doc, language=lang)
             yaml_writer.write(yaml_writer.file_path(app.env, 'index_' + lang), index)
             indexes.append((lang, index))
 
-        app.info('Joining language tree to one index.')
+        logger.info('Joining language tree to one index.')
         index = toc_languages.join(app, indexes)
         append_manual_content(app, index)
         yaml_writer.write(yaml_writer.file_path(app.env, 'index'), index)
         keys |= set(m['key'] for m in index['modules'])
 
     else:
-        app.info('Traverse document elements to write configuration index.')
+        logger.info('Traverse document elements to write configuration index.')
         index = make_index(app, root)
         append_manual_content(app, index)
         yaml_writer.write(yaml_writer.file_path(app.env, 'index'), index)
         keys |= set(m['key'] for m in index['modules'])
 
     # Rewrite links for remote inclusion.
-    app.info('Retouch all files to rewrite links.')
     keys |= {'toc', 'user', 'account'}
     html_tools.rewrite_outdir(app.outdir, keys, app.config.static_host)
 

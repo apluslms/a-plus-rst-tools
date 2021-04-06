@@ -1,6 +1,11 @@
 from sphinx.errors import SphinxError
+from sphinx.util import logging
 
 import lib.yaml_writer as yaml_writer
+
+
+logger = logging.getLogger(__name__)
+
 
 # Following keys may be given a default in base (first) language
 # and other language versions are allowed to omit them.
@@ -57,7 +62,7 @@ class IndexJoiner:
         if self.errors > 0:
             msg = "Language versions have previously reported {:d} inconsistencies!".format(self.errors)
             if self.app.config.skip_language_inconsistencies:
-                self.app.warn(msg + (
+                logger.warning(msg + (
                     " The 'skip_language_inconsistencies' option is set and"
                     " therefore incomplete version of the course is compiled."
                     " This setting should only be used in development phase!"
@@ -262,7 +267,7 @@ class IndexJoiner:
         ))
 
     def raise_error(self, msg):
-        self.app.warn(msg)
+        logger.warning(msg)
         self.errors += 1
 
 
