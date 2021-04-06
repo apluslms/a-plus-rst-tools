@@ -1,5 +1,6 @@
 import io
 import os.path
+
 import yaml
 from sphinx.util.osutil import ensuredir
 
@@ -32,7 +33,7 @@ def write(file_path, data_dict):
 def read(file_path):
     ''' Reads dictionary from a yaml file '''
     with io.open(file_path, 'r', encoding='utf-8') as f:
-        return yaml.load(f.read())
+        return yaml.safe_load(f.read())
 
 
 def ensure_unicode(value):

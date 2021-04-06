@@ -29,7 +29,7 @@ def rewrite_file_links(path, root, chapter_dirs, static_host):
         # YAML files are handled separately because rewriting links with
         # a regexp could add YAML syntax errors to the file if quotes are not
         # escaped properly. Escaping is now taken care of by the YAML module.
-        yaml_data_dict = yaml.load(content)
+        yaml_data_dict = yaml.safe_load(content)
         recursive_rewrite_links(
             yaml_data_dict,
             path,
