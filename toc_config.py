@@ -45,7 +45,7 @@ def set_config_language_for_doc(app, docname, source):
 
 def _is_multilingual_course(app):
     root = app.env.get_doctree(app.config.master_doc)
-    tocs = root.traverse(addnodes.toctree)
+    tocs = list(root.traverse(addnodes.toctree))
     return tocs and tocs[0].get('rawcaption') == 'Select language'
 
 
@@ -198,11 +198,11 @@ def make_index(app, root, language=''):
         return outdir[i:]
 
     def first_title(doc):
-        titles = doc.traverse(nodes.title)
+        titles = list(doc.traverse(nodes.title))
         return titles[0].astext() if titles else 'Unnamed'
 
     def first_meta(doc):
-        metas = doc.traverse(directives.meta.aplusmeta)
+        metas = list(doc.traverse(directives.meta.aplusmeta))
         return metas[0].options if metas else {}
 
     # Tries to parse date from natural text.
