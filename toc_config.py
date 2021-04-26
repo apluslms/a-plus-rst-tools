@@ -299,7 +299,7 @@ def make_index(app, root, language=''):
             if meta:
                 audience = meta.get('audience')
                 if audience:
-                    chapter['audience'] = yaml_writer.ensure_unicode(audience)
+                    chapter['audience'] = audience
             if category in override:
                 chapter.update(override[category])
             parent.append(chapter)
