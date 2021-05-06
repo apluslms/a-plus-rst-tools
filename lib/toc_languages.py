@@ -315,10 +315,24 @@ def join_values(lang1, val1, lang2, val2):
 
 
 def has_identical_dict_keys(d1, d2):
-    return (
-        type(d1) == type(d2) == dict
-        and len(set(d1.keys()) ^ set(d2.keys())) == 0
-    )
+    if not (type(d1) == type(d2) == dict):
+        return False
+
+    # Collect the keys of both dicts into sets and compare their differences.
+    # Keys with and without the i18n suffix are considered identical.
+    keys1 = set()
+    for k in d1:
+        if k.endswith('|i18n'):
+            keys1.add(k[:-5])
+        else:
+            keys1.add(k)
+    keys2 = set()
+    for k in d2:
+        if k.endswith('|i18n'):
+            keys2.add(k[:-5])
+        else:
+            keys2.add(k)
+    return len(keys1 ^ keys2) == 0
 
 
 def has_identical_len_and_dict_keys(l1, l2):
