@@ -278,25 +278,40 @@ def key_names(elements):
     return ', '.join(str(e.get('key', '[missing key]')) for e in elements)
 
 
+def key_without_language(lang, key):
+    separators = ('_', '-')
+    result = ""
+    i = 0
+
+    # Find segments where the language id is surrounded by separators (or end of string).
+    # Exclude them and return the remaining string.
+    while i < len(key):
+        if key[i] in separators:
+            end_index = i + len(lang) + 1
+            if key[i+1:end_index] == lang:
+                if end_index >= len(key):
+                    break
+                if key[end_index] in separators:
+                    i = end_index
+                    continue
+        result += key[i]
+        i += 1
+    return result
+
+
 def join_keys(lang1, key1, lang2, key2):
     if key1 == key2 or key2 == '':
         return key1
-    SEP = ('_', '-')
-    k = ""
-    l2 = len(key2)
-    for i,c in enumerate(key1):
-        if i < l2 and c == key2[i]:
-            if not c in SEP or k == "" or k[-1] != c:
-                k += c
-    if not k or k in SEP:
+
+    key1 = key_without_language(lang1, key1)
+    key2 = key_without_language(lang2, key2)
+
+    if key1 != key2:
         raise SphinxError(
             "Corresponding RST file names must match in multilingual courses:\n"
             + key1 + "\n" + key2)
-    if k[-1] in SEP:
-        k = k[:-1]
-    if k[0] in SEP:
-        k = k[1:]
-    return k
+
+    return key1
 
 
 def join_values(lang1, val1, lang2, val2):
