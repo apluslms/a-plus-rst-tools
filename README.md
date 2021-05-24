@@ -12,14 +12,14 @@ Provides tools to publish RST course content for mooc-grader and a-plus.
 We recommend to start with a fork from the [course-templates] repository
 from Github.
 
-    git clone --recursive https://github.com/apluslms/course-templates.git
+    git clone --recursive https://github.com/apluslms/aplus-course-template.git
 
 Read the README in that repository in order to learn how to build and run
 the course using Docker containers (recommended). If you do not use containers,
 you need Python modules Sphinx and yaml in order to compile the RST source into
 HTML and YAML course configuration files.
 
-    pip install sphinx PyYAML
+    pip install sphinx~=1.6.7 PyYAML~=5.4.1
 
 The course is compiled with make (when no containers are used).
 
@@ -45,12 +45,12 @@ In order to build the course without any Docker containers, you install the
 Python modules Sphinx and yaml as well as create the Sphinx configuration file
 conf.py.
 
-    pip install sphinx PyYAML
+    pip install sphinx~=1.6.7 PyYAML~=5.4.1
     sphinx-quickstart
     cp a-plus-rst-tools/conf.py .  # a similar conf.py is available in course-templates as well
 
 
-[course-templates]: https://github.com/apluslms/course-templates
+[course-templates]: https://github.com/apluslms/aplus-course-template
 
 
 ## Upgrading the tools
