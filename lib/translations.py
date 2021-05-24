@@ -6,57 +6,57 @@ translations = {
     'submit': {
         'en': 'Submit',
         'fi': 'Lähetä',
-        'sv': 'Skicka in',
+        #'sv': 'Skicka in',
     },
     'submit_placeholder': {
         'en': 'A+ presents the exercise submission form here.',
         'fi': 'A+ esittää tässä kohdassa tehtävän palautuslomakkeen.',
-        'sv': 'A+ presenterar formuläret för inlämningen av uppgiften här.',
+        #'sv': 'A+ presenterar formuläret för inlämningen av uppgiften här.',
     },
         'active_element_placeholder': {
         'en': 'A+ presents the active element here.',
         'fi': 'A+ esittää tässä kohdassa "active element"-elementin.',
-        'sv': 'A+ presenterar det aktiva elementet här.',
+        #'sv': 'A+ presenterar det aktiva elementet här.',
     },
     'feedback': {
         'en': 'Feedback',
         'fi': 'Palaute',
-        'sv': 'Feedback',
+        #'sv': 'Feedback',
     },
     'exercise': {
         'en': 'Exercise',
         'fi': 'Tehtävä',
-        'sv': 'Uppgift',
+        #'sv': 'Uppgift',
     },
     'question': {
         'en': 'Question',
         'fi': 'Kysymys',
-        'sv': 'Fråga',
+        #'sv': 'Fråga',
     },
     'agreement4': {
         'en': 'strongly agree',
         'fi': 'täysin samaa mieltä',
-        'sv': 'instämmer helt',
+        #'sv': 'instämmer helt',
     },
     'agreement3': {
         'en': 'agree',
         'fi': 'jokseenkin samaa mieltä',
-        'sv': 'instämmer delvis',
+        #'sv': 'instämmer delvis',
     },
     'agreement2': {
         'en': 'disagree',
         'fi': 'jokseenkin eri mieltä',
-        'sv': 'instämmer inte',
+        #'sv': 'instämmer inte',
     },
     'agreement1': {
         'en': 'strongly disagree',
         'fi': 'täysin eri mieltä',
-        'sv': 'instämmer inte alls',
+        #'sv': 'instämmer inte alls',
     },
     'agreement0': {
         'en': 'cannot say / no comments',
         'fi': 'en osaa sanoa / en kommentoi',
-        'sv': 'jag kan inte säga / ingen kommentar',
+        #'sv': 'jag kan inte säga / ingen kommentar',
     },
 }
 
