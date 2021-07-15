@@ -54,7 +54,7 @@ class IndexJoiner:
         self.app = app
         self.base_lang = base_lang
         self.joined = base
-        self.joined['language'] = [base_lang]
+        self.joined['lang'] = [base_lang]
         self.errors = 0
         self.skip_errors = app.config.skip_language_inconsistencies
 
@@ -78,7 +78,7 @@ class IndexJoiner:
         index = {}
         self.require_identical_dict_keys(path, lang1, index1, lang2, index2, ACCEPTED_INDEX_DEFAULT_KEYS)
         for k,v in index1.items():
-            if k == 'language':
+            if k == 'lang':
                 index[k] = v + [lang2]
             elif k == 'name':
                 index[k] = join_values(lang1, v, lang2, index2.get(k, v))

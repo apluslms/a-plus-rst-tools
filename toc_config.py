@@ -408,7 +408,7 @@ def make_index(app, root, language=''):
         'modules': modules,
         'categories': categories,
     }
-    index['language'] = language if language else app.config.language
+    index['lang'] = language if language else app.config.language
 
     course_enrollment_start = course_meta.get('enrollment-start')
     course_enrollment_end = course_meta.get('enrollment-end')
