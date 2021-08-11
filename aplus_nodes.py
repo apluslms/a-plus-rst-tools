@@ -138,6 +138,9 @@ def visit_html(self, node):
     node._body_children_begin = len(self.body)
 
 
+p_tag_start = re.compile(r'<p>')
+p_tag_end   = re.compile(r'</p>\s*')
+
 def depart_html(self, node):
     ''' The HTML render ends for the node. '''
     node._body_children_end = len(self.body)
@@ -145,6 +148,11 @@ def depart_html(self, node):
     node._body_end = len(self.body)
     if hasattr(node, 'html_extract'):
         node._html = "".join(self.body[(node._body_begin+1):-1])
+        # Remove <p> elements from inside choice labels and question hints.
+        # They occur in questionnaires. HTML <label> may not contain <p> and
+        # the hints are inserted to a template that already wraps them in <p>.
+        if node.html_extract in ['hint', 'label']:
+            node._html = p_tag_end.sub('', p_tag_start.sub('', node._html))
     if hasattr(node, 'yaml_data'):
         recursive_fill(self.body, node.yaml_data, node)
         if hasattr(node, 'yaml_write'):
