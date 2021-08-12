@@ -128,6 +128,11 @@ p.rubric {
   font-weight: bold;
 }
 
+li > p:last-child,
+dd > p:last-child {
+  margin-bottom: 0.5em;
+}
+
 img.align-left,
 .figure.align-left,
 object.align-left {
@@ -231,6 +236,9 @@ p.topic-title {
   margin-top: 0;
 }
 
+.topic.dl-horizontal dd > p:last-child {
+  margin-bottom: 0;
+}
 
 /* -- admonitions ----------------------------------------------------------- */
 
