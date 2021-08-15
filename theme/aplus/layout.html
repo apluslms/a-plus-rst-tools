@@ -63,6 +63,14 @@
     {%- endif %}
     <link rel="stylesheet" href="{{ pathto('_static/pygments.css', 1) }}" type="text/css" data-aplus="yes" />
 
+    {%- for js in script_files %}
+      {{ js_tag(js) }}
+    {%- endfor %}
+
+    {%- for css in css_files %}
+      {{ css_tag(css) }}
+    {%- endfor %}
+
     {#%- for cssfile in css_files %}
     <link rel="stylesheet" href="{{ pathto(cssfile, 1) }}" type="text/css" />
     {%- endfor %#}
