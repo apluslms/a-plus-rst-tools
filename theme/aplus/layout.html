@@ -4,14 +4,14 @@
 
 {%- macro siblings() %}
 <nav class="row siblings">
-  {%- if next %}
-  <a href="{{ next.link|e }}" class="pull-right btn btn-link">
-    {{ next.title }} &raquo;
+  {%- if prev %}
+  <a href="{{ prev.link|e }}" class="nav-flex-left">
+    &laquo; {{ prev.title }}
   </a>
   {%- endif %}
-  {%- if prev %}
-  <a href="{{ prev.link|e }}" class="btn btn-link">
-    &laquo; {{ prev.title }}
+  {%- if next %}
+  <a href="{{ next.link|e }}" class="nav-flex-right">
+    {{ next.title }} &raquo;
   </a>
   {%- endif %}
 </nav>
