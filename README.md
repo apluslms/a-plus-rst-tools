@@ -366,6 +366,12 @@ question options:
 * `preserve-questions-between-attempts`: If set, the answer choices in a `randomized`
   question are preserved between submission attempts (instead of being
   resampled after each attempt).
+* `checkbox-feedback`: If set, the feedback for a selected checkbox is rendered
+  under the checkbox instead of the list under the question. This makes it obvious
+  to the student which checkbox triggered the feedback. Even if this is set,
+  the inverse feedback (!a, when option is not selected) is still rendered under
+  the question after all checkboxes. By default, all feedback is rendered under
+  the question.
 
 The `pick-one` questions are rendered with HTML radio buttons by default, but
 a dropdown (select) element may be used with the `dropdown` option.

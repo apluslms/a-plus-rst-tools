@@ -485,6 +485,9 @@ class Choice(QuestionMixin, Directive):
                 data['resample_after_attempt'] = False
             env.aplus_random_question_exists = True
 
+        if 'checkbox-feedback' in self.options:
+            data['checkbox_feedback'] = True
+
         self.add_feedback(node, data, feedback)
 
         return [node]
@@ -525,6 +528,9 @@ class MultipleChoice(Choice):
         # Random questions may be resampled after each submission attempt or
         # the questions may be preserved.
         'preserve-questions-between-attempts': directives.flag,
+        # If 'checkbox-feedback' is set, the feedback for a selected checkbox
+        # is rendered under the checkbox instead of the list under the question.
+        'checkbox-feedback': directives.flag,
     })
 
     def form_group_class(self):
