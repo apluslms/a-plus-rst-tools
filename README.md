@@ -1128,13 +1128,14 @@ contain any whitespace. You must also add the option `title` to the `tab-content
 will be shown in your tabs. The content of each `tab-content` can be any anything.
 
 ### 19. Interactive code
-The `thebe-button` directive and `thebe` class can be used to make python code-blocks interactive, allowing students to edit and run code. This extension must be activated separately in the project by adding the following settings to the **conf.py** file located in the root of your course directory.
+The `thebe-button` directive and `thebe` class can be used to make python code-blocks interactive, allowing students to edit and run code.
+This extension must be activated separately in the project by adding `"thebe"` to the `extensions` list variable in the **conf.py** file located in the root of your course directory.
 
 ```python
 extensions = ["aplus_setup", "thebe"]
 ```
 
-Additionally, **conf.py** should contain the following configuration to use a production binderhub server, and possibly to set a custom repostiory for the environment interactive code runs in
+Additionally, **conf.py** should contain the following configuration to use a production binderhub server, and possibly to set a custom repository for the environment interactive code runs in.
 ```python
 
    # Thebe configuration

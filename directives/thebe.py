@@ -1,3 +1,40 @@
+"""
+This file is adapted for A+ from the sphinx-thebe project.
+
+Changes:
+* The Binderhub URL can be set in conf.py (thebe_config variable).
+  It used to be a hardcoded value, mybinder.org.
+* The JavaScript and CSS files are only copied to the build output directory
+  if this Sphinx extension is enabled in conf.py.
+
+Original source:
+https://github.com/executablebooks/sphinx-thebe
+https://github.com/executablebooks/sphinx-thebe/blob/v0.0.8/sphinx_thebe/__init__.py
+
+
+MIT License
+
+Copyright (c) 2018 Chris Holdgraf
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+"""
+
 """A sphinx extension to enable interactive computations using thebe."""
 
 import json
@@ -220,14 +257,14 @@ def setup(app):
     app.add_css_file(CSS_FILE, **opts)
 
     # The files are added to the _build/html/_static/css folder. 
-    logger.info('Copying CSS files from the annotated directive to the _static folder... ')
+    logger.info('Copying CSS files from the thebe-button directive to the _static folder... ')
     html_static_path_css = os.path.join(assets_path, CSS_FILE)
     local_path_css = os.path.join(os.path.dirname(__file__), html_static_path_css)
     copy_asset(local_path_css, os.path.join(app.outdir, '_static', 'css'))
     logger.info('done')
     
     # The files are added to the _build/html/_static/js folder. 
-    logger.info('Copying JS files from the annotated directive to the _static folder... ')
+    logger.info('Copying JS files from the thebe-button directive to the _static folder... ')
     html_static_path_js = os.path.join(assets_path, JS_FILE)
     local_path_js = os.path.join(os.path.dirname(__file__), html_static_path_js)
     copy_asset(local_path_js, os.path.join(app.outdir, '_static', 'js'))
