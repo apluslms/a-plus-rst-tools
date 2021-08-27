@@ -371,8 +371,9 @@ def add_assets(app):
     # settings from the conf.py file located in the course directory. If such
     # settings are not found, the default settings defined in the setup()
     #  method will be used instead
-    app.config.include_annotated_css and app.add_css_file(CSS_FILE)
-    app.config.include_annotated_js and app.add_js_file(JS_FILE)
+    attrs = {"data-aplus": "yes"}
+    app.config.include_annotated_css and app.add_css_file(CSS_FILE, **attrs)
+    app.config.include_annotated_js and app.add_js_file(JS_FILE, **attrs)
 
 def copy_asset_files(app, exc):
 

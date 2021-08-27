@@ -83,12 +83,13 @@ class TabContentDirective(Directive):
         return [node]
 
 def add_assets(app):
-    # This method reads the `include_annotated_css` and `include_annotated_js`
+    # This method reads the `include_tab_css` and `include_tab_js`
     # settings from the conf.py file located in the course directory. If such
     # settings are not found, the default settings defined in the setup()
     #  method will be used instead
-    app.config.include_tab_css and app.add_css_file(CSS_FILE)
-    app.config.include_tab_js and app.add_js_file(JS_FILE)
+    attrs = {"data-aplus": "yes"}
+    app.config.include_tab_css and app.add_css_file(CSS_FILE, **attrs)
+    app.config.include_tab_js and app.add_js_file(JS_FILE, **attrs)
 
 
 def copy_asset_files(app, exception):
@@ -98,7 +99,7 @@ def copy_asset_files(app, exception):
         
     # The files are added to the _build/html/_static/css folder.
     if app.config.include_tab_css:
-        logger.info('Copying CSS files from the tabs directive to the _static folder... ')
+        logger.info('Copying CSS files from the rst-tabs directive to the _static folder... ')
         html_static_path_css = os.path.join(assets_path, CSS_FILE)
         local_path_css = os.path.join(os.path.dirname(__file__), html_static_path_css)
         copy_asset(local_path_css, os.path.join(app.outdir, '_static', 'css'))
@@ -107,7 +108,7 @@ def copy_asset_files(app, exception):
     # The files are added to the _build/html/_static/js folder.
     if app.config.include_tab_js:
         logger.info(
-        'Copying JS files from the annotated directive to the _static folder... ')
+        'Copying JS files from the rst-tabs directive to the _static folder... ')
         html_static_path_js = os.path.join(assets_path, JS_FILE)
         local_path_js = os.path.join(os.path.dirname(__file__), html_static_path_js)
         copy_asset(local_path_js, os.path.join(app.outdir, '_static', 'js'))

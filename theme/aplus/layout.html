@@ -34,22 +34,6 @@
     <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script>
     {%- endif %}
 
-    {% if '_static/css/annotated.css' in css_files %}
-    <link rel="stylesheet" href="{{ pathto('_static/css/annotated.css', 1) }}" type="text/css" data-aplus="yes"/>
-    {% endif %}
-
-    {% if '_static/js/annotated.js' in script_files %}
-    <script rel="stylesheet" src="{{ pathto('_static/js/annotated.js', 1) }}" type="text/javascript" data-aplus="yes"></script>
-    {% endif %}
-
-    {% if '_static/css/aplus_tab.css' in css_files %}
-    <link rel="stylesheet" href="{{ pathto('_static/css/aplus_tab.css', 1) }}" type="text/css" data-aplus="yes"/>
-    {% endif %}
-
-    {% if '_static/js/aplus_tab.js' in script_files %}
-    <script rel="stylesheet" src="{{ pathto('_static/js/aplus_tab.js', 1) }}" type="text/javascript" data-aplus="yes"></script>
-    {% endif %}
-
     <!-- The A+ main.css includes Bootstrap v3.4.1 CSS styles since A+ v1.8. -->
     <link rel="stylesheet" href="https://plus.cs.aalto.fi/static/css/main.css">
     <script src="https://plus.cs.aalto.fi/static/js/bootstrap3.min.js"></script>
