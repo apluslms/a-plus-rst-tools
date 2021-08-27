@@ -49,19 +49,19 @@
     {%- endif %}
     <link rel="stylesheet" href="{{ pathto('_static/pygments.css', 1) }}" type="text/css" data-aplus="yes" />
 
-    {# script_files and css_files contain some built-in files from Sphinx that
+    {#- script_files and css_files contain some built-in files from Sphinx that
        we do not want to include. Only include tags that have the data-aplus
-       attribute added by the directive code. #}
+       attribute added by the directive code. -#}
     {%- for js in script_files %}
-      {% if 'data-aplus' in js.attributes %}
+      {%- if 'data-aplus' in js.attributes %}
         {{ js_tag(js) }}
-      {% endif %}
+      {%- endif %}
     {%- endfor %}
 
     {%- for css in css_files %}
-      {% if 'data-aplus' in css.attributes %}
+      {%- if 'data-aplus' in css.attributes %}
         {{ css_tag(css) }}
-      {% endif %}
+      {%- endif %}
     {%- endfor %}
 
     {%- block extrahead %} {% endblock %}
