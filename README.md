@@ -1127,6 +1127,38 @@ which is used internally to identify individual `tab-content`. Therefore, this a
 contain any whitespace. You must also add the option `title` to the `tab-content` directive since it is the title that
 will be shown in your tabs. The content of each `tab-content` can be any anything.
 
+### 19. Interactive code
+The `thebe-button` directive and `thebe` class can be used to make python code-blocks interactive, allowing students to edit and run code.
+This extension must be activated separately in the project by adding `"thebe"` to the `extensions` list variable in the **conf.py** file located in the root of your course directory.
+
+```python
+extensions = ["aplus_setup", "thebe"]
+```
+
+Additionally, **conf.py** should contain the following configuration to use a production binderhub server, and possibly to set a custom repository for the environment interactive code runs in.
+```python
+
+   # Thebe configuration
+    thebe_config = {
+      "binderUrl": "https://mybinder.org" # For testing; replace this with a binderhub server provided by your instution for production
+      # "repository_url": ""
+      # "repostiory_branch": ""
+    }   
+```
+
+The following snippet of code is an example on how you can use the `thebe` extension.
+
+```rst
+.. thebe-button:: Custom button text (defaults to "Run code")
+
+.. code-block:: python
+  :class: thebe
+  a = 1
+  b = 2
+  c = a + b
+  print(c)
+```
+
 ### List of exercise statuses
 
 There are 6 possible statuses for exercises:
