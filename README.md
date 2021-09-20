@@ -149,7 +149,9 @@ course_head_urls = [
 enable_rst_file_language_detection = True
 
 # Add the language suffix to doc and ref link targets as well as ref link
-# labels in multilingual courses.
+# labels in multilingual courses. This can only be used in multilingual courses
+# that include the language suffix "_en" in each chapter RST file, that is,
+# filenames are like chapter1_en.rst and chapter1_fi.rst.
 # It is more convenient to write doc links without manually added language
 # suffixes, e.g., :doc:`chapter1` instead of :doc:`chapter1_en`. This function
 # adds the language suffixes automatically since Sphinx can not compile
