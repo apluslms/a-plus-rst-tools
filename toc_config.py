@@ -85,10 +85,6 @@ def add_lang_suffix_to_links(app, docname, source):
     if not re.fullmatch(r"^_[a-z]{2}$", lang_suffix):
         return
 
-    # Check that this is a multilingual course.
-    if not _is_multilingual_course(app):
-        return
-
     # The source argument is a list whose only element is the content of the source file.
     if app.config.enable_doc_link_multilang_suffix_correction:
         # Links of the form :doc:`link text <path/file>` (no language suffix _en in the file path)
