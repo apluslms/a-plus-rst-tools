@@ -272,7 +272,7 @@ max points `50` and difficulty `A`. If not set in the directive arguments, the m
 the sum of the question points. Setting the difficulty is optional and it can be set
 even if the max points aren't defined in the argument. The questionnaire directive accepts the following options:
 
-* `submissions`: max submissions
+* `submissions`: max submissions (set to 0 to remove submission limit)
 * `points-to-pass`: points to pass
 * `feedback`: If set, assumes the defaults for a feedback questionnaire
 * `title`: exercise title
@@ -560,7 +560,7 @@ body of the submit directive will be prioritized.
 It accepts the following options:
 
 * `config`: path to the YAML configuration file
-* `submissions`: max submissions
+* `submissions`: max submissions (set to 0 to remove submission limit)
 * `points-to-pass`: points to pass (default zero)
 * `class`: CSS class(es)
 * `title`: exercise title
