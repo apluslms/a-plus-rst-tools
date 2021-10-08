@@ -6,6 +6,14 @@ Provides tools to publish RST course content for mooc-grader and a-plus.
 * http://matplotlib.org/sampledoc/
 * http://docutils.sourceforge.net/rst.html
 
+A-plus RST tools comprise a set of Sphinx extensions.
+Sphinx is a tool for writing documentation mainly in the reStructuredText (RST) markup language,
+though it also supports other markup languages such as markdown via extensions.
+Sphinx itself extends the Docutils RST parser and compiler.
+A-plus RST tools support the following Sphinx versions:
+
+* a-plus-rst-tools v1.4 support Sphinx v4.1.
+* a-plus-rst-tools v1.3 and earlier support Sphinx v1.6.
 
 ## Creating a new course
 
