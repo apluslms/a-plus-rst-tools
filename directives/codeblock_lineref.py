@@ -38,25 +38,18 @@ def visit_codeblock_lineref_node(self, node):
     # except for the addition of line anchors.
     lineanchors = node['lineanchor_id']
     node = node[0]
-    lang = self.highlightlang
-    linenos = node.rawsource.count('\n') >= \
-        self.highlightlinenothreshold - 1
+    lang = node.get('language', 'default')
+    linenos = node.get('linenos', False)
     highlight_args = node.get('highlight_args', {})
-    if 'language' in node:
-        # code-block directives
-        lang = node['language']
-        highlight_args['force'] = True
-    if 'linenos' in node:
-        linenos = node['linenos']
-    if lang is self.highlightlang_base:
-        # only pass highlighter options for original language
-        opts = self.highlightopts
-    else:
-        opts = {}
+    highlight_args['force'] = node.get('force', False)
+    opts = self.config.highlight_options.get(lang, {})
+
+    if linenos and self.config.html_codeblock_linenos_style:
+        linenos = self.config.html_codeblock_linenos_style
 
     highlighted = self.highlighter.highlight_block(
         node.rawsource, lang, opts=opts, linenos=linenos, lineanchors=lineanchors,
-        location=(self.builder.current_docname, node.line), **highlight_args
+        location=node, **highlight_args
     )
     starttag = self.starttag(node, 'div', suffix='',
                              CLASS='highlight-%s notranslate' % lang)

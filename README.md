@@ -872,6 +872,13 @@ and hyphen (-). The directive is used similarly to the Sphinx directive `code-bl
 This extension must be activated separately in the project conf.py
 (`extensions = ["aplus_setup", "codeblock_lineref"]`).
 
+This directive has limitations (that have not been fixed thus far):
+
+* The `lref` link can only refer to code blocks in the same RST file.
+* The code block containing the label must be defined before the `lref` link that refers to the label.
+  Otherwise, the link does not work.
+  In other words, you can not link to the code block in the chapter text before the code block.
+
 ```
 .. lineref-code-block:: python
   :linenos:
