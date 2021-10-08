@@ -21,16 +21,16 @@ jQuery(function ($) {
           "Unexpected classes on code comment: " + $(this).attr("class")
         );
       }
-      var classBits = commentClass[0]
-        .substring(commentPrefix.length)
-        .split("-");
-      if (classBits.length != 2) {
+      var classEnd = commentClass[0].substring(commentPrefix.length);
+      var classSepIndex = classEnd.lastIndexOf('-');
+      if (classSepIndex === -1) {
         console.error(
           "Unexpected classes on code comment: " + $(this).attr("class")
         );
+        classSepIndex = classEnd.length;
       }
-      var exampleName = classBits[0];
-      var commentNumber = classBits[1];
+      var exampleName = classEnd.substring(0, classSepIndex);
+      var commentNumber = classEnd.substring(classSepIndex + 1);
       var commentID = exampleName + "-" + commentNumber;
 
       /* find all target locations for current commentary box */
