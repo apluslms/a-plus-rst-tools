@@ -4,6 +4,7 @@ from docutils.parsers.rst import Directive, directives
 from sphinx.errors import SphinxError
 
 from aplus_nodes import aplusmeta
+from lib.revealrule import parse_reveal_rule
 
 class AplusMeta(Directive):
     ''' Injects document meta data for A+ configuration. '''
@@ -21,6 +22,8 @@ class AplusMeta(Directive):
         'hidden': directives.flag,
         'points-to-pass': directives.nonnegative_int, # set points to pass for modules
         'introduction': directives.unchanged, # module introduction HTML
+        'reveal-submission-feedback': directives.unchanged,
+        'reveal-model-solutions': directives.unchanged,
     }
 
     # Valid date formats are the same as in function parse_date() in
@@ -37,6 +40,12 @@ class AplusMeta(Directive):
         'read-open-time',
         'close-time',
         'late-time',
+    }
+
+    # Keys in option_spec which are parsed as reveal rules
+    reveal_rules = {
+        'reveal-submission-feedback',
+        'reveal-model-solutions',
     }
 
     def run(self):
@@ -59,6 +68,9 @@ class AplusMeta(Directive):
                 self.options[opt] = substitutions[value]
             if opt in AplusMeta.date_format_required:
                 self.validate_time(opt, self.options[opt], old_value)
+            if opt in AplusMeta.reveal_rules:
+                source, line = self.state_machine.get_source_and_line(self.lineno)
+                self.options[opt] = parse_reveal_rule(value, source, line, opt)
 
         return [aplusmeta(options=self.options)]
 
