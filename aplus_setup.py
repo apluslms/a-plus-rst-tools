@@ -47,6 +47,8 @@ def setup(app):
     app.add_config_value('acos_submit_base_url', 'http://172.21.0.2:3000', 'html')
     app.add_config_value('enable_doc_link_multilang_suffix_correction', False, 'html')
     app.add_config_value('enable_ref_link_multilang_suffix_correction', False, 'html')
+    app.add_config_value('reveal_submission_feedback', None, 'html')
+    app.add_config_value('reveal_model_solutions', None, 'html')
 
     # Connect configuration generation to events.
     app.connect('builder-inited', toc_config.prepare)

@@ -139,6 +139,13 @@ skip_language_inconsistencies = False # for debugging multilanguage courses
 allow_assistant_viewing = True # May assistants view submissions?
 allow_assistant_grading = False # May assistants grade submissions?
 
+# Default rules for revealing submission feedback and model solutions.
+# Can be overridden in module aplusmeta directive, or in questionnaire/submit
+# directives.
+# See instructions in chapter 'Defining reveal rules'.
+reveal_submission_feedback = 'immediate'
+reveal_model_solutions = 'deadline'
+
 # List of JavaScript and CSS URLs for the A+ head URLs course setting.
 # A+ adds these to every course page.
 course_head_urls = [
@@ -286,7 +293,7 @@ even if the max points aren't defined in the argument. The questionnaire directi
   Note that A+ has a separate feature for showing exercise model solutions after
   the deadline. Can be set to true or false. The default value can be set in
   index.rst with the field `questionnaire-default-reveal-model-at-max-submissions`.
-  By default false.
+  By default false. Don't use this option together with `reveal-model-solutions`.
 * `show-model`: Students may open the model solution in A+ after the module
   deadline. Can be set to true or false. The default value can be set in
   index.rst with the field `questionnaire-default-show-model`. By default true.
@@ -294,6 +301,8 @@ even if the max points aren't defined in the argument. The questionnaire directi
   Can be set to true or false. Overrides any options set in the conf.py or config.yaml files.
 * `allow-assistant-grading`: Allows assistants to grade the submissions of the students.
   Can be set to true or false. Overrides any options set in the conf.py or config.yaml files.
+* `reveal-submission-feedback`: rule for revealing submission feedback. See [instructions](#defining-reveal-rules).
+* `reveal-model-solutions`: rule for revealing model solutions. See [instructions](#defining-reveal-rules).
 
 The contents of the questionnaire directive define the questions and possible
 instructions to students.
@@ -562,6 +571,8 @@ It accepts the following options:
   Can be set to true or false. Overrides any options set in the conf.py or config.yaml files.
 * `allow-assistant-grading`: Allows assistants to grade the submissions of the students.
   Can be set to true or false. Overrides any options set in the conf.py or config.yaml files.
+* `reveal-submission-feedback`: rule for revealing submission feedback. See [instructions](#defining-reveal-rules).
+* `reveal-model-solutions`: rule for revealing model solutions. See [instructions](#defining-reveal-rules).
 * `quiz`: If set, the exercise feedback will take the place of the exercise instructions.
   This makes sense for questionnaires since their feedback contains the submission form.
   In RST, you would usually define questionnaires with the questionnaire directive,
@@ -634,6 +645,8 @@ The aplusmeta directive does not have any content and it accepts the following o
 * `hidden`: If set, set status hidden for the module or chapter
 * `points-to-pass`: module points to pass
 * `introduction`: module introduction as an HTML string
+* `reveal-submission-feedback`: default rule for revealing submission feedback. Can be overridden per exercise. See [instructions](#defining-reveal-rules).
+* `reveal-model-solutions`: default rule for revealing model solutions. Can be overridden per exercise. See [instructions](#defining-reveal-rules).
 
 Example module index.rst file:
 
@@ -1186,3 +1199,39 @@ There are 6 possible statuses for exercises:
 * enrollment: Questions for students when they enroll to a course.
 * enrollment_ext: Same as enrollment but for external students.
 * maintenance: Hides the exercise description and prevents submissions.
+
+### Defining reveal rules
+
+Rules for revealing submission feedback (`reveal-submission-feedback`) and model solutions (`reveal-model-solutions`)
+can be defined and overridden on multiple levels:
+
+* course level, in conf.py
+* module level, in the `aplusmeta` directive
+* exercise level, in the `questionnaire`/`submit` directive
+
+The reveal rules are defined by providing the name of a reveal mode. Some of the modes also accept arguments after the
+mode name. The reveal modes are:
+
+* manual: Never revealed, unless a teacher manually reveals it in A+ exercise settings.
+* immediate: Always revealed. **This is the default setting for revealing submission feedback.**
+* time: Revealed at a specific time. The reveal date and time must be provided as an argument, in the format
+`YYYY-MM-DD [hh[:mm[:ss]]]` or `DD.MM.YYYY [hh[:mm[:ss]]]`. Examples:
+```
+:reveal_submission_feedback: time 2020-01-16
+:reveal_submission_feedback: time 2020-01-16 16
+:reveal_submission_feedback: time 16.01.2020 16:00
+:reveal_submission_feedback: time 16.01.2020 16:00:00
+```
+* deadline: Revealed after the exercise deadline, and the possible deadline extension granted to the student. **This is
+the default setting for revealing model solutions.** An additional delay can optionally be provided as an argument, in
+the format `+<number><unit>`, where `unit` is 'd' (days), 'h' (hours) or 'm'/'min' (minutes). Examples:
+```
+:reveal_submission_feedback: deadline
+:reveal_submission_feedback: deadline +1d
+:reveal_submission_feedback: deadline +2h
+:reveal_submission_feedback: deadline +30m
+:reveal_submission_feedback: deadline +30min
+```
+* deadline_all: Revealed after the exercise deadline, and all deadline extensions granted to any student on the course.
+An additional delay can optionally be provided as an argument. See instructions above.
+* completion: Revealed after the student has used all submissions or achieved full points from the exercise.

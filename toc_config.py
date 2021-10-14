@@ -12,6 +12,7 @@ import directives.meta
 import lib.yaml_writer as yaml_writer
 import lib.html_tools as html_tools
 import lib.toc_languages as toc_languages
+from lib.revealrule import parse_reveal_rule
 
 
 logger = logging.getLogger(__name__)
@@ -185,6 +186,19 @@ def make_index(app, root, language=''):
     course_penalty = course_meta.get('course-default-late-penalty', app.config.default_late_penalty)
     override = app.config.override
 
+    course_reveal_submission_feedback = parse_reveal_rule(
+        app.config.reveal_submission_feedback,
+        'conf.py',
+        None,
+        'reveal_submission_feedback',
+    )
+    course_reveal_model_solutions = parse_reveal_rule(
+        app.config.reveal_model_solutions,
+        'conf.py',
+        None,
+        'reveal_model_solutions',
+    )
+
     modules = []
     category_keys = []
 
@@ -225,7 +239,7 @@ def make_index(app, root, language=''):
         return float(src) if src else default
 
     # Recursive chapter parsing.
-    def parse_chapter(docname, doc, parent):
+    def parse_chapter(docname, doc, parent, module_meta):
         for config_file in [e.yaml_write for e in doc.traverse(aplus_nodes.html) if e.has_yaml('exercise')]:
             config = yaml_writer.read(config_file)
             if config.get('_external', False):
@@ -253,6 +267,28 @@ def make_index(app, root, language=''):
             })
             if 'scale_points' in config:
                 exercise['max_points'] = config.pop('scale_points')
+
+            # Reveal rules: try exercise config, then module meta, then course config.
+            reveal_submission_feedback = config.get(
+                'reveal_submission_feedback',
+                module_meta.get(
+                    'reveal-submission-feedback',
+                    course_reveal_submission_feedback,
+                )
+            )
+            if reveal_submission_feedback:
+                exercise['reveal_submission_feedback'] = reveal_submission_feedback.copy()
+
+            reveal_model_solutions = config.get(
+                'reveal_model_solutions',
+                module_meta.get(
+                    'reveal-model-solutions',
+                    course_reveal_model_solutions,
+                )
+            )
+            if reveal_model_solutions:
+                exercise['reveal_model_solutions'] = reveal_model_solutions.copy()
+
             parent.append(exercise)
             if not config['category'] in category_keys:
                 category_keys.append(config['category'])
@@ -305,7 +341,7 @@ def make_index(app, root, language=''):
             parent.append(chapter)
             if not 'chapter' in category_keys:
                 category_keys.append('chapter')
-            parse_chapter(name, child, chapter['children'])
+            parse_chapter(name, child, chapter['children'], module_meta)
 
     # Read title from document.
     if not course_title:
@@ -349,7 +385,7 @@ def make_index(app, root, language=''):
         if introduction is not None:
             module['introduction'] = introduction
         modules.append(module)
-        parse_chapter(docname, doc, module['children'])
+        parse_chapter(docname, doc, module['children'], meta)
 
     # Create categories.
     category_names = app.config.category_names
