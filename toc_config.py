@@ -289,6 +289,9 @@ def make_index(app, root, language=''):
             if reveal_model_solutions:
                 exercise['reveal_model_solutions'] = reveal_model_solutions.copy()
 
+            if 'grading_mode' in config:
+                exercise['grading_mode'] = config.pop('grading_mode')
+
             parent.append(exercise)
             if not config['category'] in category_keys:
                 category_keys.append(config['category'])

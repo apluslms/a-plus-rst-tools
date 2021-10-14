@@ -39,6 +39,7 @@ class SubmitForm(AbstractExercise):
         'allow-assistant-grading': choice_truefalse,
         'reveal-submission-feedback': directives.unchanged,
         'reveal-model-solutions': directives.unchanged,
+        'grading-mode': directives.unchanged,
     }
 
     def run(self):
@@ -169,6 +170,9 @@ class SubmitForm(AbstractExercise):
                 line,
                 'reveal-model-solutions',
             )
+
+        if 'grading-mode' in self.options:
+            data['grading_mode'] = self.options['grading-mode']
 
         if category in override:
             data.update(override[category])
