@@ -184,6 +184,13 @@ enable_rst_file_language_detection = True
 # ref link and label modifications.
 enable_doc_link_multilang_suffix_correction = True
 enable_ref_link_multilang_suffix_correction = True
+
+# If True, autosave is enabled for all questionnaires in this course. A draft is
+# saved periodically while a student types their answer, and the latest draft
+# is automatically restored if the student leaves the exercise page and comes
+# back later. A draft does not count as a submission and does not affect
+# grading. Autosave can also be enabled for individual questionnaires.
+enable_autosave = False
 ```
 
 ### Sphinx configurations that should be modified with a-plus-rst-tools
@@ -306,6 +313,10 @@ even if the max points aren't defined in the argument. The questionnaire directi
 * `grading-mode`: which submission determines the final score for this exercise ("best" or "last"). Defaults to "best".
   If delayed feedback is used (`reveal-submission-feedback` is set to something other than "immediate"), defaults to
   "last".
+* `autosave`: If set, autosave is enabled for this exercise. A draft is saved periodically while a student types their
+  answer, and the latest draft is automatically restored if the student leaves the exercise page and comes back later.
+  A draft does not count as a submission and does not affect grading. Autosave can also be enabled for the entire
+  course in conf.py.
 
 The contents of the questionnaire directive define the questions and possible
 instructions to students.
