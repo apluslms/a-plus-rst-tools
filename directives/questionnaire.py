@@ -173,10 +173,8 @@ class Questionnaire(AbstractExercise):
             # questionnaires.
             node.attributes['data-aplus-quiz'] = 'yes'
 
-            # Autosave can be enabled for any questionnaire that has the
-            # attribute data-aplus-quiz.
-            if 'autosave' in self.options or env.config.enable_autosave:
-                node.attributes['data-aplus-autosave'] = 'yes'
+        if 'autosave' in self.options or env.config.enable_autosave:
+            node.attributes['data-aplus-autosave'] = 'yes'
 
         self.set_assistant_permissions(data)
 
