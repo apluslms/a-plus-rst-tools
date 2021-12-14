@@ -112,6 +112,12 @@ append_content = [] # Hack for modifying the YAML configuration at the end of th
 # The main index.yaml is built from the RST and YAML sources and contains
 # all the modules, chapters, and exercises of the course.
 
+unprotected_paths = []
+# List of static paths that should be accessible without login, e.g. downloadable files.
+# _downloads, _static and _images are always added by Git Manager.
+# The paths are relative to the static_dir in the output yaml. static_dir is generally
+# the html output directory, i.e. _build/html.
+
 override = {
     'submit': {
         'max_submissions': 99,
@@ -258,6 +264,7 @@ The keys for the A+ course settings are listed below:
 :numerate-ignoring-modules: False
 :questionnaire-default-reveal-model-at-max-submissions: False
 :questionnaire-default-show-model: False
+:unprotected_paths: "this/is/parsed" "into/a/list/of/paths" "like/a/shell/command"
 ```
 
 Some fields require a value from specific choices (see also

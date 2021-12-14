@@ -1,5 +1,6 @@
 import os
 import re
+import shlex
 
 from docutils import nodes
 
@@ -401,12 +402,18 @@ def make_index(app, root, language=''):
         if key in categories:
             categories[key]['status'] = 'nototal'
 
+    unprotected_paths = course_meta.get('unprotected-paths', app.config.unprotected_paths)
+    if isinstance(unprotected_paths, str):
+        unprotected_paths = shlex.split(unprotected_paths)
+        logger.info(f'Parsed unprotected-paths: {unprotected_paths}')
+
     # Build configuration index.
     index = {
         'name': course_title,
         'static_dir': get_static_dir(app),
         'modules': modules,
         'categories': categories,
+        'unprotected_paths': unprotected_paths,
     }
     index['lang'] = language if language else app.config.language
 

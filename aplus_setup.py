@@ -50,6 +50,7 @@ def setup(app):
     app.add_config_value('reveal_submission_feedback', None, 'html')
     app.add_config_value('reveal_model_solutions', None, 'html')
     app.add_config_value('enable_autosave', False, 'html')
+    app.add_config_value('unprotected_paths', [], 'html')
 
     # Connect configuration generation to events.
     app.connect('builder-inited', toc_config.prepare)
