@@ -10,12 +10,13 @@ from sphinx.errors import SphinxError
 import aplus_nodes
 import lib.translations as translations
 import lib.yaml_writer as yaml_writer
-from directives.abstract_exercise import AbstractExercise
+from directives.abstract_exercise import ConfigurableExercise
 
 
-class ActiveElementOutput(AbstractExercise):
+class ActiveElementOutput(ConfigurableExercise):
     has_content = False
-    option_spec = {
+    option_spec = ConfigurableExercise.option_spec.copy()
+    option_spec.update({
         'class' : directives.class_option,
         'submissions': directives.nonnegative_int,
         'config': directives.unchanged,
@@ -28,7 +29,7 @@ class ActiveElementOutput(AbstractExercise):
         'type': directives.unchanged,
         'scale-size': directives.flag,
         'status': directives.unchanged,
-    }
+    })
 
     def run(self):
         key, difficulty, points = self.extract_exercise_arguments()
@@ -107,10 +108,21 @@ class ActiveElementOutput(AbstractExercise):
             'max_submissions': self.options.get('submissions', data.get('max_submissions', env.config.ae_default_submissions)),
         })
         data.setdefault('status', self.options.get('status', 'unlisted'))
-        if category in override:
-            data.update(override[category])
-            if 'url' in data:
-                data['url'] = data['url'].format(key=name)
+
+        self.apply_override(data, category)
+        self.set_url(data, name)
+
+        configure_files = {}
+        if "container" in data and isinstance(data["container"], dict) and "mount" in data["container"]:
+            configure_files[data["container"]["mount"]] = data["container"]["mount"]
+        if "template" in data:
+            configure_files[data["template"]] = data["template"]
+        if "feedback_template" in data:
+            configure_files[data["feedback_template"]] = data["feedback_template"]
+        if "instructions_file" in data:
+            configure_files[data["instructions_file"]] = data["instructions_file"]
+
+        self.set_configure(data, data.get("url"), configure_files)
 
         node.write_yaml(env, name, data, 'exercise')
 

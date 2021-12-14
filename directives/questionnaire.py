@@ -13,17 +13,18 @@ from sphinx.util.nodes import nested_parse_with_titles
 import aplus_nodes
 import lib.translations as translations
 import lib.yaml_writer as yaml_writer
-from directives.abstract_exercise import AbstractExercise, choice_truefalse, str_to_bool
+from directives.abstract_exercise import ConfigurableExercise, choice_truefalse, str_to_bool
 from lib.revealrule import parse_reveal_rule
 
 
 logger = logging.getLogger(__name__)
 
 
-class Questionnaire(AbstractExercise):
+class Questionnaire(ConfigurableExercise):
     ''' Wraps questionnaire configuration. '''
     has_content = True
-    option_spec = {
+    option_spec = ConfigurableExercise.option_spec.copy()
+    option_spec.update({
         'chapter-feedback': directives.flag,
         'weekly-feedback': directives.flag,
         'appendix-feedback': directives.flag,
@@ -37,7 +38,6 @@ class Questionnaire(AbstractExercise):
         'submissions': directives.nonnegative_int,
         'points-to-pass': directives.nonnegative_int,
         'title': directives.unchanged,
-        'category': directives.unchanged,
         'status': directives.unchanged,
         'show-model': choice_truefalse,
         'reveal-model-at-max-submissions': choice_truefalse,
@@ -47,7 +47,7 @@ class Questionnaire(AbstractExercise):
         'reveal-model-solutions': directives.unchanged,
         'grading-mode': directives.unchanged,
         'autosave': directives.flag,
-    }
+    })
 
     def run(self):
         self.assert_has_content()
@@ -222,10 +222,14 @@ class Questionnaire(AbstractExercise):
         if 'grading-mode' in self.options:
             data['grading_mode'] = self.options['grading-mode']
 
-        if not 'no-override' in self.options and category in override:
-            data.update(override[category])
-            if 'url' in data:
-                data['url'] = data['url'].format(key=name)
+        self.apply_override(data, category)
+        self.set_url(data, name)
+
+        configure_files = {}
+        if data.get("template"):
+            configure_files[data["template"]] = data["template"]
+
+        self.set_configure(data, data.get("url"), configure_files)
 
         form.write_yaml(env, name, data, 'exercise')
 

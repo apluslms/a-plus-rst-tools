@@ -259,6 +259,8 @@ def make_index(app, root, language=''):
                     'max_group_size': config.get('max_group_size', 1),
                     'confirm_the_level': config.get('confirm_the_level', False),
                 }
+            if 'configure' in config:
+                exercise['configure'] = config['configure']
             allow_assistant_viewing = config.get('allow_assistant_viewing', app.config.allow_assistant_viewing)
             allow_assistant_grading = config.get('allow_assistant_grading', app.config.allow_assistant_grading)
             exercise.update({

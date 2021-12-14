@@ -179,10 +179,8 @@ class IndexJoiner:
                 override = self.app.env.config.override.get(c1.get('category'), {})
                 if k in override:
                     c[k] = override[k].format(key=key)
-                elif v != c2.get(k, v):
-                    self.raise_unequal(path, lang2, k)
                 else:
-                    c[k] = v
+                    c[k] = join_keys(lang1, v, lang2, c2.get(k, v))
             elif k in IDENTICAL_EXERCISE_KEYS:
                 if v != c2.get(k, v):
                     self.raise_unequal(path, lang2, k)

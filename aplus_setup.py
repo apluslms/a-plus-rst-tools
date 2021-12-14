@@ -51,6 +51,8 @@ def setup(app):
     app.add_config_value('reveal_model_solutions', None, 'html')
     app.add_config_value('enable_autosave', False, 'html')
     app.add_config_value('unprotected_paths', [], 'html')
+    app.add_config_value('default_exercise_url', None, 'html')
+    app.add_config_value('default_configure_url', "{scheme}://{netloc}/configure", 'html')
 
     # Connect configuration generation to events.
     app.connect('builder-inited', toc_config.prepare)

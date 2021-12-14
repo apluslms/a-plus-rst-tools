@@ -1,4 +1,5 @@
 import itertools
+from urllib.parse import urlparse
 
 from docutils.parsers.rst import Directive, directives
 from sphinx.errors import SphinxError
@@ -51,3 +52,67 @@ class AbstractExercise(Directive):
 
         if 'allow-assistant-viewing' in self.options:
             data['allow_assistant_viewing'] = str_to_bool(self.options['allow-assistant-viewing'])
+
+class ConfigurableExercise(AbstractExercise):
+    option_spec = {
+        'configure-url': directives.unchanged,
+        'category': directives.unchanged,
+        'no-configure': directives.flag,
+    }
+
+    def apply_override(self, data, category=None):
+        if 'no-override' in self.options:
+            return
+
+        if not category:
+            if "category" in data:
+                category = data["category"]
+            elif "category" in self.options:
+                category = self.options["category"]
+
+        if not category:
+            return
+
+        env = self.state.document.settings.env
+        override = env.config.override
+        if category in override:
+            data.update(override[category])
+
+    def set_url(self, data, name):
+        env = self.state.document.settings.env
+
+        if "url" not in data and env.config.default_exercise_url:
+            data["url"] = env.config.default_exercise_url
+
+        if data['url']:
+            data['url'] = data['url'].format(key=name)
+
+    def set_configure(self, data, exercise_url, files):
+        if 'no-configure' in self.options:
+            return
+
+        if "configure-url" in data:
+            url = data.pop("configure-url")
+        elif "configure-url" in self.options:
+            url = self.options["configure-url"]
+        else:
+            url = self.state.document.settings.env.config.default_configure_url
+
+        if not url:
+            return
+
+        if exercise_url:
+            url = url.format(**urlparse(exercise_url)._asdict())
+
+        try:
+            parsed = urlparse(url)
+        except ValueError:
+            raise SphinxError(f"Invalid configure url {url} for {data.get('key', data)}")
+
+        if not parsed.scheme or not parsed.netloc:
+            raise SphinxError(f"Invalid configure url {url} for {data.get('key', data)}")
+
+        data["configure"] = {
+            "files": files,
+            "url": url,
+        }
