@@ -80,7 +80,13 @@ def init_thebe_core(app, env):
 
     # Add core libraries
     opts = {"async": "async", "data-aplus": "yes"}
+    css_opts = {"data-aplus": "yes"}
     app.add_js_file(filename="https://unpkg.com/thebelab@latest/lib/index.js", **opts)
+    app.add_js_file(filename="https://codemirror.net/mode/clike/clike.js", **opts)
+    app.add_js_file(filename="https://codemirror.net/addon/hint/matchbrackets.js", **opts)
+    app.add_css_file(filename="https://codemirror.net/theme/eclipse.css", **css_opts)
+    app.add_css_file(filename="https://codemirror.net/theme/abcdef.css", **css_opts)
+
 
     # Add configuration variables
     thebe_config = f"""
@@ -105,7 +111,6 @@ def update_thebe_context(app, doctree, docname):
         raise ValueError(
             "thebe configuration must be `True` or a dictionary for configuration."
         )
-    codemirror_theme = config_thebe.get("codemirror-theme", "abcdef")
 
     # Thebe configuration
     # Choose the kernel we'll use
@@ -123,6 +128,12 @@ def update_thebe_context(app, doctree, docname):
         cm_language = "python"
     elif cm_language == "ir":
         cm_language = "r"
+    elif "cpp" in cm_language:
+        cm_language = "text/x-c++src"
+    elif "c" in cm_language:
+        cm_language = "text/x-csrc"
+    else:
+        cm_language = "python"
 
     # Get url for binderhub server
     binder_url = config_thebe.get(
@@ -139,6 +150,25 @@ def update_thebe_context(app, doctree, docname):
     path_to_docs = config_thebe.get("path_to_docs", ".").strip("/") + "/"
     org, repo = _split_repo_url(repo_url)
 
+    codemirror_theme = config_thebe.get("codemirror-theme", "eclipse")
+    codemirror_indent_unit = 4
+    codemirror_indent_with_tabs = "true"
+    codemirror_electric_chars = "true"
+    codemirror_line_numbers = "true"
+    # NOTE: this assignment is not used in the thebe.js since the language is
+    # later detected based on the kernel name.
+    # Although overridden, this assignment might be useful later
+    # when code-mirror mode is assigned with options in the configuration.
+    codemirror_mode = cm_language
+
+    codemirror_config = config_thebe.get("codemirror-config", None)
+    if codemirror_config:
+        codemirror_theme = codemirror_config.get("theme", codemirror_theme)
+        codemirror_indent_unit = codemirror_config.get("indentUnit", codemirror_indent_unit)
+        codemirror_indent_with_tabs = codemirror_config.get("indentWithTabs", codemirror_indent_with_tabs)
+        codemirror_electric_chars = codemirror_config.get("electricChars", codemirror_electric_chars)
+        codemirror_line_numbers = codemirror_config.get("lineNumbers", codemirror_line_numbers)
+        codemirror_mode = codemirror_config.get("mode", codemirror_mode)
     # Update the doctree with some nodes for the thebe configuration
     thebe_html_config = f"""
     <script type="text/x-thebe-config">
@@ -149,9 +179,14 @@ def update_thebe_context(app, doctree, docname):
             repo: "{org}/{repo}",
             ref: "{branch}",
         }},
-        codeMirrorConfig: {{
-            theme: "{codemirror_theme}",
-            mode: "{cm_language}"
+        codeMirrorconfig: {{
+            theme: '{codemirror_theme}',
+            mode: '{codemirror_mode}',
+            lineNumbers: {codemirror_line_numbers},
+            electricChars: {codemirror_electric_chars},
+            indentUnit: {codemirror_indent_unit},
+            indentWithTabs: {codemirror_indent_with_tabs},
+            matchBrackets: true
         }},
         kernelOptions: {{
             kernelName: "{kernel_name}",

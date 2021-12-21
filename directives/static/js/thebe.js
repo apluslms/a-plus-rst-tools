@@ -115,7 +115,11 @@ var detectLanguage = (language) => {
     if (language.indexOf('python') > -1) {
         language = "python";
     } else if (language === 'ir') {
-        language = "r"
+        language = "r";
+    } else if (language.indexOf('cpp') > -1) {
+        language = "text/x-c++src";
+    } else if (language.indexOf('c') > -1) {
+        language = "text/x-csrc";
     }
     return language;
 }
