@@ -1175,31 +1175,80 @@ contain any whitespace. You must also add the option `title` to the `tab-content
 will be shown in your tabs. The content of each `tab-content` can be any anything.
 
 ### 19. Interactive code
-The `thebe-button` directive and `thebe` class can be used to make python code-blocks interactive, allowing students to edit and run code.
+The `thebe-button` directive and `thebe` class can be used to make python, R and 
+C/C++ code-blocks interactive, allowing students to edit and run code.
 This extension must be activated separately in the project by adding `"thebe"` to the `extensions` list variable in the **conf.py** file located in the root of your course directory.
 
 ```python
 extensions = ["aplus_setup", "thebe"]
 ```
 
-Additionally, **conf.py** should contain the following configuration to use a production binderhub server, and possibly to set a custom repository for the environment interactive code runs in.
+Additionally, **conf.py** should contain the following configuration to use 
+interactive code blocks.
+
 ```python
 
    # Thebe configuration
     thebe_config = {
       "binderUrl": "https://mybinder.org" # For testing; replace this with a binderhub server provided by your instution for production
-      # "repository_url": ""
-      # "repostiory_branch": ""
+      # "repository_url": "",
+      # "repostiory_branch": "",
+      "selector": "div.highlight",
+      "codemirror-config": {
+          "theme": "eclipse",
+          "electricChars": "true"
+          "lineNumbers": "true",
+          "indentWithTabs": "true",
+          "indentUnit": 4,
+      }
     }   
 ```
+The kernel configuration fields, which configure a production binderhub server that 
+can run the environment residing in a remote repository, are followed by 
+`"selector"` configuration. The last configuration ultimately defines which `rst` 
+code blocks should be converted to interactive code elements. If this configuration is
+- `"selector": "div.highlight"` all the code blocks in `rst` files starting or 
+containing `:thebe-kernel: <KERNEL-NAME-HERE>` directive will be converted to 
+interactive code blocks.
+- `"selector": ".thebe"` the code blocks containing `:class: thebe` option will be
+converted to interactive code blocks. This is the default option, and if it is
+desired to have all code blocks to be interactive code blocks, 
+`"selector": "div.highlight"` should be explicitly configured.
 
-The following snippet of code is an example on how you can use the `thebe` extension.
+You can also configure the editable code area behavior in `thebe_config`
+as follows.
+1. `"theme": "eclipse"` configuration option states the editor code style theme. 
+We support only two options for now
+   - `"theme": "eclipse"` (default). This theme is very similar to the default theme 
+   of Eclipse IDE, and has a light background, which makes it a natural choice
+   for the default A+ style in general. 
+   - `"theme": "abcdef"`. This is a colorful theme with a dark background.
+2. `"electricChars": "true"` configuration option sets whether the editor 
+(interactive code block) should re-indent the current line when a character is typed. 
+Change this configuration to `"false"` if you prefer the students to practice proper 
+indentation. Default is `"true"`.
+3. `"lineNumbers": "true"` configuration enables line numbering. When enabled, the
+editor will have a left gutter area with line numbers. The default is `"true"`,
+and should be explicitly set to `"false"` if you do not want to have line numbers.
+4. `"indentWithTabs": "true"` configuration enables indentation with tabs. The 
+default configuration is `"true"`, and should be set to `"false"` if you prefer
+to use spaces for indentation. A tab has `4` characters width.
+5. `"indentUnit": 4` configuration sets how many spaces define an indented block.
+The default is `4` spaces, and should be explicitly configured to change the indentation experience.
+
+- In addition to these, the matching braces are highlighted when one of
+(`}`, `)` or `]`) is typed. 
+
+The following code snippet is an example on how you can use the `thebe` extension.
 
 ```rst
+:thebe-kernel: python
+
 .. thebe-button:: Custom button text (defaults to "Run code")
 
 .. code-block:: python
   :class: thebe
+
   a = 1
   b = 2
   c = a + b
