@@ -97,7 +97,7 @@ def init_thebe_core(app, env):
     app.add_js_file(None, body=thebe_config, **opts)
     app.add_js_file(filename=JS_FILE, **opts)
 
-    
+
 def update_thebe_context(app, doctree, docname):
     """Add thebe config nodes to this doctree."""
     config_thebe = app.config["thebe_config"]
@@ -291,14 +291,14 @@ def setup(app):
     opts = {'data-aplus': 'yes'}
     app.add_css_file(CSS_FILE, **opts)
 
-    # The files are added to the _build/html/_static/css folder. 
+    # The files are added to the _build/html/_static/css folder.
     logger.info('Copying CSS files from the thebe-button directive to the _static folder... ')
     html_static_path_css = os.path.join(assets_path, CSS_FILE)
     local_path_css = os.path.join(os.path.dirname(__file__), html_static_path_css)
     copy_asset(local_path_css, os.path.join(app.outdir, '_static', 'css'))
     logger.info('done')
-    
-    # The files are added to the _build/html/_static/js folder. 
+
+    # The files are added to the _build/html/_static/js folder.
     logger.info('Copying JS files from the thebe-button directive to the _static folder... ')
     html_static_path_js = os.path.join(assets_path, JS_FILE)
     local_path_js = os.path.join(os.path.dirname(__file__), html_static_path_js)
