@@ -126,6 +126,19 @@ default_configure_url = "{scheme}://{netloc}/configure"
 # This is optional (omit or set to None). See the configure-url option in the section
 # "common for questionnaires and submittable exercises" below for more information.
 
+course_configures = []
+# What files to send and where. This can be used to send additional course files
+# to the grading services. E.g.
+# course_configures = [
+#     {
+#         "url": "<grader domain>/configure",
+#         "files": {
+#             "fileongrader.txt": "file in repo.txt",
+#         },
+#     },
+# ]
+# sends the file "file in repo.txt" to the grader but renamed as "fileongrader.txt"
+
 unprotected_paths = []
 # List of static paths that should be accessible without login, e.g. downloadable files.
 # _downloads, _static and _images are always added by Git Manager.

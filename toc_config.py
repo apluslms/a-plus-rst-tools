@@ -416,6 +416,7 @@ def make_index(app, root, language=''):
         'modules': modules,
         'categories': categories,
         'unprotected_paths': unprotected_paths,
+        'configures': app.config.course_configures,
     }
     index['lang'] = language if language else app.config.language
 
