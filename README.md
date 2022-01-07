@@ -323,6 +323,14 @@ Supports formatting with `{scheme}`, `{netloc}`, `{path}`, `{params}`,
 `{query}` and `{fragment}` where the variables are parsed from the `url` option as
 `<scheme>://<netloc>/<path>;<params>?<query>#<fragment>`.
 For example, "{scheme}://{netloc}/configure".
+* `configure-files`: Additional files to be sent to the grader as part of the exercise.
+A comma separated list of mappings that define the file path on the grader and in the git repository.
+The paths in a mapping are separated by a colon `:`.
+If the file need not be renamed, the mapping may contain only the path in the repo.
+For example, `extra/grader.txt:configs/repo.txt,files/not-renamed.txt`
+sends the file `configs/repo.txt` from the git repo to the grader path `extra/grader.txt` and
+the file `files/not-renamed.txt` is copied to the same path.
+These additional files could be, for example, HTML template files.
 
 ### 2. Graded questionnaire
 

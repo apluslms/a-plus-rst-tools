@@ -5,6 +5,22 @@ from docutils.parsers.rst import Directive, directives
 from sphinx.errors import SphinxError
 
 
+def file_mapping(argument):
+    """
+    Converts a comma-separated list of key:value pairs into a dict.
+    (Directive option conversion function.)
+    """
+    args = [arg.split(":") for arg in argument.split(',')]
+    for arg in args:
+        if not arg or len(arg) > 2:
+            raise SphinxError(
+                "File mapping must be in the format '<mapping 1>,<mapping 2>,...',"
+                " where each <mapping X> is either 'path_on_grader:path_in_repository'"
+                " or just 'path' if no renaming is neccessary. E.g."
+                " 'extra/grader.txt:configs/repo.txt,files/not-renamed.txt'")
+
+    return dict((arg, arg) if len(arg) == 1 else arg for arg in args)
+
 def choice_truefalse(argument):
     """Choice of "true" or "false".
     This is an option conversion function for the option_spec in directives.
@@ -56,6 +72,7 @@ class AbstractExercise(Directive):
 class ConfigurableExercise(AbstractExercise):
     option_spec = {
         'configure-url': directives.unchanged,
+        'configure-files': file_mapping,
         'category': directives.unchanged,
         'no-configure': directives.flag,
     }
@@ -111,6 +128,16 @@ class ConfigurableExercise(AbstractExercise):
 
         if not parsed.scheme or not parsed.netloc:
             raise SphinxError(f"Invalid configure url {url} for {data.get('key', data)}")
+
+        extra_files = {}
+        if "configure-files" in data:
+            extra_files = data.pop("configure-files")
+            if not isinstance(extra_files, dict):
+                raise SphinxError(f"configure-files needs to be a dictionary for {data.get('key', data)}")
+        if "configure-files" in self.options:
+            extra_files = self.options["configure-files"]
+
+        files.update(extra_files)
 
         data["configure"] = {
             "files": files,
