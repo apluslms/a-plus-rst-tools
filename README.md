@@ -537,7 +537,7 @@ the path to a config.yaml file. It is used to generate multiple agree items.
 See the example below. (The agree item directives are quite limited and
 you could just use the pick-one directive instead.)
 
-Note that the [mooc-jutut service](https://github.com/Aalto-LeTech/mooc-jutut/)
+Note that the [mooc-jutut service](https://github.com/apluslms/mooc-jutut/)
 provides a more advanced method for reading and responding to feedback.
 In order to use it, you still define the feedback questionnaire in RST, but
 you must also set the service URL of the questionnaire exercise to the mooc-jutut
