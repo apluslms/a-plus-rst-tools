@@ -321,6 +321,8 @@ even if the max points aren't defined in the argument. The questionnaire directi
 The contents of the questionnaire directive define the questions and possible
 instructions to students.
 
+#### Question directives: multiple choice and text input
+
 The **question directives** `pick-one`, `pick-any`, and `freetext` take the points
 of the question as the first argument. If the questionnaire's max points are set, the sum
 of the question points should be equal to them.
@@ -332,38 +334,7 @@ The question directives accept the following options:
   the key in the submission data. If no key is set, note that automatically added
   keys change when the order and amount of questions is modified.
 
-The `freetext` directive also accepts the following options in addition to
-the common question options:
-
-* `length`: (horizontal) length for the HTML text input
-* `height`: If greater than 1, the textarea HTML element is used. Otherwise,
-  a text input is used.
-* Other options are defined in the code, but they mainly affect the CSS classes
-  and they were implemented for very narrow usecases.
-
-The `freetext` directive accepts a second positional argument after the points.
-It defines the compare method for the model solution.
-A textual input can be compared with the model solution as `int`, `float`,
-`string`, `subdiff`, `regexp` or `unsortedchars` (unsorted character set).
-The `regexp` compare method takes the correct answer as a regular
-expression and tries to match the submission with it.
-The `subdiff` method works almost like the `string` method, but it can have
-multiple correct answers separated with `|` and if the answer is incorrect, it
-shows the difference of the answer to each correct answer as a hint.
-For example, when the correct answer is 'cat' and the student answers 'car',
-the student receives feedback `Correct parts in your answer: ca-`.
-String methods have comparison modifiers that are separated with a hyphen.
-For example, `.. freetext:: 30 string-ignorews-ignorequotes`. The following
-modifiers are available:
-
-* `ignorews`: ignore white space (applies to regexp too)
-* `ignorequotes`: iqnore "quotes" around
-* `requirecase`: require identical lower and upper cases (only with the string
-  and subdiff types)
-* `ignorerepl`: ignore REPL prefixes
-* `ignoreparenthesis`: ignore parenthesis "( )"
-
-The question directives may define instructions. After the instructions,
+**The question directives may define instructions.** After the instructions,
 the contents of the directive define the choices, the correct solution, and
 possible hints. The hints are targeted to specific choices and they are shown
 after answering. The format of the hints is `value § Feedback text`. The value
@@ -379,6 +350,8 @@ Neutral options are always counted as correct, whether the student selected them
 or not. Initially selected options may be set with `+`. The initially selected
 options are pre-selected when the exercise is loaded. The `+` character is
 written before `*` or `?` if they are combined.
+
+**Multiple choice: pick-any and pick-one**
 
 The `pick-any` directive has following options in addition to the common
 question options:
@@ -409,6 +382,58 @@ question options:
 The `pick-one` questions are rendered with HTML radio buttons by default, but
 a dropdown (select) element may be used with the `dropdown` option.
 
+**Text input: freetext**
+
+The `freetext` directive also accepts the following options in addition to
+the common question options:
+
+* `length`: (horizontal) length for the HTML text input
+* `height`: If greater than 1, the textarea HTML element is used. Otherwise,
+  a text input is used.
+* Other options are defined in the code, but they mainly affect the CSS classes
+  and they were implemented for very narrow usecases.
+
+The `freetext` directive accepts a second positional argument after the points.
+It defines the compare method for the model solution.
+A textual input can be compared with the model solution as
+
+* `int`,
+* `float`,
+* `string`,
+* `subdiff`,
+* `regexp` or
+* `unsortedchars` (unsorted character set).
+
+The `regexp` compare method takes the correct answer as a regular
+expression and tries to match the submission with it.
+It is possible to provide a separate display model solution
+that is shown to the students in the model solution.
+Otherwise, the students would be shown the whole regular expression.
+The display model solution is added after the model regular expression
+with the special characters `°=°`.
+For example,
+
+```
+/cat|dog/ °=° dog
+```
+
+The `subdiff` method works almost like the `string` method, but it can have
+multiple correct answers separated with `|` and if the answer is incorrect, it
+shows the difference of the answer to each correct answer as a hint.
+For example, when the correct answer is 'cat' and the student answers 'car',
+the student receives feedback `Correct parts in your answer: ca-`.
+
+String methods have comparison modifiers that are separated with a hyphen.
+For example, `.. freetext:: 30 string-ignorews-ignorequotes`. The following
+modifiers are available:
+
+* `ignorews`: ignore white space (applies to regexp too)
+* `ignorequotes`: iqnore "quotes" around
+* `requirecase`: require identical lower and upper cases (only with the string
+  and subdiff types)
+* `ignorerepl`: ignore REPL prefixes
+* `ignoreparenthesis`: ignore parenthesis "( )"
+
 The body of the `freetext` question is
 expected to be its model solution. However, the question instructions can be written
 inside the body before the model answer. The instructions and the model solution must
@@ -417,6 +442,8 @@ be separated with an empty line.
 If the questionnaire has the `feedback` option set, `freetext`
 questions may not have a model solution and the body of the question is shown as the
 question instructions.
+
+#### Questionnaire example in RST markup
 
 ```
 .. questionnaire:: 1 A
@@ -481,9 +508,10 @@ question instructions.
   .. freetext:: 10 regexp
 
     This question accepts either "red" or "blue" as the correct answer.
-    The model solution is a regular expression.
+    The submission is graded by a regular expression.
+    When the student is shown the model solution, it shows `red`.
 
-    red|blue
+    red|blue °=° red
 ```
 
 ### 2. Feedback questionnaire
