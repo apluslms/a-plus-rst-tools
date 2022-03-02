@@ -30,7 +30,6 @@ class Questionnaire(ConfigurableExercise):
         'appendix-feedback': directives.flag,
         'course-feedback': directives.flag,
         'feedback': directives.flag,
-        'no-override': directives.flag,
         'pick_randomly': directives.positive_int,
         # Random questions may be resampled after each submission attempt or
         # the questions may be preserved.

@@ -75,6 +75,7 @@ class ConfigurableExercise(AbstractExercise):
         'configure-files': file_mapping,
         'category': directives.unchanged,
         'no-configure': directives.flag,
+        'no-override': directives.flag,
     }
 
     def apply_override(self, data, category=None):

@@ -331,6 +331,7 @@ For example, `extra/grader.txt:configs/repo.txt,files/not-renamed.txt`
 sends the file `configs/repo.txt` from the git repo to the grader path `extra/grader.txt` and
 the file `files/not-renamed.txt` is copied to the same path.
 These additional files could be, for example, HTML template files.
+* `no-override`: If set, the conf.py override setting is ignored.
 
 ### 2. Graded questionnaire
 
@@ -344,7 +345,6 @@ even if the max points aren't defined in the argument. The questionnaire directi
 * `points-to-pass`: points to pass
 * `feedback`: If set, assumes the defaults for a feedback questionnaire
 * `title`: exercise title
-* `no-override`: If set, the conf.py override setting is ignored
 * `pick_randomly`: integer. The questionnaire selects N questions randomly for
   the user instead of showing all questions. The random selection changes after
   the user submits, but persists without changes if the user just reloads the web page.
