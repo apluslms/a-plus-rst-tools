@@ -28,4 +28,7 @@ class ACOSSubmitDirective(SubmitForm):
         # add the domain to the URL path
         self.options['url'] = env.config.acos_submit_base_url + self.options['url']
 
+        # acos exercises don't need configuring
+        self.options['no-configure'] = None
+
         return super().run()

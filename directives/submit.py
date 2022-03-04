@@ -11,13 +11,14 @@ from sphinx.util.nodes import nested_parse_with_titles
 import aplus_nodes
 import lib.translations as translations
 import lib.yaml_writer as yaml_writer
-from directives.abstract_exercise import AbstractExercise, choice_truefalse
+from directives.abstract_exercise import ConfigurableExercise, choice_truefalse
 from lib.revealrule import parse_reveal_rule
 
 
-class SubmitForm(AbstractExercise):
+class SubmitForm(ConfigurableExercise):
     has_content = True
-    option_spec = {
+    option_spec = ConfigurableExercise.option_spec.copy()
+    option_spec.update({
         'class' : directives.class_option,
         'quiz': directives.flag,
         'ajax': directives.flag,
@@ -33,21 +34,19 @@ class SubmitForm(AbstractExercise):
         'lti_open_in_iframe': directives.flag,
         'radar_tokenizer': directives.unchanged,
         'radar_minimum_match_tokens': directives.unchanged,
-        'category': directives.unchanged,
         'status': directives.unchanged,
         'allow-assistant-viewing': choice_truefalse,
         'allow-assistant-grading': choice_truefalse,
         'reveal-submission-feedback': directives.unchanged,
         'reveal-model-solutions': directives.unchanged,
         'grading-mode': directives.unchanged,
-    }
+    })
 
     def run(self):
         key, difficulty, points = self.extract_exercise_arguments()
 
         env = self.state.document.settings.env
         name = "{}_{}".format(env.docname.replace('/', '_'), key)
-        override = env.config.override
 
         classes = ['exercise']
         if 'class' in self.options:
@@ -174,10 +173,23 @@ class SubmitForm(AbstractExercise):
         if 'grading-mode' in self.options:
             data['grading_mode'] = self.options['grading-mode']
 
-        if category in override:
-            data.update(override[category])
-            if 'url' in data:
-                data['url'] = data['url'].format(key=name)
+        self.apply_override(data, category)
+        self.set_url(data, name)
+
+        if "lti" in data:
+            self.options['no-configure'] = None
+
+        configure_files = {}
+        if "container" in data and isinstance(data["container"], dict) and "mount" in data["container"]:
+            configure_files[data["container"]["mount"]] = data["container"]["mount"]
+        if "template" in data:
+            configure_files[data["template"]] = data["template"]
+        if "feedback_template" in data:
+            configure_files[data["feedback_template"]] = data["feedback_template"]
+        if "instructions_file" in data:
+            configure_files[data["instructions_file"]] = data["instructions_file"]
+
+        self.set_configure(data, data.get("url"), configure_files)
 
         if 'category' in self.options:
             data['category'] = str(self.options['category'])

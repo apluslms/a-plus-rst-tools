@@ -1,5 +1,6 @@
 import os
 import re
+import shlex
 
 from docutils import nodes
 
@@ -258,6 +259,8 @@ def make_index(app, root, language=''):
                     'max_group_size': config.get('max_group_size', 1),
                     'confirm_the_level': config.get('confirm_the_level', False),
                 }
+            if 'configure' in config:
+                exercise['configure'] = config['configure']
             allow_assistant_viewing = config.get('allow_assistant_viewing', app.config.allow_assistant_viewing)
             allow_assistant_grading = config.get('allow_assistant_grading', app.config.allow_assistant_grading)
             exercise.update({
@@ -401,14 +404,21 @@ def make_index(app, root, language=''):
         if key in categories:
             categories[key]['status'] = 'nototal'
 
+    unprotected_paths = course_meta.get('unprotected-paths', app.config.unprotected_paths)
+    if isinstance(unprotected_paths, str):
+        unprotected_paths = shlex.split(unprotected_paths)
+        logger.info(f'Parsed unprotected-paths: {unprotected_paths}')
+
     # Build configuration index.
     index = {
         'name': course_title,
         'static_dir': get_static_dir(app),
         'modules': modules,
         'categories': categories,
+        'unprotected_paths': unprotected_paths,
+        'configures': app.config.course_configures,
     }
-    index['language'] = language if language else app.config.language
+    index['lang'] = language if language else app.config.language
 
     course_enrollment_start = course_meta.get('enrollment-start')
     course_enrollment_end = course_meta.get('enrollment-end')

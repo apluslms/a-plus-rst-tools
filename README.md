@@ -98,6 +98,8 @@ default_min_group_size = 1
 default_max_group_size = 1
 use_wide_column = True # should chapters use full or narrow column width?
 static_host = os.environ.get('STATIC_CONTENT_HOST')
+course_key = os.environ.get('COURSE_KEY')
+course_id = os.environ.get('COURSE_ID')
 
 course_title = 'Basic course in programming' # can be defined in index.rst instead
 submit_title = '{config_title}'
@@ -111,6 +113,37 @@ append_content = [] # Hack for modifying the YAML configuration at the end of th
 # This can add new keys or modify existing values in the index.
 # The main index.yaml is built from the RST and YAML sources and contains
 # all the modules, chapters, and exercises of the course.
+
+default_exercise_url = f"https://somedomain/{course_id}/{{key}}"
+# Note that f"https://somedomain/{course_id}/{{key}}" directly evaluates to
+# something like "https://somedomain/3/{key}".
+# The default exercise URL in the exercise service.
+# This is optional (omit or set to None). See the url option in the section
+# "common for questionnaires and submittable exercises" below for more information.
+
+default_configure_url = "{scheme}://{netloc}/configure"
+# The default configuration URL.
+# This is optional (omit or set to None). See the configure-url option in the section
+# "common for questionnaires and submittable exercises" below for more information.
+
+course_configures = []
+# What files to send and where. This can be used to send additional course files
+# to the grading services. E.g.
+# course_configures = [
+#     {
+#         "url": "<grader domain>/configure",
+#         "files": {
+#             "fileongrader.txt": "file in repo.txt",
+#         },
+#     },
+# ]
+# sends the file "file in repo.txt" to the grader but renamed as "fileongrader.txt"
+
+unprotected_paths = []
+# List of static paths that should be accessible without login, e.g. downloadable files.
+# _downloads, _static and _images are always added by Git Manager.
+# The paths are relative to the static_dir in the output yaml. static_dir is generally
+# the html output directory, i.e. _build/html.
 
 override = {
     'submit': {
@@ -147,7 +180,8 @@ reveal_submission_feedback = 'immediate'
 reveal_model_solutions = 'deadline'
 
 # List of JavaScript and CSS URLs for the A+ head URLs course setting.
-# A+ adds these to every course page.
+# A+ adds these to every course page. These can also be paths to static files,
+# e.g. _static/course.js (only on gitmanager)
 course_head_urls = [
     "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS_CHTML-full",
 ]
@@ -258,6 +292,7 @@ The keys for the A+ course settings are listed below:
 :numerate-ignoring-modules: False
 :questionnaire-default-reveal-model-at-max-submissions: False
 :questionnaire-default-show-model: False
+:unprotected_paths: "this/is/parsed" "into/a/list/of/paths" "like/a/shell/command"
 ```
 
 Some fields require a value from specific choices (see also
@@ -271,7 +306,34 @@ Some fields require a value from specific choices (see also
 
 ## List of directives and examples
 
-### 1. Graded questionnaire
+### 1. Common options for questionnaires and submittable exercises
+
+* `url`: the URL of the exercise in the assessment service. This is optional.
+If omitted, it is set according to `default_exercise_url`. If that is omitted
+as well, it is set by Git Manager to the value returned by the service at
+`configure-url` (which should return the correct URL). Supports formatting
+where `{key}` is replaced with the exercise key.
+For example, "https://grader/{key}".
+* `configure-url`: the URL that is used to configure the exercises on a
+grader. It is dependent on the grading service used, and is `<domain>/configure`
+for MOOC-grader. This is optional. If omitted, it is set according to
+`default_configure_url`. If that is omitted as well, it is set by Git Manager
+to the Git Manager instance's default value (MOOC-grader for Aalto).
+Supports formatting with `{scheme}`, `{netloc}`, `{path}`, `{params}`,
+`{query}` and `{fragment}` where the variables are parsed from the `url` option as
+`<scheme>://<netloc>/<path>;<params>?<query>#<fragment>`.
+For example, "{scheme}://{netloc}/configure".
+* `configure-files`: Additional files to be sent to the grader as part of the exercise.
+A comma separated list of mappings that define the file path on the grader and in the git repository.
+The paths in a mapping are separated by a colon `:`.
+If the file need not be renamed, the mapping may contain only the path in the repo.
+For example, `extra/grader.txt:configs/repo.txt,files/not-renamed.txt`
+sends the file `configs/repo.txt` from the git repo to the grader path `extra/grader.txt` and
+the file `files/not-renamed.txt` is copied to the same path.
+These additional files could be, for example, HTML template files.
+* `no-override`: If set, the conf.py override setting is ignored.
+
+### 2. Graded questionnaire
 
 The questionnaire directive arguments define the exercise key and optional max points
 with the difficulty. For example, `.. questionnaire:: 1 A50` sets key `1`,
@@ -283,7 +345,6 @@ even if the max points aren't defined in the argument. The questionnaire directi
 * `points-to-pass`: points to pass
 * `feedback`: If set, assumes the defaults for a feedback questionnaire
 * `title`: exercise title
-* `no-override`: If set, the conf.py override setting is ignored
 * `pick_randomly`: integer. The questionnaire selects N questions randomly for
   the user instead of showing all questions. The random selection changes after
   the user submits, but persists without changes if the user just reloads the web page.
@@ -514,7 +575,7 @@ question instructions.
     red|blue °=° red
 ```
 
-### 2. Feedback questionnaire
+### 3. Feedback questionnaire
 
 A feedback questionnaire is almost like a graded questionnaire. When the
 `feedback` option is set, the questionnaire uses the feedback category and
@@ -586,7 +647,7 @@ The config.yaml file used by `agree-item-generate` may use the following keys:
   image_url: http://localhost:8080/static/default/_images/myimage.png
 ```
 
-### 3. Submittable exercise
+### 4. Submittable exercise
 
 These types of exercises are configured separately for the MOOC grader by
 linking a YAML configuration file with the `config` option.
@@ -648,7 +709,7 @@ It accepts the following options:
   This will be shown in aplus as the instructions.
 ```
 
-### 4. External exercise (LTI)
+### 5. External exercise (LTI)
 
 This exercise opens an external tool via the LTI launch protocol.
 The LTI service must be configured beforehand in A+ by an administrator.
@@ -671,7 +732,7 @@ In LTI excercises, the instructions cannot be written in the body of the submit 
   :lti_resource_link_id: example1
 ```
 
-### 5. Meta (exercise round settings)
+### 6. Meta (exercise round settings)
 
 The aplusmeta directive is used to define module (exercise round) settings.
 It should be defined in the RST file that defines the `toctree` of the module
@@ -739,7 +800,7 @@ named freely as long as they are not RST markup (e.g. '|open01|' will not
 work). The substitutions can be used with any option of the meta directive.
 
 
-### 6. Active element input
+### 7. Active element input
 
 This creates an input field for active element.
 
@@ -771,7 +832,7 @@ Tools for making clickable active element inputs: https://version.aalto.fi/gitla
              the default clickable input
 
 
-### 7. Active element output
+### 8. Active element output
 
 This creates an output field for active element.
 
@@ -800,7 +861,7 @@ More active element examples can be found at https://version.aalto.fi/gitlab/pii
                    height will scale to match content that has a defined height
       :status: exercise status (default "unlisted"). See available [statuses](#list-of-exercise-statuses).
 
-### 8. Hidden block
+### 9. Hidden block
 
 Directive for creating hidden content blocks. The content can be shown/hidden
 by clicking the link. (This uses the Bootstrap collapse component.)
@@ -813,7 +874,7 @@ by clicking the link. (This uses the Bootstrap collapse component.)
   Hidden content here.
 ```
 
-### 9. Point of interest
+### 10. Point of interest
 
 Directive for creating a "point of interest" summary block.
 This extension must be activated separately in the project conf.py
@@ -826,7 +887,7 @@ Point of interests may also be used to generate separate lecture slides
 (not directly included in the A+ content chapters). This requires a separate
 tool called [Presentation maker](https://github.com/apluslms/presentation-maker).
 
-More information about [Columns and rows](#17-columns-and-rows).
+More information about [Columns and rows](#18-columns-and-rows).
 ```
 .. point-of-interest:: Title text
   :id: unique id, if not supplied a random id will be generated
@@ -863,7 +924,7 @@ More information about [Columns and rows](#17-columns-and-rows).
 ```
 
 
-### 10. Annotated code blocks
+### 11. Annotated code blocks
 
 Code blocks may be annotated with comments for specific lines. This extension
 must be activated separately in the project by adding the following settings to
@@ -921,7 +982,7 @@ and JS code to interact with the annotated directive.
     The parameters to the function call are evaluated first.
 ```
 
-### 11. Code blocks with line references
+### 12. Code blocks with line references
 
 With the `lineref-code-block`, you may add links from the chapter contents to
 specific lines of the code block. You define labels enclosed in `::` for lines
@@ -949,7 +1010,7 @@ The role lref makes it possible to link to labels defined in lineref-code-block 
 :lref:`optional link text <my-label-name>`.
 ```
 
-### 12. REPL sessions
+### 13. REPL sessions
 
 The `repl` directive is used to print a (Scala) REPL session (read-eval-print loop).
 This extension must be activated separately in the project conf.py
@@ -968,7 +1029,7 @@ This extension must be activated separately in the project conf.py
   res0: Int = 14
 ```
 
-### 13. Submittable ACOS exercises
+### 14. Submittable ACOS exercises
 
 The custom directive acos-submit behaves almost identically to the normal
 submit directive. It is intended for exercises that are hosted outside the MOOC grader,
@@ -990,7 +1051,7 @@ In RST:
   :url: /aplus/draganddrop/draganddrop-example/revealdemo
 ```
 
-### 14. HTML div elements
+### 15. HTML div elements
 
 The div directive can be used to insert basic `<div>` html elements into the
 generated document. This is useful for styling and other similar reasons.
@@ -1012,7 +1073,7 @@ Usage example:
   indentation.
 ```
 
-### 15. CSS styled topics
+### 16. CSS styled topics
 
 Directive that inserts `topic` elements that are more friendly to css styling
 using the bootstrap framework. Usage:
@@ -1036,7 +1097,7 @@ added to all styled-topic directives. The default value is `dl-horizontal topic`
 where `dl-horizontal` is useful for inserting bootstrap styled `<dl>` elements
 into the div.
 
-### 16. Media directives
+### 17. Media directives
 
 The media directives were developed basically for a single course and they
 may not be quite reusable for other usecases, but they are listed here anyway.
@@ -1082,7 +1143,7 @@ the mp4 or webm format. The id argument is the filename without the extension.
   :frame-width: 850
 ```
 
-### 17. Columns and rows
+### 18. Columns and rows
 
 Directive for creating columns and rows. Primarily designed to be used with "point of interest" summary blocks. But should also work independently to layout content.
 
@@ -1137,7 +1198,7 @@ Width is not mandatory, but if it is not given then it uses the width of 12 auto
 
 Older columns (`::newcol`) work, but they are deprecated. Column and row directives should be used instead.
 
-### 18. Tabs
+### 19. Tabs
 
 The `rst-tabs` directive is designed to add tabbed content. Tabs separate content into different panels so that one
 panel is displayed at a time. This extension must be activated separately in the project by adding the following
@@ -1202,8 +1263,8 @@ which is used internally to identify individual `tab-content`. Therefore, this a
 contain any whitespace. You must also add the option `title` to the `tab-content` directive since it is the title that
 will be shown in your tabs. The content of each `tab-content` can be any anything.
 
-### 19. Interactive code
-The `thebe-button` directive and `thebe` class can be used to make python, R and 
+### 20. Interactive code
+The `thebe-button` directive and `thebe` class can be used to make python, R and
 C/C++ code-blocks interactive, allowing students to edit and run code.
 This extension must be activated separately in the project by adding `"thebe"` to the `extensions` list variable in the **conf.py** file located in the root of your course directory.
 
@@ -1211,7 +1272,7 @@ This extension must be activated separately in the project by adding `"thebe"` t
 extensions = ["aplus_setup", "thebe"]
 ```
 
-Additionally, **conf.py** should contain the following configuration to use 
+Additionally, **conf.py** should contain the following configuration to use
 interactive code blocks.
 
 ```python
@@ -1229,43 +1290,43 @@ interactive code blocks.
           "indentWithTabs": "true",
           "indentUnit": 4,
       }
-    }   
+    }
 ```
-The kernel configuration fields, which configure a production binderhub server that 
-can run the environment residing in a remote repository, are followed by 
-`"selector"` configuration. The last configuration ultimately defines which `rst` 
+The kernel configuration fields, which configure a production binderhub server that
+can run the environment residing in a remote repository, are followed by
+`"selector"` configuration. The last configuration ultimately defines which `rst`
 code blocks should be converted to interactive code elements. If this configuration is
-- `"selector": "div.highlight"` all the code blocks in `rst` files starting or 
-containing `:thebe-kernel: <KERNEL-NAME-HERE>` directive will be converted to 
+- `"selector": "div.highlight"` all the code blocks in `rst` files starting or
+containing `:thebe-kernel: <KERNEL-NAME-HERE>` directive will be converted to
 interactive code blocks.
 - `"selector": ".thebe"` the code blocks containing `:class: thebe` option will be
 converted to interactive code blocks. This is the default option, and if it is
-desired to have all code blocks to be interactive code blocks, 
+desired to have all code blocks to be interactive code blocks,
 `"selector": "div.highlight"` should be explicitly configured.
 
 You can also configure the editable code area behavior in `thebe_config`
 as follows.
-1. `"theme": "eclipse"` configuration option states the editor code style theme. 
+1. `"theme": "eclipse"` configuration option states the editor code style theme.
 We support only two options for now
-   - `"theme": "eclipse"` (default). This theme is very similar to the default theme 
+   - `"theme": "eclipse"` (default). This theme is very similar to the default theme
    of Eclipse IDE, and has a light background, which makes it a natural choice
-   for the default A+ style in general. 
+   for the default A+ style in general.
    - `"theme": "abcdef"`. This is a colorful theme with a dark background.
-2. `"electricChars": "true"` configuration option sets whether the editor 
-(interactive code block) should re-indent the current line when a character is typed. 
-Change this configuration to `"false"` if you prefer the students to practice proper 
+2. `"electricChars": "true"` configuration option sets whether the editor
+(interactive code block) should re-indent the current line when a character is typed.
+Change this configuration to `"false"` if you prefer the students to practice proper
 indentation. Default is `"true"`.
 3. `"lineNumbers": "true"` configuration enables line numbering. When enabled, the
 editor will have a left gutter area with line numbers. The default is `"true"`,
 and should be explicitly set to `"false"` if you do not want to have line numbers.
-4. `"indentWithTabs": "true"` configuration enables indentation with tabs. The 
+4. `"indentWithTabs": "true"` configuration enables indentation with tabs. The
 default configuration is `"true"`, and should be set to `"false"` if you prefer
 to use spaces for indentation. A tab has `4` characters width.
 5. `"indentUnit": 4` configuration sets how many spaces define an indented block.
 The default is `4` spaces, and should be explicitly configured to change the indentation experience.
 
 - In addition to these, the matching braces are highlighted when one of
-(`}`, `)` or `]`) is typed. 
+(`}`, `)` or `]`) is typed.
 
 The following code snippet is an example on how you can use the `thebe` extension.
 
