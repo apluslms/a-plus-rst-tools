@@ -102,8 +102,8 @@ class ConfigurableExercise(AbstractExercise):
         if "url" not in data and env.config.default_exercise_url:
             data["url"] = env.config.default_exercise_url
 
-        if data['url']:
-            data['url'] = data['url'].format(key=name)
+        if "url" in data:
+            data["url"] = data["url"].format(key=name)
 
     def set_configure(self, data, exercise_url, files):
         if 'no-configure' in self.options:
