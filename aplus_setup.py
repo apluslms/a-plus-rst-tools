@@ -52,7 +52,7 @@ def setup(app):
     app.add_config_value('enable_autosave', False, 'html')
     app.add_config_value('unprotected_paths', [], 'html')
     app.add_config_value('default_exercise_url', None, 'html')
-    app.add_config_value('default_configure_url', "{scheme}://{netloc}/configure", 'html')
+    app.add_config_value('default_configure_url', None, 'html')
     app.add_config_value('course_configures', [], 'html')
 
     # Connect configuration generation to events.
