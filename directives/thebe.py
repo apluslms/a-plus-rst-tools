@@ -37,15 +37,14 @@ SOFTWARE.
 
 """A sphinx extension to enable interactive computations using thebe."""
 
+
 import json
 import os
 from pathlib import Path
-
 from docutils.parsers.rst import Directive, directives
 from docutils import nodes
 from sphinx.util import logging
 from sphinx.util.fileutil import copy_asset
-
 __version__ = "0.0.8"
 
 CSS_FILE = 'css/thebe.css'
@@ -55,8 +54,10 @@ assets_path = 'static'
 
 logger = logging.getLogger(__name__)
 
+
 def st_static_path(app):
-    static_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "_static"))
+    static_path = os.path.abspath(os.path.join(
+        os.path.dirname(__file__), "_static"))
     app.config.html_static_path.append(static_path)
 
 
@@ -75,18 +76,27 @@ def init_thebe_default_config(app, env, docnames):
 def init_thebe_core(app, env):
     config_thebe = app.config["thebe_config"]
     if not config_thebe:
-        logger.warning("Didn't find `thebe_config` in conf.py, add to use thebe")
+        logger.warning(
+            "Didn't find `thebe_config` in conf.py, add to use thebe")
         return
 
     # Add core libraries
     opts = {"async": "async", "data-aplus": "yes"}
     css_opts = {"data-aplus": "yes"}
-    app.add_js_file(filename="https://unpkg.com/thebelab@latest/lib/index.js", **opts)
-    app.add_js_file(filename="https://codemirror.net/mode/clike/clike.js", **opts)
-    app.add_js_file(filename="https://codemirror.net/addon/hint/matchbrackets.js", **opts)
-    app.add_css_file(filename="https://codemirror.net/theme/eclipse.css", **css_opts)
-    app.add_css_file(filename="https://codemirror.net/theme/abcdef.css", **css_opts)
-
+    app.add_js_file(
+        filename="https://unpkg.com/thebelab@latest/lib/index.js", **opts)
+    app.add_js_file(
+        filename="https://codemirror.net/lib/codemirror.js")
+    app.add_js_file(
+        filename="https://codemirror.net/mode/clike/clike.js")
+    app.add_js_file(
+        filename="https://codemirror.net/mode/octave/octave.js")
+    app.add_js_file(
+        filename="https://codemirror.net/addon/edit/matchbrackets.js")
+    app.add_css_file(
+        filename="https://codemirror.net/theme/eclipse.css", **css_opts)
+    app.add_css_file(
+        filename="https://codemirror.net/theme/abcdef.css", **css_opts)
 
     # Add configuration variables
     thebe_config = f"""
@@ -132,6 +142,8 @@ def update_thebe_context(app, doctree, docname):
         cm_language = "text/x-c++src"
     elif "c" in cm_language:
         cm_language = "text/x-csrc"
+    elif "octave" in cm_language:
+        cm_language = "text/x-octave"
     else:
         cm_language = "python"
 
@@ -164,10 +176,14 @@ def update_thebe_context(app, doctree, docname):
     codemirror_config = config_thebe.get("codemirror-config", None)
     if codemirror_config:
         codemirror_theme = codemirror_config.get("theme", codemirror_theme)
-        codemirror_indent_unit = codemirror_config.get("indentUnit", codemirror_indent_unit)
-        codemirror_indent_with_tabs = codemirror_config.get("indentWithTabs", codemirror_indent_with_tabs)
-        codemirror_electric_chars = codemirror_config.get("electricChars", codemirror_electric_chars)
-        codemirror_line_numbers = codemirror_config.get("lineNumbers", codemirror_line_numbers)
+        codemirror_indent_unit = codemirror_config.get(
+            "indentUnit", codemirror_indent_unit)
+        codemirror_indent_with_tabs = codemirror_config.get(
+            "indentWithTabs", codemirror_indent_with_tabs)
+        codemirror_electric_chars = codemirror_config.get(
+            "electricChars", codemirror_electric_chars)
+        codemirror_line_numbers = codemirror_config.get(
+            "lineNumbers", codemirror_line_numbers)
         codemirror_mode = codemirror_config.get("mode", codemirror_mode)
     # Update the doctree with some nodes for the thebe configuration
     thebe_html_config = f"""
@@ -199,7 +215,8 @@ def update_thebe_context(app, doctree, docname):
 
     doctree.append(nodes.raw(text=thebe_html_config, format="html"))
     doctree.append(
-        nodes.raw(text=f"<script>kernelName = '{kernel_name}'</script>", format="html")
+        nodes.raw(
+            text=f"<script>kernelName = '{kernel_name}'</script>", format="html")
     )
 
 
@@ -212,7 +229,8 @@ def _split_repo_url(url):
         end = url.split("github.com/")[-1]
         org, repo = end.split("/")[:2]
     else:
-        logger.warning(f"Currently Thebe repositories must be on GitHub or Aalto gitlab, got {url}")
+        logger.warning(
+            f"Currently Thebe repositories must be on GitHub or Aalto gitlab, got {url}")
         org = repo = None
     return org, repo
 
@@ -292,16 +310,20 @@ def setup(app):
     app.add_css_file(CSS_FILE, **opts)
 
     # The files are added to the _build/html/_static/css folder.
-    logger.info('Copying CSS files from the thebe-button directive to the _static folder... ')
+    logger.info(
+        'Copying CSS files from the thebe-button directive to the _static folder... ')
     html_static_path_css = os.path.join(assets_path, CSS_FILE)
-    local_path_css = os.path.join(os.path.dirname(__file__), html_static_path_css)
+    local_path_css = os.path.join(
+        os.path.dirname(__file__), html_static_path_css)
     copy_asset(local_path_css, os.path.join(app.outdir, '_static', 'css'))
     logger.info('done')
 
     # The files are added to the _build/html/_static/js folder.
-    logger.info('Copying JS files from the thebe-button directive to the _static folder... ')
+    logger.info(
+        'Copying JS files from the thebe-button directive to the _static folder... ')
     html_static_path_js = os.path.join(assets_path, JS_FILE)
-    local_path_js = os.path.join(os.path.dirname(__file__), html_static_path_js)
+    local_path_js = os.path.join(
+        os.path.dirname(__file__), html_static_path_js)
     copy_asset(local_path_js, os.path.join(app.outdir, '_static', 'js'))
     logger.info('done')
 
