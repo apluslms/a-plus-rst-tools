@@ -65,9 +65,9 @@ var initThebe = () => {
         console.log("Status changed:", data.status, data.message);
 
         $(".thebe-launch-button ")
-        .removeClass("thebe-status-" + thebeStatus)
-        .addClass("thebe-status-" + data.status)
-        .find(".loading-text").html("<span class='launch_msg'>Launching interactive code environment: </span><span class='status'>" + data.status + "</span>");
+            .removeClass("thebe-status-" + thebeStatus)
+            .addClass("thebe-status-" + data.status)
+            .find(".loading-text").html("<span class='launch_msg'>Launching interactive code environment: </span><span class='status'>" + data.status + "</span>");
 
         // Now update our thebe status
         thebeStatus = data.status;
@@ -120,6 +120,8 @@ var detectLanguage = (language) => {
         language = "text/x-c++src";
     } else if (language.indexOf('c') > -1) {
         language = "text/x-csrc";
+    } else if (language.indexOf('octave')) {
+        language = "text/x-octave";
     }
     return language;
 }
