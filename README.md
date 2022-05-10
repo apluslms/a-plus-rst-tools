@@ -1264,7 +1264,7 @@ contain any whitespace. You must also add the option `title` to the `tab-content
 will be shown in your tabs. The content of each `tab-content` can be any anything.
 
 ### 20. Interactive code
-The `thebe-button` directive and `thebe` class can be used to make python, R and
+The `thebe-button` or `thebe-precell-button` directives and `thebe` class can be used to make python, R and
 C/C++ code-blocks interactive, allowing students to edit and run code.
 This extension must be activated separately in the project by adding `"thebe"` to the `extensions` list variable in the **conf.py** file located in the root of your course directory.
 
@@ -1328,13 +1328,26 @@ The default is `4` spaces, and should be explicitly configured to change the ind
 - In addition to these, the matching braces are highlighted when one of
 (`}`, `)` or `]`) is typed.
 
-The following code snippet is an example on how you can use the `thebe` extension.
+The following code snippets are examples on how you can use the `thebe` extension. The `thebe-button` directive makes an activation button that looks good on its own, and the `thebe-precell-button` makes an activation button that looks nice when placed just before a code cell.
 
 ```rst
 :thebe-kernel: python
 
 .. thebe-button:: Custom button text (defaults to "Run code")
 
+.. code-block:: python
+  :class: thebe
+
+  a = 1
+  b = 2
+  c = a + b
+  print(c)
+```
+
+```rst
+:thebe-kernel: python
+
+.. thebe-precell-button:: Custom button text (defaults to "Activate")
 .. code-block:: python
   :class: thebe
 

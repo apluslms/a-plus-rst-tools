@@ -64,10 +64,29 @@ var initThebe = () => {
     thebelab.on("status", function (evt, data) {
         console.log("Status changed:", data.status, data.message);
 
-        $(".thebe-launch-button ")
-            .removeClass("thebe-status-" + thebeStatus)
-            .addClass("thebe-status-" + data.status)
-            .find(".loading-text").html("<span class='launch_msg'>Launching interactive code environment: </span><span class='status'>" + data.status + "</span>");
+        // A nicer interface for the state of launch process
+        const state_dict = {
+            'launching': 'Launching',
+            'building': 'Launching',
+            'built': 'Launching',
+            'starting': 'Launching',
+            'ready': 'Active',
+            'failed': 'Error'
+        }
+
+        // Change status of topmost container
+        $(".thebe-info ")
+        .removeClass("thebe-status-" + thebeStatus)
+        .addClass("thebe-status-" + data.status)
+
+        // Write loading text into standalone button
+        $(".thebe-standalone-button-container")
+        .find(".thebe-launch-button")
+        .find(".loading-text")
+        .html(`<span class='launch_msg'>Launching interactive code environment: </span><span class='status'> ${state_dict[data.status]} </span>`);
+
+        // Write status message into button next to code cell
+        $(".thebe-status-msg ").html(state_dict[data.status]);
 
         // Now update our thebe status
         thebeStatus = data.status;
