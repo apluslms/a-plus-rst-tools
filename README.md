@@ -1264,8 +1264,8 @@ contain any whitespace. You must also add the option `title` to the `tab-content
 will be shown in your tabs. The content of each `tab-content` can be any anything.
 
 ### 20. Interactive code
-The `thebe-button` or `thebe-precell-button` directives and `thebe` class can be used to make python, R and
-C/C++ code-blocks interactive, allowing students to edit and run code.
+The `thebe-button` or `thebe-precell-button` directives and `thebe` class can be used to make Python, R,
+C/C++ and Octave code-blocks interactive, allowing students to edit and run code.
 This extension must be activated separately in the project by adding `"thebe"` to the `extensions` list variable in the **conf.py** file located in the root of your course directory.
 
 ```python
