@@ -64,6 +64,14 @@ SOFTWARE.
   font-weight: bold;
 }
 
+.thebe-launch-button {
+  pointer-events: none;
+}
+
+.thebe-status-waiting .thebe-launch-button {
+  pointer-events: auto;
+}
+
 .thebe-standalone-button-container button.thebe-launch-button div.spinner {
   float: left;
   margin-right: 1em;
@@ -119,6 +127,7 @@ SOFTWARE.
   padding: 0.35em 1.2em;
   margin: 0px 1px;
   border-radius: 0.12em;
+  min-width: 80px;
   box-sizing: border-box;
   text-decoration: none;
   font-family: 'Roboto', sans-serif;
