@@ -185,7 +185,7 @@ class SubmitForm(ConfigurableExercise):
                 configure_files[data["container"]["mount"]] = data["container"]["mount"]
             if "mounts" in data["container"]:
                 for path_in_repo, path_in_container in data["container"]["mounts"].items():
-                    configure_files[path_in_container] = path_in_repo
+                    configure_files[path_in_repo] = path_in_repo
         if "template" in data:
             configure_files[data["template"]] = data["template"]
         if "feedback_template" in data:
