@@ -116,19 +116,17 @@ class ConfigurableExercise(AbstractExercise):
         else:
             url = self.state.document.settings.env.config.default_configure_url
 
-        if not url:
-            return
+        if url:
+            if exercise_url:
+                url = url.format(**urlparse(exercise_url)._asdict())
 
-        if exercise_url:
-            url = url.format(**urlparse(exercise_url)._asdict())
+            try:
+                parsed = urlparse(url)
+            except ValueError as e:
+                raise SphinxError(f"Invalid configure url {url} for {data.get('key', data)}") from e
 
-        try:
-            parsed = urlparse(url)
-        except ValueError:
-            raise SphinxError(f"Invalid configure url {url} for {data.get('key', data)}")
-
-        if not parsed.scheme or not parsed.netloc:
-            raise SphinxError(f"Invalid configure url {url} for {data.get('key', data)}")
+            if not parsed.scheme or not parsed.netloc:
+                raise SphinxError(f"Invalid configure url {url} for {data.get('key', data)}")
 
         extra_files = {}
         if "configure-files" in data:
@@ -142,5 +140,6 @@ class ConfigurableExercise(AbstractExercise):
 
         data["configure"] = {
             "files": files,
-            "url": url,
         }
+        if url:
+            data["configure"]["url"] = url
