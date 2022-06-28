@@ -162,6 +162,22 @@ class IndexJoiner:
                     c[k] = self.join_children(c_path, lang1, v, lang2, c2.get(k, []))
                 elif k in INTERNAL_KEYS_TO_JOIN:
                     c[k + '|i18n'] = join_values(lang1, v, lang2, c2.get(k, v))
+                elif k == 'configure':
+                    # Combine the configure files from all languages to a single dictionary.
+                    # Do not add any language codes or the |i18n suffix to the keys.
+                    # Check that the urls are identical.
+                    if v.get('url') != c2.get(k, v).get('url'):
+                        self.raise_unequal(c_path, lang2, 'configure.url')
+                    else:
+                        configure = c2.get(k, v).copy()
+                        files = configure.get('files')
+                        if files:
+                            files = files.copy()
+                            files.update(v.get('files', {}))
+                            configure['files'] = files
+                        else:
+                            configure['files'] = v.get('files', {})
+                        c[k] = configure
                 elif deep_equals(v, c2.get(k, v)):
                     c[k] = v
                 else:
