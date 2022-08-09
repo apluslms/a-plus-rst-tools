@@ -1406,3 +1406,41 @@ the format `+<number><unit>`, where `unit` is 'd' (days), 'h' (hours) or 'm'/'mi
 * deadline_all: Revealed after the exercise deadline, and all deadline extensions granted to any student on the course.
 An additional delay can optionally be provided as an argument. See instructions above.
 * completion: Revealed after the student has used all submissions or achieved full points from the exercise.
+
+
+## Developers: how to debug A-plus-rst-tools and Sphinx in VS Code
+
+Follow these instructions to debug A+ RST course builds in A-plus-rst-tools and/or Sphinx.
+We use the VS Code Python debugger and run the course build in a Docker container.
+
+Modified `docker-compile.sh` in the A+ course directory:
+
+```sh
+docker run -t --rm \
+  -v "$(pwd):/compile" \
+  -u "$(id -u):$(id -g)" \
+  -e "STATIC_CONTENT_HOST=http://localhost:8080/static/default" \
+  -e "COURSE_KEY=default" \
+  -p "5675:5678" \
+  apluslms/compile-rst:4.3 \
+  sh -c 'make touchrst && pip3 install debugpy -t /tmp && python3 /tmp/debugpy --wait-for-client --listen 0.0.0.0:5678 /compile/debug_sphinx_build.py -b html -d _build/doctrees . _build/html'
+```
+
+At the root of the course directory, copy the sphinx-build script from the Sphinx installation
+(e.g., from a virtual environment installation) so that it is easier to start that script with debugpy.
+The file is named `debug_sphinx_build.py`.
+
+```python
+# -*- coding: utf-8 -*-
+import re
+import sys
+from sphinx.cmd.build import main
+if __name__ == '__main__':
+    sys.argv[0] = re.sub(r'(-script\.pyw|\.exe)?$', '', sys.argv[0])
+    sys.exit(main())
+```
+
+In VS Code, set up the usual debugging environment in the a-plus-rst-tools project:
+Python remote attach, localhost, port 5675
+
+Run `docker-compile.sh` in the terminal and start debugging in VS Code.
