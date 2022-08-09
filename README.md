@@ -1413,7 +1413,8 @@ An additional delay can optionally be provided as an argument. See instructions 
 Follow these instructions to debug A+ RST course builds in A-plus-rst-tools and/or Sphinx.
 We use the VS Code Python debugger and run the course build in a Docker container.
 
-Modified `docker-compile.sh` in the A+ course directory:
+Modified `docker-compile.sh` in the A+ course directory
+(compare to the [original](https://github.com/apluslms/aplus-manual/blob/1868e483cda236325e4a6e3ecff331448f639e38/docker-compile.sh)):
 
 ```sh
 docker run -t --rm \
@@ -1426,9 +1427,10 @@ docker run -t --rm \
   sh -c 'make touchrst && pip3 install debugpy -t /tmp && python3 /tmp/debugpy --wait-for-client --listen 0.0.0.0:5678 /compile/debug_sphinx_build.py -b html -d _build/doctrees . _build/html'
 ```
 
-At the root of the course directory, copy the sphinx-build script from the Sphinx installation
-(e.g., from a virtual environment installation) so that it is easier to start that script with debugpy.
-The file is named `debug_sphinx_build.py`.
+Copy this script to a new file `debug_sphinx_build.py` under the root of the course repository.
+This is a copy of the `sphinx-build` script from the Sphinx installation.
+It is easier to start this in the `docker run` command in `docker-compile.sh`
+when the file exists in the course directory.
 
 ```python
 # -*- coding: utf-8 -*-
