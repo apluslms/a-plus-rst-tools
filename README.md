@@ -1388,20 +1388,20 @@ mode name. The reveal modes are:
 * time: Revealed at a specific time. The reveal date and time must be provided as an argument, in the format
 `YYYY-MM-DD [hh[:mm[:ss]]]` or `DD.MM.YYYY [hh[:mm[:ss]]]`. Examples:
 ```
-:reveal_submission_feedback: time 2020-01-16
-:reveal_submission_feedback: time 2020-01-16 16
-:reveal_submission_feedback: time 16.01.2020 16:00
-:reveal_submission_feedback: time 16.01.2020 16:00:00
+:reveal-submission-feedback: time 2020-01-16
+:reveal-submission-feedback: time 2020-01-16 16
+:reveal-submission-feedback: time 16.01.2020 16:00
+:reveal-submission-feedback: time 16.01.2020 16:00:00
 ```
 * deadline: Revealed after the exercise deadline, and the possible deadline extension granted to the student. **This is
 the default setting for revealing model solutions.** An additional delay can optionally be provided as an argument, in
 the format `+<number><unit>`, where `unit` is 'd' (days), 'h' (hours) or 'm'/'min' (minutes). Examples:
 ```
-:reveal_submission_feedback: deadline
-:reveal_submission_feedback: deadline +1d
-:reveal_submission_feedback: deadline +2h
-:reveal_submission_feedback: deadline +30m
-:reveal_submission_feedback: deadline +30min
+:reveal-submission-feedback: deadline
+:reveal-submission-feedback: deadline +1d
+:reveal-submission-feedback: deadline +2h
+:reveal-submission-feedback: deadline +30m
+:reveal-submission-feedback: deadline +30min
 ```
 * deadline_all: Revealed after the exercise deadline, and all deadline extensions granted to any student on the course.
 An additional delay can optionally be provided as an argument. See instructions above.
