@@ -86,17 +86,17 @@ def init_thebe_core(app, env):
     app.add_js_file(
         filename="https://unpkg.com/thebe@latest/lib/index.js", **opts)
     app.add_js_file(
-        filename="https://codemirror.net/lib/codemirror.js")
+        filename="https://codemirror.net/5/lib/codemirror.js")
     app.add_js_file(
-        filename="https://codemirror.net/mode/clike/clike.js")
+        filename="https://codemirror.net/5/mode/clike/clike.js")
     app.add_js_file(
-        filename="https://codemirror.net/mode/octave/octave.js")
+        filename="https://codemirror.net/5/mode/octave/octave.js")
     app.add_js_file(
-        filename="https://codemirror.net/addon/edit/matchbrackets.js")
+        filename="https://codemirror.net/5/addon/edit/matchbrackets.js")
     app.add_css_file(
-        filename="https://codemirror.net/theme/eclipse.css", **css_opts)
+        filename="https://codemirror.net/5/theme/eclipse.css", **css_opts)
     app.add_css_file(
-        filename="https://codemirror.net/theme/abcdef.css", **css_opts)
+        filename="https://codemirror.net/5/theme/abcdef.css", **css_opts)
 
     # Add configuration variables
     thebe_config = f"""
