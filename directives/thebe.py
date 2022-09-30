@@ -194,16 +194,16 @@ def update_thebe_context(app, doctree, docname):
             binderUrl: "{binder_url}",
             repo: "{org}/{repo}",
             ref: "{branch}",
-            repoProvider: "{provider}"
-        }},
-        codeMirrorconfig: {{
-            theme: '{codemirror_theme}',
-            mode: '{codemirror_mode}',
-            lineNumbers: {codemirror_line_numbers},
-            electricChars: {codemirror_electric_chars},
-            indentUnit: {codemirror_indent_unit},
-            indentWithTabs: {codemirror_indent_with_tabs},
-            matchBrackets: true
+            repoProvider: "{provider}",
+            codeMirrorConfig: {{
+                theme: '{codemirror_theme}',
+                mode: '{codemirror_mode}',
+                lineNumbers: {codemirror_line_numbers},
+                electricChars: {codemirror_electric_chars},
+                indentUnit: {codemirror_indent_unit},
+                indentWithTabs: {codemirror_indent_with_tabs},
+                matchBrackets: true,
+            }},
         }},
         kernelOptions: {{
             name: "{kernel_name}",
