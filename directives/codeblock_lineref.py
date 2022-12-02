@@ -20,9 +20,7 @@
 '''
 import re
 
-import docutils
 from docutils import nodes
-from docutils.parsers.rst import directives, roles
 
 from sphinx.directives.code import CodeBlock
 from sphinx.util import logging
