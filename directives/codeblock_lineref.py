@@ -2,8 +2,8 @@
 '''
     Defines the directive lineref-code-block and role lref.
 
-    lineref-code-block allows defining labels enclosed in :: for lines 
-    of the code block. Labels can include alphanumeric characters, 
+    lineref-code-block allows defining labels enclosed in :: for lines
+    of the code block. Labels can include alphanumeric characters,
     underscore (_), and hyphen (-). Usage as with Sphinx directive code-block:
 
     .. lineref-code-block:: python
@@ -13,7 +13,7 @@
           :label-name:var = something
           return var
 
-    The role lref makes it possible to link to labels defined in 
+    The role lref makes it possible to link to labels defined in
     lineref-code-block blocks:
 
     :lref:`optional link text <label-name>`
@@ -34,7 +34,7 @@ class codeblock_lineref(nodes.General, nodes.Element):
     pass
 
 def visit_codeblock_lineref_node(self, node):
-    # Pretty much copied from the codeblock visitor 
+    # Pretty much copied from the codeblock visitor
     # except for the addition of line anchors.
     lineanchors = node['lineanchor_id']
     node = node[0]
@@ -62,20 +62,20 @@ def depart_codeblock_lineref_node(self, node):
 
 def process_line(block, line, labelpattern, anchor):
     env = block.state.document.settings.env
-    parts = re.split(r'(:[\w-]+:)', line) 
+    parts = re.split(r'(:[\w-]+:)', line)
     newline = []
     for string in parts:
-        if labelpattern.match(string):        
+        if labelpattern.match(string):
             label = string.strip(':')
             if label in env.code_line_labels:
                 logger.warning(
                     __('Line reference labels should be unique: ' +
-                          'label "{}" has already been defined'.format(label)), 
+                          'label "{}" has already been defined'.format(label)),
                     location=block.state_machine.get_source_and_line(
                         block.lineno)
                     )
                 continue
-            # Save the label and row numebr to env so that they are 
+            # Save the label and row numebr to env so that they are
             # available later in visit_codeblock_lineref_node
             env.code_line_labels[label] = anchor
         elif string:
@@ -86,7 +86,7 @@ def process_line(block, line, labelpattern, anchor):
 
 class LineRefCodeBlock(CodeBlock):
     '''
-    Directive for code blocks that can include line labels that 
+    Directive for code blocks that can include line labels that
     can be referenced to with the lref-role.
     '''
 
@@ -128,16 +128,16 @@ def lineref_role(name, rawtext, text, lineno, inliner, options={}, content=[]):
     if not labelmatch:
         logger.warning(
             __('Missing label: the role lref requires a label and optional link text ' +
-                  'in the form :lref:`link text <label>`'), 
+                  'in the form :lref:`link text <label>`'),
             location=location
         )
         return [], []
-    
+
     label = labelmatch.group(1)
 
     if not label in env.code_line_labels:
         logger.warning(
-            __('Unknown label "{}"'.format(label)), 
+            __('Unknown label "{}"'.format(label)),
             location=location
         )
         return [nodes.reference(rawtext, label, refuri='', **options)],[]
@@ -148,9 +148,9 @@ def lineref_role(name, rawtext, text, lineno, inliner, options={}, content=[]):
     parens = False
     if not linktext:
         # Default link text is (line X)
-        linktext = 'line ' + lineno 
+        linktext = 'line ' + lineno
         parens = True
-    linknode = nodes.reference(rawtext, str(linktext), refuri='#'+anchor, 
+    linknode = nodes.reference(rawtext, str(linktext), refuri='#'+anchor,
                                 **options)
     linknode['classes'].append('codeblock-lineref')
 
