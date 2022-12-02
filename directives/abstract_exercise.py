@@ -76,6 +76,8 @@ class ConfigurableExercise(AbstractExercise):
         'category': directives.unchanged,
         'no-configure': directives.flag,
         'no-override': directives.flag,
+        'min-group-size': directives.nonnegative_int,
+        'max-group-size': directives.nonnegative_int,
     }
 
     def apply_override(self, data, category=None):

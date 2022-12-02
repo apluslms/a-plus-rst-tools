@@ -104,8 +104,8 @@ class SubmitForm(ConfigurableExercise):
             'scale_points': points,
             'difficulty': difficulty or '',
             'max_submissions': self.options.get('submissions', data.get('max_submissions', env.config.program_default_submissions)),
-            'min_group_size': data.get('min_group_size', env.config.default_min_group_size),
-            'max_group_size': data.get('max_group_size', env.config.default_max_group_size),
+            'min_group_size': self.options.get('min-group-size', data.get('min_group_size', env.config.default_min_group_size)),
+            'max_group_size': self.options.get('max-group-size', data.get('max_group_size', env.config.default_max_group_size)),
             'points_to_pass': self.options.get('points-to-pass', data.get('points_to_pass', 0)),
             # The RST source file path is needed for fixing relative URLs
             # in the exercise description.
