@@ -158,6 +158,12 @@ def lineref_role(name, rawtext, text, lineno, inliner, options={}, content=[]):
          return [linknode], []
 
 
+def _reset_env_code_line_labels(app):
+    env = app.builder.env
+    if hasattr(env, 'code_line_labels'):
+        del env.code_line_labels
+
+
 def setup(app):
     app.add_directive('lineref-code-block', LineRefCodeBlock)
     app.add_node(codeblock_lineref,
@@ -165,3 +171,5 @@ def setup(app):
                  latex=(visit_codeblock_lineref_node, depart_codeblock_lineref_node),
                  text=(visit_codeblock_lineref_node, depart_codeblock_lineref_node))
     app.add_role('lref', lineref_role)
+
+    app.connect("builder-inited", _reset_env_code_line_labels)
