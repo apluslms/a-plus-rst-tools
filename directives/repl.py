@@ -2,7 +2,7 @@
 import docutils
 from docutils import nodes
 from docutils.parsers.rst import Directive, directives
-from cgi import escape
+from html import escape
 import re
 
 import aplus_nodes
