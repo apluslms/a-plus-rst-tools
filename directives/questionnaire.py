@@ -200,7 +200,7 @@ class Questionnaire(ConfigurableExercise):
         if 'title' in self.options:
             data['title'] = self.options.get('title')
         else:
-            data['title|i18n'] = translations.opt('feedback') if is_feedback else translations.opt('exercise', postfix=" {}".format(key))
+            data['title|i18n'] = translations.opt('feedback') if is_feedback else translations.opt('exercise', postfix="{}".format(key))
 
         source, line = self.state_machine.get_source_and_line(self.lineno)
         if 'reveal-submission-feedback' in self.options:
