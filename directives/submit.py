@@ -74,6 +74,8 @@ class SubmitForm(ConfigurableExercise):
                 raise SphinxError('Missing config path {}'.format(self.options['config']))
             data = yaml_writer.read(path)
             config_title = data.get('title', '')
+
+            env.note_dependency(path) # Add the config file to the rst file's dependencies
         else:
             data = { '_external': True }
             if 'url' in self.options:
