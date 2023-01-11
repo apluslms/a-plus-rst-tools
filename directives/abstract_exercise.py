@@ -1,4 +1,5 @@
 import itertools
+from typing import Any, Mapping
 from urllib.parse import urlparse
 
 from docutils.parsers.rst import Directive, directives
@@ -68,6 +69,20 @@ class AbstractExercise(Directive):
 
         if 'allow-assistant-viewing' in self.options:
             data['allow_assistant_viewing'] = str_to_bool(self.options['allow-assistant-viewing'])
+
+    def set_configure_files_from_container(
+            self,
+            configure_files: Mapping[str, str],
+            container: Mapping[str, Any],
+            ) -> None:
+        mount: str = container.get("mount")
+        mounts: dict = container.get("mounts")
+        if mount:
+            configure_files[mount] = mount
+        if mounts:
+            for path_in_repo, path_in_container in mounts.items():
+                configure_files[path_in_repo] = path_in_repo
+
 
 class ConfigurableExercise(AbstractExercise):
     option_spec = {

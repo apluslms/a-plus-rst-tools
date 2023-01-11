@@ -181,11 +181,11 @@ class SubmitForm(ConfigurableExercise):
 
         configure_files = {}
         if "container" in data and isinstance(data["container"], dict):
-            if "mount" in data["container"]:
-                configure_files[data["container"]["mount"]] = data["container"]["mount"]
-            if "mounts" in data["container"]:
-                for path_in_repo, path_in_container in data["container"]["mounts"].items():
-                    configure_files[path_in_repo] = path_in_repo
+            self.set_configure_files_from_container(configure_files, data["container"])
+        elif "container|i18n" in data and isinstance(data["container|i18n"], dict):
+            for lang, lcontainer in data["container|i18n"].items():
+                self.set_configure_files_from_container(configure_files, lcontainer)
+
         if "template" in data:
             configure_files[data["template"]] = data["template"]
         if "feedback_template" in data:
