@@ -723,14 +723,16 @@ It accepts the following options:
 * `radar_tokenizer`: [See the Radar similarity analysis tool][Radar service]
 * `radar_minimum_match_tokens`: [See the Radar similarity analysis tool][Radar service]
 * `lti`: See LTI exercises in the next section. This option defines the label of
-  the LTI service that must be configured in the A+ site beforehand.
-* `lti_resource_link_id`: LTI exercise key
-* `lti_context_id`: LTI course key
+  the LTI 1.1 service that must be configured in the A+ site beforehand.
+* `lti_resource_link_id`: LTI exercise key. Only available with LTI 1.1.
+* `lti_context_id`: LTI course key. Only available with LTI 1.1.
 * `lti_open_in_iframe`: Open the exercise in an iframe inside the A+ page instead of a new window.
-  This option does not take any parameters.
+  This option does not take any parameters, and is available both with LTI 1.1 and LTI 1.3.
 * `lti_aplus_get_and_post`: The exercise uses the A+ protocol to connect to the service.
   The LTI launch parameters are appended to the A+ protocol parameters. This does not work with standard LTI services.
-  This option does not take any parameters.
+  This option does not take any parameters, and is only available with LTI 1.1.
+* `lti1p3`: Defines the label of the LTI 1.3 service that must be configured beforehand.
+* `lti_custom`: Custom service-specific parameters. Usage depends on the target service. Only available with LTI 1.3.
 
 [Radar service]: https://github.com/Aalto-LeTech/radar
 
@@ -742,11 +744,12 @@ It accepts the following options:
   This will be shown in aplus as the instructions.
 ```
 
-### 5. External exercise (LTI)
+### 5. External exercise (LTI 1.1 or LTI 1.3)
 
 This exercise opens an external tool via the LTI launch protocol.
 The LTI service must be configured beforehand in A+ by an administrator.
-The `lti` option refers to the label of the LTI service.
+The `lti` option refers to the label of the LTI 1.1 service, and `lti1p3` refers
+to the label of the LTI 1.3 service.
 The `url` option may exclude the domain of the service URL since the domain
 must be equal to the URL defined in the LTI service anyway.
 There are two ways to define LTI exercise:
@@ -756,13 +759,22 @@ There are two ways to define LTI exercise:
 * Writing LTI options in the submit directive. Remark that in this case the submit directive must
   not have the `config` option set.
 
-In LTI excercises, the instructions cannot be written in the body of the submit directive.
+In LTI excercises, the instructions cannot be written in the body of the submit directive. Below is an example of an LTI 1.1 service:
 
 ```
 .. submit:: 3 B50
   :lti: Rubyric
   :url: /aplus/123
   :lti_resource_link_id: example1
+```
+
+An LTI 1.3 exercise definition looks, for example, as follows:
+
+```
+.. submit:: exercise 10
+  :lti1p3: ExternalService
+  :lti_open_in_iframe:
+  :lti_custom: id=5fd14e7b10b6
 ```
 
 ### 6. Meta (exercise round settings)
