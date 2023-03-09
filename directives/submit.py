@@ -28,8 +28,10 @@ class SubmitForm(ConfigurableExercise):
         'url': directives.unchanged,
         'title': directives.unchanged,
         'lti': directives.unchanged,
+        'lti1p3': directives.unchanged,
         'lti_context_id': directives.unchanged,
         'lti_resource_link_id': directives.unchanged,
+        'lti_custom':  directives.unchanged,
         'lti_aplus_get_and_post': directives.flag,
         'lti_open_in_iframe': directives.flag,
         'radar_tokenizer': directives.unchanged,
@@ -81,6 +83,10 @@ class SubmitForm(ConfigurableExercise):
             if 'url' in self.options:
                 data['url'] = self.options['url']
             if 'lti' in self.options:
+                if 'lti1p3' in self.options:
+                    raise SphinxError("Cannot use Both 'lti' and 'lti1p3' at the same time")
+                if 'lti_custom' in self.options:
+                    raise SphinxError("lti_custom is not available with LTI 1.1.")
                 data.update({
                     'lti': self.options['lti'],
                     'lti_context_id': self.options.get('lti_context_id', ''),
@@ -88,6 +94,16 @@ class SubmitForm(ConfigurableExercise):
                 })
                 if 'lti_aplus_get_and_post' in self.options:
                     data.update({'lti_aplus_get_and_post': True})
+                if 'lti_open_in_iframe' in self.options:
+                    data.update({'lti_open_in_iframe': True})
+            if 'lti1p3' in self.options:
+                for v in ('lti_context_id', 'lti_resource_link_id', 'lti_aplus_get_and_post'):
+                    if v in self.options:
+                        raise SphinxError(f"{v} is not available with LTI 1.3")
+                data.update({
+                    'lti1p3': self.options['lti1p3'],
+                    'lti_custom': self.options.get('lti_custom', ''),
+                })
                 if 'lti_open_in_iframe' in self.options:
                     data.update({'lti_open_in_iframe': True})
             config_title = ''
