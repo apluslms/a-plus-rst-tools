@@ -573,6 +573,16 @@ class MultipleChoice(Choice):
         return 'checkbox'
 
 
+def non_negative_float(argument):
+    try:
+        value = float(argument)
+        if value >= 0:
+            return value
+    except ValueError:
+        pass
+    raise SphinxError(f"{argument} is not a non-negative float")
+
+
 class FreeText(QuestionMixin, Directive):
     ''' A free text answer. '''
     has_content = True
@@ -582,6 +592,8 @@ class FreeText(QuestionMixin, Directive):
     option_spec = {
         'length': directives.positive_int,
         'height': directives.positive_int,
+        'float-rel-tol': non_negative_float,
+        'float-abs-tol': non_negative_float,
         'own-line': directives.flag,
         'main-feedback': directives.flag,
         'required': directives.flag,
@@ -595,6 +607,8 @@ class FreeText(QuestionMixin, Directive):
     def run(self):
         self.length = self.options.get('length', None)
         self.height = self.options.get('height', 1)
+        self.float_rel_tol = self.options.get('float-rel-tol', None)
+        self.float_abs_tol = self.options.get('float-abs-tol', None)
         self.position = 'place-on-own-line' if self.height > 1 or 'own-line' in self.options else 'place-inline'
 
         # Detect paragraphs: any number of plain content and correct answer including optional feedback
@@ -638,6 +652,11 @@ class FreeText(QuestionMixin, Directive):
         if len(self.arguments) > 1:
             self._validate_compare_method(self.arguments[1])
             data['compare_method'] = self.arguments[1]
+
+        if self.float_rel_tol is not None:
+            data['float_rel_tol'] = self.float_rel_tol
+        if self.float_abs_tol is not None:
+            data['float_abs_tol'] = self.float_abs_tol
 
         if config_content:
             fb = None
