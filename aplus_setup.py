@@ -36,6 +36,7 @@ def setup(app):
     app.add_config_value('append_content', [], 'html')
     app.add_config_value('override', {}, 'html')
     app.add_config_value('category_names', {}, 'html')
+    app.add_config_value('categories', {}, 'html')
     app.add_config_value('static_host', None, 'html')
     app.add_config_value('ae_default_submissions', 0, 'html')
     app.add_config_value('skip_language_inconsistencies', False, 'html')

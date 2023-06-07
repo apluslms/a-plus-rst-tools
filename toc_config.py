@@ -395,14 +395,26 @@ def make_index(app, root, language=''):
 
     # Create categories.
     category_names = app.config.category_names
+    for key, name in category_names.items():
+        category = app.config.categories.get(key, {"name": name})
+        if name != category.get("name", name):
+            raise SphinxError(f"Name mismatch between config options 'category_names' and 'categories' for key '{key}': '{name}' vs '{category['name']}'")
+
     categories = {
         key: {
             'name': category_names.get(key, key),
         } for key in category_keys
     }
+
+    for key, category in app.config.categories.items():
+        if key not in categories:
+            raise SphinxError(f"Category with key '{key}' was configured but not used in the material")
+
+        categories[key].update(category)
+
     for key in ['chapter', 'feedback']:
         if key in categories:
-            categories[key]['status'] = 'nototal'
+            categories[key].setdefault('status', 'nototal')
 
     unprotected_paths = course_meta.get('unprotected-paths', app.config.unprotected_paths)
     if isinstance(unprotected_paths, str):
