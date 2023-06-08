@@ -109,6 +109,8 @@ class ActiveElementOutput(ConfigurableExercise):
             'category': 'active elements',
             'max_submissions': self.options.get('submissions', data.get('max_submissions', env.config.ae_default_submissions)),
         })
+        data["category"] = "active elements" if data["max_submissions"] == 0 else "active elements with max submissions"
+
         data.setdefault('status', self.options.get('status', 'unlisted'))
 
         self.apply_override(data, category)
