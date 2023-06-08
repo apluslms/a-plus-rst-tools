@@ -416,6 +416,10 @@ def make_index(app, root, language=''):
         if key in categories:
             categories[key].setdefault('status', 'nototal')
 
+    if "active elements" in categories:
+        categories["active elements"].setdefault("accept_unofficial_submits", True)
+
+    # Set unprotected paths
     unprotected_paths = course_meta.get('unprotected-paths', app.config.unprotected_paths)
     if isinstance(unprotected_paths, str):
         unprotected_paths = shlex.split(unprotected_paths)
