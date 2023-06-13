@@ -3,6 +3,8 @@
 Directive that places active element output divs.
 '''
 import os.path
+from typing import Any, Dict
+
 from docutils.parsers.rst import directives
 from docutils import nodes
 from sphinx.errors import SphinxError
@@ -84,6 +86,7 @@ class ActiveElementOutput(ConfigurableExercise):
         key_title = "{} {}".format(translations.get(env, 'exercise'), key)
 
         # Load or create exercise configuration.
+        data: Dict[str, Any]
         if 'config' in self.options:
             path = os.path.join(env.app.srcdir, self.options['config'])
             if not os.path.exists(path):
@@ -106,10 +109,17 @@ class ActiveElementOutput(ConfigurableExercise):
             'title': env.config.submit_title.format(
                 key_title=key_title, config_title=config_title
             ),
-            'category': 'active elements',
             'max_submissions': self.options.get('submissions', data.get('max_submissions', env.config.ae_default_submissions)),
         })
-        data["category"] = "active elements" if data["max_submissions"] == 0 else "active elements with max submissions"
+
+        if "category" in self.options:
+            data["category"] = self.options["category"]
+        elif "category" not in data:
+            data["category"] = (
+                "active elements"
+                if data["max_submissions"] == 0 else
+                "active elements with max submissions"
+            )
 
         data.setdefault('status', self.options.get('status', 'unlisted'))
 
