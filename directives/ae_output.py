@@ -103,7 +103,6 @@ class ActiveElementOutput(ConfigurableExercise):
 
         config_title = self.options.get('title', config_title)
 
-        category = 'submit'
         data.update({
             'key': name,
             'title': env.config.submit_title.format(
@@ -123,7 +122,7 @@ class ActiveElementOutput(ConfigurableExercise):
 
         data.setdefault('status', self.options.get('status', 'unlisted'))
 
-        self.apply_override(data, category)
+        self.apply_override(data, data["category"])
         self.set_url(data, name)
 
         configure_files = {}
