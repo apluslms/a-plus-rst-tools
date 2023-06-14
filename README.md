@@ -150,16 +150,49 @@ override = {
         'max_submissions': 99,
     },
 }
-# Hack for modifying exercise configurations based on category.
-# The override dict uses category names as keys and the exercise configurations
+# Hack for modifying exercise configurations based on the category.
+# Category keys are keys in the override dict. The exercise configurations
 # are updated at the end with the dict corresponding to the category.
-# The category used is usually the hardcoded default (such as 'submit') instead
-# of the manually set category.
 
 category_names = {'submit': 'Programming exercises'}
-# dict from category keys to category names
-# This can be used to set visible category names if categories are set to
-# exercises by keys.
+# Dict from category keys to category names.
+# This can be used to set visible category names.
+# If no names are set, the names default to the category keys themselves.
+# Default category keys in often-used RST directives include
+# 'submit', 'questionnaire', 'feedback', 'chapter' and 'active elements'.
+# category_names may also set multilingual names:
+category_names = {
+    'chapter': {
+        'fi': 'Luku',
+        'en': 'Chapter',
+    },
+    'feedback': {
+        'fi': 'Palaute',
+        'en': 'Feedback',
+    },
+    'submit': {
+        'fi': 'Pisteytetty',
+        'en': 'Graded',
+    },
+    'questionnaire': {
+        'fi': 'Monivalintakysely',
+        'en': 'Questionnaire',
+    },
+}
+
+# New categories setting in A-plus-rst-tools v1.6.
+# Category settings may be modified here.
+# Map of category keys to dictionaries that are used to
+# override the default category settings.
+categories = {
+    'submit': {
+        'accept_unofficial_submits': True, # allow unofficial submissions
+    },
+    'feedback': {
+        'status': 'ready', # display the category points bar
+    },
+}
+
 static_host = 'http://localhost:8080/static/default'
 # This overwrites the beginning of URLs in links to static materials.
 # It is useful if the A+ frontend is otherwise unable to fix relative URLs
