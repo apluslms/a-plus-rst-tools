@@ -31,6 +31,7 @@ class Questionnaire(ConfigurableExercise):
         'course-feedback': directives.flag,
         'feedback': directives.flag,
         'pick_randomly': directives.positive_int,
+        'pick-randomly': directives.positive_int,
         # Random questions may be resampled after each submission attempt or
         # the questions may be preserved.
         'preserve-questions-between-attempts': directives.flag,
@@ -89,7 +90,7 @@ class Questionnaire(ConfigurableExercise):
         env.question_count = 0
         env.aplus_single_question_points = None
         env.aplus_quiz_total_points = 0
-        env.aplus_pick_randomly_quiz = 'pick_randomly' in self.options
+        env.aplus_pick_randomly_quiz = 'pick-randomly' in self.options or 'pick_randomly' in self.options
         env.aplus_random_question_exists = False
 
         # Create document elements.
@@ -154,12 +155,12 @@ class Questionnaire(ConfigurableExercise):
                 data['show_model_answer'] = show_default
 
         if env.aplus_pick_randomly_quiz:
-            pick_randomly = self.options.get('pick_randomly', 0)
+            pick_randomly = self.options.get('pick-randomly', self.options.get('pick_randomly', 0))
             if pick_randomly < 1:
                 source, line = self.state_machine.get_source_and_line(self.lineno)
                 raise SphinxError(source + ": line " + str(line) +
                     "\nNumber of fields to sample randomly should be greater than zero "
-                    "(option pick_randomly in the questionnaire directive).")
+                    "(option pick-randomly in the questionnaire directive).")
             data['fieldgroups'][0]['pick_randomly'] = pick_randomly
             if 'preserve-questions-between-attempts' in self.options:
                 data['fieldgroups'][0]['resample_after_attempt'] = False
