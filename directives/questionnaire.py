@@ -182,7 +182,7 @@ class Questionnaire(ConfigurableExercise):
 
         if env.aplus_pick_randomly_quiz:
             calculated_max_points = (
-                self.options.get('pick_randomly') * env.aplus_single_question_points
+                self.options.get('pick-randomly', self.options.get('pick_randomly')) * env.aplus_single_question_points
                 if env.aplus_single_question_points is not None
                 else 0
             )
