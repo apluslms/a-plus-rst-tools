@@ -1450,6 +1450,8 @@ the format `+<number><unit>`, where `unit` is 'd' (days), 'h' (hours) or 'm'/'mi
 ```
 * deadline_all: Revealed after the exercise deadline, and all deadline extensions granted to any student on the course.
 An additional delay can optionally be provided as an argument. See instructions above.
+* deadline_or_full_points: Same as deadline, but also revealed after the student has achieved full points from the
+exercise. An additional delay can optionally be provided as an argument. See instructions above.
 * completion: Revealed after the student has used all submissions or achieved full points from the exercise.
 
 
