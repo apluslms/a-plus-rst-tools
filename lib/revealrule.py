@@ -77,7 +77,7 @@ def parse_reveal_rule(
                 "2. 'DD.MM.YYYY [hh[:mm[:ss]]]', e.g., '16.01.2020 16:00'\n"
             )
 
-    elif trigger in ['deadline', 'deadline_all']:
+    elif trigger in ['deadline', 'deadline_all', 'deadline_or_full_points']:
         if argument is not None:
             match = delay_format.match(argument)
             if match:
@@ -92,7 +92,7 @@ def parse_reveal_rule(
                 result['delay_minutes'] = minutes
             else:
                 reveal_rule_error(
-                    "Delay was formatted incorrectly. When using the 'deadline' or 'deadline_all'\n"
+                    "Delay was formatted incorrectly. When using the 'deadline', 'deadline_all' or 'deadline_or_full_points'\n"
                     "reveal mode, a delay can optionally be provided after the mode name. Format the\n"
                     "delay like this:\n"
                     "'+<number><unit>', where unit is 'd' (days), 'h' (hours) or 'm'/'min' (minutes)\n"
@@ -102,7 +102,7 @@ def parse_reveal_rule(
     else:
         reveal_rule_error(
             "Unexpected reveal mode. Supported modes are 'manual', 'immediate', 'time',\n"
-            "'deadline', 'deadline_all' and 'completion'.\n"
+            "'deadline', 'deadline_all', 'deadline_or_full_points' and 'completion'.\n"
         )
 
     return result
