@@ -798,6 +798,8 @@ The aplusmeta directive does not have any content and it accepts the following o
 * `introduction`: module introduction as an HTML string
 * `reveal-submission-feedback`: default rule for revealing submission feedback. Can be overridden per exercise. See [instructions](#defining-reveal-rules).
 * `reveal-model-solutions`: default rule for revealing model solutions. Can be overridden per exercise. See [instructions](#defining-reveal-rules).
+* `model-answer`: chapter that is used as the model answer for the module in the format `<module_key>/<chapter_key>`.
+* `reveal-module-model-solution`: rule for revealing the module model solution. See [instructions](#defining-reveal-rules).
 
 Example module index.rst file:
 

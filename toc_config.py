@@ -367,6 +367,8 @@ def make_index(app, root, language=''):
         close_src = meta.get('close-time', title_date_match.group(1) if title_date_match else course_close)
         late_src = meta.get('late-time', course_late)
         introduction = meta.get('introduction', None)
+        model_answer = meta.get('model-answer', None)
+        reveal_module_model_solution = meta.get('reveal-module-model-solution', None)
         module = {
             # modules01/index -> modules01
             # modules/01/index -> modules_01
@@ -390,6 +392,10 @@ def make_index(app, root, language=''):
             module['late_penalty'] = parse_float(meta.get('late-penalty', course_penalty), 0.0)
         if introduction is not None:
             module['introduction'] = introduction
+        if model_answer is not None:
+            module['model_answer'] = model_answer
+        if reveal_module_model_solution is not None:
+            module['reveal_module_model_solution'] = reveal_module_model_solution
         modules.append(module)
         parse_chapter(docname, doc, module['children'], meta)
 
