@@ -24,6 +24,8 @@ class AplusMeta(Directive):
         'introduction': directives.unchanged, # module introduction HTML
         'reveal-submission-feedback': directives.unchanged,
         'reveal-model-solutions': directives.unchanged,
+        'model-answer': directives.unchanged,
+        'reveal-module-model-solution': directives.unchanged,
     }
 
     # Valid date formats are the same as in function parse_date() in
@@ -42,10 +44,19 @@ class AplusMeta(Directive):
         'late-time',
     }
 
+    chapter_format = re.compile(
+        "^\w+\/\w+$"
+    )
+
+    chapter_format_required = {
+        'model-answer',
+    }
+
     # Keys in option_spec which are parsed as reveal rules
     reveal_rules = {
         'reveal-submission-feedback',
         'reveal-model-solutions',
+        'reveal-module-model-solution',
     }
 
     def run(self):
@@ -68,6 +79,8 @@ class AplusMeta(Directive):
                 self.options[opt] = substitutions[value]
             if opt in AplusMeta.date_format_required:
                 self.validate_time(opt, self.options[opt], old_value)
+            if opt in AplusMeta.chapter_format_required:
+                self.options[opt] = self.parse_chapter(opt, value)
             if opt in AplusMeta.reveal_rules:
                 source, line = self.state_machine.get_source_and_line(self.lineno)
                 self.options[opt] = parse_reveal_rule(value, source, line, opt)
@@ -126,3 +139,13 @@ class AplusMeta(Directive):
                 name=opt,
                 value=value,
                 old_value=old_value))
+
+    def parse_chapter(self, option: str, chapter: str):
+        if AplusMeta.chapter_format.match(chapter):
+            return chapter
+        else:
+            raise SphinxError(
+                f"Option '{option}' was formatted incorrectly: '{chapter}'.\n"
+                "Use the following format: 'module_key/chapter_key', e.g., 'module01/chapter01'."
+            )
+
