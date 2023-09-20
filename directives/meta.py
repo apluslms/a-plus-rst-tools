@@ -44,9 +44,7 @@ class AplusMeta(Directive):
         'late-time',
     }
 
-    chapter_format = re.compile(
-        "^\w+\/\w+$"
-    )
+    chapter_format = re.compile(r"^\w[\w\-\.]*/\w[\w\-\.]*$")
 
     chapter_format_required = {
         'model-answer',
