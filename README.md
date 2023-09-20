@@ -799,6 +799,10 @@ The aplusmeta directive does not have any content and it accepts the following o
 * `reveal-submission-feedback`: default rule for revealing submission feedback. Can be overridden per exercise. See [instructions](#defining-reveal-rules).
 * `reveal-model-solutions`: default rule for revealing model solutions. Can be overridden per exercise. See [instructions](#defining-reveal-rules).
 * `model-answer`: chapter that is used as the model answer for the module in the format `<module_key>/<chapter_key>`.
+  - Typically, the `module_key` is the name of the directory in which the module index and chapter RST files are located.
+  - Likewise, `chapter_key` is the name of the chapter RST file without the filename extension.
+    If there is a language suffix (`_en`, `_fi`) in the filename, the suffix is also excluded from the chapter key.
+  - If you view the chapter in A+, you can see the correct keys in the URL of the A+ chapter page.
 * `reveal-module-model-solution`: rule for revealing the module model solution. See [instructions](#defining-reveal-rules).
 
 Example module index.rst file:
