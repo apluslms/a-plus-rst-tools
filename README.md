@@ -469,6 +469,19 @@ question options:
 * `correct-count`: The number of correct answer choices (checkboxes) to randomly
   select in the randomized `pick-any` question. This option is used with the
   `randomized` option.
+* `structured-randomized`: When this option is used, a subset of the answer choices (checkboxes)
+  is randomly selected for the user, based on the provided structure. The random selection
+  changes after the user submits, but persists when the user just reloads the web page.
+  The value of the option is a string expression of the format
+  `(pick X answer-choice-1 answer-choice-2 ...) (pick Y answer-choice-3 answer-choice-4 ...) ...`,
+  where `X` and `Y` are the number of choices to randomly select from their respective
+  groups of answer choices. Example: `(pick 1 a b) (pick 2 c d e f) (pick 1 g h)`.
+  The string expression may also include nested `pick` groups, e.g.,
+  `(pick 3 a b (pick 1 c d) e f)`. In this example, one of `c` or `d` is randomly picked first,
+  and then three answer choices are randomly picked from the pool of `a`, `b`, `c`, `e`, and `f`
+  or `a`, `b`, `d`, `e`, and `f`, depending how the choice between `c` and `d` played out.
+  The option `correct-count` should not be set when this option is used,
+  since the number of correct answer choices can be controlled using the structure.
 * `preserve-questions-between-attempts`: If set, the answer choices in a `randomized`
   question are preserved between submission attempts (instead of being
   resampled after each attempt).
