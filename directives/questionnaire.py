@@ -423,12 +423,13 @@ class Choice(QuestionMixin, Directive):
                 'name': 'field_{:d}'.format(env.question_count - 1),
             })
 
+        choice_keys = []
         correct_count = 0
         # Travel all answer options.
-        for i,line in slicer(choices):
+        for i, line in slicer(choices):
 
             # Split choice key off.
-            key,content = line[0].split(' ', 1)
+            key, content = line[0].split(' ', 1)
             key = key.strip()
             line[0] = content.strip()
 
@@ -447,6 +448,7 @@ class Choice(QuestionMixin, Directive):
                 key = key[1:]
             if key.endswith('.'):
                 key = key[:-1]
+            choice_keys.append(key)
 
             # Add YAML configuration data.
             optdata = {
@@ -500,18 +502,75 @@ class Choice(QuestionMixin, Directive):
             node.append(dropdown)
 
         if 'randomized' in self.options:
+            if 'structured-randomized' in self.options:
+                source, line = self.state_machine.get_source_and_line(self.lineno)
+                raise SphinxError(
+                    source + ": line " + str(line) +
+                    "\nThe option 'randomized' can not be used together with the option 'structured-randomized'!"
+                )
             data['randomized'] = self.options.get('randomized', 1)
             if data['randomized'] > len(choices):
                 source, line = self.state_machine.get_source_and_line(self.lineno)
-                raise SphinxError(source + ": line " + str(line) +
-                    "\nThe option 'randomized' can not be greater than the number of answer choices!")
+                raise SphinxError(
+                    source + ": line " + str(line) +
+                    "\nThe option 'randomized' can not be greater than the number of answer choices!"
+                )
             if 'correct-count' in self.options:
                 data['correct_count'] = self.options.get('correct-count', 0)
                 if data['correct_count'] > correct_count or data['correct_count'] > data['randomized']:
                     source, line = self.state_machine.get_source_and_line(self.lineno)
-                    raise SphinxError(source + ": line " + str(line) +
+                    raise SphinxError(
+                        source + ": line " + str(line) +
                         "\nThe option 'correct-count' can not be greater than "
-                        "the number of correct choices or the value of 'randomized'!")
+                        "the number of correct choices or the value of 'randomized'!"
+                    )
+            if 'preserve-questions-between-attempts' in self.options:
+                data['resample_after_attempt'] = False
+            env.aplus_random_question_exists = True
+
+        if 'structured-randomized' in self.options:
+            data['structured-randomized'] = self.options.get('structured-randomized')
+
+            def check_groups_recursive(group, all_choice_keys):
+                pick_num = group[0]
+                num_choices = 0
+                for choice_or_subgroup in group[1]:
+                    if isinstance(choice_or_subgroup, tuple):
+                        num_choices += check_groups_recursive(choice_or_subgroup, all_choice_keys)
+                    else:
+                        all_choice_keys.append(choice_or_subgroup)
+                        num_choices += 1
+                if pick_num >= num_choices:
+                    source, line = self.state_machine.get_source_and_line(self.lineno)
+                    raise SphinxError(
+                        source + ": line " + str(line) +
+                        "\nThe number of picked answer choices must be smaller than the number of choices "
+                        "in the value for the option 'structured-randomized'!"
+                    )
+                return pick_num
+
+            all_choice_keys = []
+            for group in data['structured-randomized']:
+                try:
+                    check_groups_recursive(group, all_choice_keys)
+                except IndexError as e: # Should never go here
+                    source, line = self.state_machine.get_source_and_line(self.lineno)
+                    raise SphinxError(
+                        source + ": line " + str(line) +
+                        f"Something went wrong while processing the option 'structured-randomized'!"
+                    ) from e
+            if not all(choice in choice_keys for choice in all_choice_keys):
+                source, line = self.state_machine.get_source_and_line(self.lineno)
+                raise SphinxError(
+                    source + ": line " + str(line) +
+                    "\nAll the answer choices used in the value for option 'structured-randomized' must exist!"
+                )
+            if 'correct-count' in self.options:
+                source, line = self.state_machine.get_source_and_line(self.lineno)
+                raise SphinxError(
+                    source + ": line " + str(line) +
+                    "\nThe option 'correct-count' can not be used together with the option 'structured-randomized'!"
+                )
             if 'preserve-questions-between-attempts' in self.options:
                 data['resample_after_attempt'] = False
             env.aplus_random_question_exists = True
@@ -543,6 +602,44 @@ class SingleChoice(Choice):
         return 'radio'
 
 
+def structured_randomized_expression(argument):
+    import regex # Import regex here so that courses can still build with older compile-rst versions
+    # Verify that the expression matches the expected format
+    pattern = r'(\(\s*pick\s+\d+\s+(?>(?:\w+\s*)|(?1)){2,}\)\s*)'
+    if not regex.match(f'^{pattern}+$', argument):
+        raise SphinxError(f"The option 'structured-randomized' was supplied an invalid argument '{argument}'!")
+
+    def get_group_recursive(string):
+        # Use regular expressions to extract the number of picks and the keys.
+        # Subgroups are parsed recursively.
+        group = []
+        string = string.strip()
+        match = regex.match(r'^(\(\s*pick\s+(\d+)\s+((?>(?:\w+\s*)|(?1)){2,})\)\s*)$', string)
+        if match:
+            pick_num = int(match.group(2))
+            items = regex.split(pattern, match.group(3))
+            for item in items:
+                item = item.strip()
+                if item.startswith('(') and item.endswith(')'):
+                    group.append(get_group_recursive(item))
+                elif item: # Skip empty strings
+                    group.extend(item.split())
+            return pick_num, group
+        else: # Should never go here
+            raise SphinxError(
+                f"Something went wrong while processing the argument '{argument}' "
+                "for the option 'structured-randomized'!"
+            )
+
+    # Use regular expressions to extract the individual parenthetical parts, i.e. groups
+    groups = []
+    groups_as_strings = regex.findall(pattern, argument)
+    for group_string in groups_as_strings:
+        groups.append(get_group_recursive(group_string))
+
+    return groups
+
+
 class MultipleChoice(Choice):
     ''' Lists options for picking all the correct ones. '''
 
@@ -555,6 +652,7 @@ class MultipleChoice(Choice):
         # randomized defines the number of options that are chosen randomly and
         # correct-count is the number of correct options to include
         'randomized': directives.positive_int,
+        'structured-randomized': structured_randomized_expression,
         'correct-count': directives.nonnegative_int,
         # Random questions may be resampled after each submission attempt or
         # the questions may be preserved.
