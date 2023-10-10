@@ -22,6 +22,7 @@ class SubmitForm(ConfigurableExercise):
         'class' : directives.class_option,
         'quiz': directives.flag,
         'ajax': directives.flag,
+        'disable-duplicate-check': directives.flag,
         'submissions': directives.nonnegative_int,
         'points-to-pass': directives.nonnegative_int,
         'config': directives.unchanged,
@@ -65,6 +66,8 @@ class SubmitForm(ConfigurableExercise):
             args['data-aplus-quiz'] = 'yes'
         if 'ajax' in self.options:
             args['data-aplus-ajax'] = 'yes'
+        if 'disable-duplicate-check' in self.options or env.config.disable_duplicate_check:
+            args['data-aplus-disable-duplicate-check'] = 'yes'
         node = aplus_nodes.html('div', args)
 
         key_title = "{} {}".format(translations.get(env, 'exercise'), key)

@@ -47,6 +47,7 @@ class Questionnaire(ConfigurableExercise):
         'reveal-model-solutions': directives.unchanged,
         'grading-mode': directives.unchanged,
         'autosave': directives.flag,
+        'disable-duplicate-check': directives.flag,
     })
 
     def run(self):
@@ -175,6 +176,8 @@ class Questionnaire(ConfigurableExercise):
 
         if 'autosave' in self.options or env.config.enable_autosave:
             node.attributes['data-aplus-autosave'] = 'yes'
+        if 'disable-duplicate-check' in self.options or env.config.disable_duplicate_check:
+            node.attributes['data-aplus-disable-duplicate-check'] = 'yes'
 
         self.set_assistant_permissions(data)
 

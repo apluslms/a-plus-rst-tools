@@ -258,6 +258,10 @@ enable_ref_link_multilang_suffix_correction = True
 # back later. A draft does not count as a submission and does not affect
 # grading. Autosave can also be enabled for individual questionnaires.
 enable_autosave = False
+
+# If True, do not display a confirmation dialog when attempting to submit
+# identical/duplicate answers to questionnaires or submit exercises.
+disable_duplicate_check = False
 ```
 
 ### Sphinx configurations that should be modified with a-plus-rst-tools
@@ -411,6 +415,8 @@ even if the max points aren't defined in the argument. The questionnaire directi
   answer, and the latest draft is automatically restored if the student leaves the exercise page and comes back later.
   A draft does not count as a submission and does not affect grading. Autosave can also be enabled for the entire
   course in conf.py.
+* `disable-duplicate-check`: If set, do not display a confirmation dialog when attempting to submit
+  identical/duplicate answers to a questionnaire.
 
 The contents of the questionnaire directive define the questions and possible
 instructions to students.
@@ -712,6 +718,8 @@ It accepts the following options:
 * `grading-mode`: which submission determines the final score for this exercise ("best" or "last"). Defaults to "best".
   If delayed feedback is used (`reveal-submission-feedback` is set to something other than "immediate"), defaults to
   "last".
+* `disable-duplicate-check`: If set, do not display a confirmation dialog when attempting to submit
+  identical/duplicate answers to an exercise.
 * `quiz`: If set, the exercise feedback will take the place of the exercise instructions.
   This makes sense for questionnaires since their feedback contains the submission form.
   In RST, you would usually define questionnaires with the questionnaire directive,
