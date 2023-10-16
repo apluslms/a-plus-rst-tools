@@ -426,6 +426,7 @@ class Choice(QuestionMixin, Directive):
                 'name': 'field_{:d}'.format(env.question_count - 1),
             })
 
+        choice_keys = []
         correct_count = 0
         # Travel all answer options.
         for i,line in slicer(choices):
@@ -450,6 +451,14 @@ class Choice(QuestionMixin, Directive):
                 key = key[1:]
             if key.endswith('.'):
                 key = key[:-1]
+
+            if key in choice_keys:
+                source, line = self.state_machine.get_source_and_line(self.lineno)
+                raise SphinxError(
+                    source + ": line " + str(line) +
+                    f"\nThe choice keys in a questionnaire must be unique! Found a duplicate key: {key}"
+                )
+            choice_keys.append(key)
 
             # Add YAML configuration data.
             optdata = {
