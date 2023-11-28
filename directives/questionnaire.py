@@ -451,7 +451,6 @@ class Choice(QuestionMixin, Directive):
                 key = key[1:]
             if key.endswith('.'):
                 key = key[:-1]
-            choice_keys.append(key)
 
             if key in choice_keys:
                 source, line = self.state_machine.get_source_and_line(self.lineno)
