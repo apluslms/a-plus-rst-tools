@@ -49,6 +49,7 @@ __version__ = "0.0.8"
 
 CSS_FILE = 'css/thebe.css'
 JS_FILE = 'js/thebe.js'
+THEBE_VERSION = '0.8.2'
 
 assets_path = 'static'
 
@@ -84,7 +85,7 @@ def init_thebe_core(app, env):
     opts = {"async": "async", "data-aplus": "yes"}
     css_opts = {"data-aplus": "yes"}
     app.add_js_file(
-        filename="https://unpkg.com/thebe@latest/lib/index.js", **opts)
+        filename=f"https://unpkg.com/thebe@{THEBE_VERSION}/lib/index.js", **opts)
     app.add_js_file(
         filename="https://codemirror.net/5/lib/codemirror.js")
     app.add_js_file(
