@@ -711,6 +711,7 @@ class FreeText(QuestionMixin, Directive):
         'class': directives.class_option,
         'key': directives.unchanged,
         'extra': directives.unchanged,
+        'placeholder': directives.unchanged,
     }
 
     def run(self):
@@ -739,19 +740,18 @@ class FreeText(QuestionMixin, Directive):
         self.add_instructions(node, data, plain_content)
 
         # Create input element.
+        attrs = {
+            'class': self.position,
+        }
+        if 'placeholder' in self.options:
+            attrs['placeholder'] = self.options['placeholder']
         if self.height > 1:
-            attrs = {
-                'rows': self.height,
-                'class': self.position,
-            }
+            attrs['rows'] = self.height
             if self.length:
                 attrs['cols'] = self.length
             element = aplus_nodes.html('textarea', attrs)
         else:
-            attrs = {
-                'type': 'text',
-                'class': self.position,
-            }
+            attrs['type'] = 'text'
             if self.length:
                 attrs['size'] = self.length
             element = aplus_nodes.html('input', attrs)

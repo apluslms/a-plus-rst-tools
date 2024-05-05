@@ -503,6 +503,7 @@ the common question options:
 * `length`: (horizontal) length for the HTML text input
 * `height`: If greater than 1, the textarea HTML element is used. Otherwise,
   a text input is used.
+* `placeholder`: a placeholder text that is visible in an empty input or textarea field
 * Other options are defined in the code, but they mainly affect the CSS classes
   and they were implemented for very narrow usecases.
 
