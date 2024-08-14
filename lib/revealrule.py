@@ -54,21 +54,36 @@ def parse_reveal_rule(
 
     result: Dict[str, Any] = {'trigger': trigger}
 
-    if trigger in ['immediate', 'manual', 'completion']:
+    if trigger in ['immediate']:
         if argument is not None:
             reveal_rule_error(
                 "Unexpected argument in reveal rule. When using the 'manual', 'immediate' or\n"
                 "'completion' mode, no arguments are expected after the mode name.\n"
             )
-
+    elif trigger in ['manual', 'completion']:
+        if argument is not None:
+            time_parts = argument.split(': show-zero-points-immediately')
+            zero_points_argument = time_parts[1].strip()
+            if zero_points_argument == "true":
+                result['show_zero_points_immediately'] = True
+            else:
+                result['show_zero_points_immediately'] = False
     elif trigger == 'time':
         if argument is None:
             reveal_rule_error(
                 "Reveal time was not provided. When using the 'time' reveal mode, a time must be\n"
                 "provided after the mode name.\n"
             )
-        if date_format.match(argument):
-            result['time'] = argument
+        time_parts = argument.split(': show-zero-points-immediately ')
+        time_argument = time_parts[0].strip()
+        if date_format.match(time_argument):
+            result['time'] = time_argument
+            if len(time_parts) > 1:
+                additional_argument = time_parts[1].strip()
+                if additional_argument == "true":
+                    result['show_zero_points_immediately'] = True
+                else:
+                    result['show_zero_points_immediately'] = False
         else:
             reveal_rule_error(
                 "Reveal time was formatted incorrectly. When using the 'time' reveal mode, use\n"
@@ -79,7 +94,10 @@ def parse_reveal_rule(
 
     elif trigger in ['deadline', 'deadline_all', 'deadline_or_full_points']:
         if argument is not None:
-            match = delay_format.match(argument)
+            time_parts = argument.split(': show-zero-points-immediately ')
+            delay_argument = time_parts[0].strip()
+            match = delay_format.match(delay_argument)
+
             if match:
                 number = int(match.group('number'))
                 unit = match.group('unit')
@@ -90,6 +108,12 @@ def parse_reveal_rule(
                 else:
                     minutes = number
                 result['delay_minutes'] = minutes
+                if len(time_parts) > 1:
+                    additional_argument = time_parts[1].strip()
+                    if additional_argument == "true":
+                        result['show_zero_points_immediately'] = True
+                    else:
+                        result['show_zero_points_immediately'] = False
             else:
                 reveal_rule_error(
                     "Delay was formatted incorrectly. When using the 'deadline', 'deadline_all' or 'deadline_or_full_points'\n"

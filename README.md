@@ -1452,6 +1452,9 @@ can be defined and overridden on multiple levels:
 * module level, in the `aplusmeta` directive
 * exercise level, in the `questionnaire`/`submit` directive
 
+Additionally one can define separately from the reveal mode if the user should see submissions with zero
+points immediately. Check below for usage.
+
 The reveal rules are defined by providing the name of a reveal mode. Some of the modes also accept arguments after the
 mode name. The reveal modes are:
 
@@ -1461,9 +1464,9 @@ mode name. The reveal modes are:
 `YYYY-MM-DD [hh[:mm[:ss]]]` or `DD.MM.YYYY [hh[:mm[:ss]]]`. Examples:
 ```
 :reveal-submission-feedback: time 2020-01-16
-:reveal-submission-feedback: time 2020-01-16 16
+:reveal-submission-feedback: time 2020-01-16 16 : show-zero-points-immediately true
 :reveal-submission-feedback: time 16.01.2020 16:00
-:reveal-submission-feedback: time 16.01.2020 16:00:00
+:reveal-submission-feedback: time 16.01.2020 16:00:00 : show-zero-points-immediately false
 ```
 * deadline: Revealed after the exercise deadline, and the possible deadline extension granted to the student. **This is
 the default setting for revealing model solutions.** An additional delay can optionally be provided as an argument, in
@@ -1471,7 +1474,7 @@ the format `+<number><unit>`, where `unit` is 'd' (days), 'h' (hours) or 'm'/'mi
 ```
 :reveal-submission-feedback: deadline
 :reveal-submission-feedback: deadline +1d
-:reveal-submission-feedback: deadline +2h
+:reveal-submission-feedback: deadline +2h : show-zero-points-immediately true
 :reveal-submission-feedback: deadline +30m
 :reveal-submission-feedback: deadline +30min
 ```
@@ -1480,7 +1483,6 @@ An additional delay can optionally be provided as an argument. See instructions 
 * deadline_or_full_points: Same as deadline, but also revealed after the student has achieved full points from the
 exercise. An additional delay can optionally be provided as an argument. See instructions above.
 * completion: Revealed after the student has used all submissions or achieved full points from the exercise.
-
 
 ## Developers: how to debug A-plus-rst-tools and Sphinx in VS Code
 
