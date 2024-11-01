@@ -14,7 +14,7 @@ import aplus_nodes
 import lib.translations as translations
 import lib.yaml_writer as yaml_writer
 from directives.abstract_exercise import ConfigurableExercise, choice_truefalse, str_to_bool
-from lib.revealrule import parse_reveal_rule
+from lib.utils import apply_reveal_rules
 
 
 logger = logging.getLogger(__name__)
@@ -44,6 +44,7 @@ class Questionnaire(ConfigurableExercise):
         'allow-assistant-viewing': choice_truefalse,
         'allow-assistant-grading': choice_truefalse,
         'reveal-submission-feedback': directives.unchanged,
+        'show-zero-points-immediately': choice_truefalse,
         'reveal-model-solutions': directives.unchanged,
         'grading-mode': directives.unchanged,
         'autosave': directives.flag,
@@ -207,20 +208,8 @@ class Questionnaire(ConfigurableExercise):
             data['title|i18n'] = translations.opt('feedback') if is_feedback else translations.opt('exercise', postfix="{}".format(key))
 
         source, line = self.state_machine.get_source_and_line(self.lineno)
-        if 'reveal-submission-feedback' in self.options:
-            data['reveal_submission_feedback'] = parse_reveal_rule(
-                self.options['reveal-submission-feedback'],
-                source,
-                line,
-                'reveal-submission-feedback',
-            )
-        if 'reveal-model-solutions' in self.options:
-            data['reveal_model_solutions'] = parse_reveal_rule(
-                self.options['reveal-model-solutions'],
-                source,
-                line,
-                'reveal-model-solutions',
-            )
+
+        apply_reveal_rules(self.options, data, source, line)
 
         if 'grading-mode' in self.options:
             data['grading_mode'] = self.options['grading-mode']
