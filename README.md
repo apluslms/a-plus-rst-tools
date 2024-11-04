@@ -1452,6 +1452,14 @@ can be defined and overridden on multiple levels:
 * module level, in the `aplusmeta` directive
 * exercise level, in the `questionnaire`/`submit` directive
 
+Additionally one can define separately from the reveal mode if the user should see submissions with zero
+points immediately (default false).
+
+```
+:show-zero-points-immediately: true
+:show-zero-points-immediately: false
+```
+
 The reveal rules are defined by providing the name of a reveal mode. Some of the modes also accept arguments after the
 mode name. The reveal modes are:
 
@@ -1480,7 +1488,6 @@ An additional delay can optionally be provided as an argument. See instructions 
 * deadline_or_full_points: Same as deadline, but also revealed after the student has achieved full points from the
 exercise. An additional delay can optionally be provided as an argument. See instructions above.
 * completion: Revealed after the student has used all submissions or achieved full points from the exercise.
-
 
 ## Developers: how to debug A-plus-rst-tools and Sphinx in VS Code
 
