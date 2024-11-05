@@ -330,6 +330,7 @@ The keys for the A+ course settings are listed below:
 :questionnaire-default-reveal-model-at-max-submissions: False
 :questionnaire-default-show-model: False
 :unprotected_paths: "this/is/parsed" "into/a/list/of/paths" "like/a/shell/command"
+:points-goal-enabled: True
 ```
 
 Some fields require a value from specific choices (see also
