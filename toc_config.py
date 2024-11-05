@@ -478,6 +478,10 @@ def make_index(app, root, language=''):
             True if course_meta.get('numerate-ignoring-modules', False) not in (
                 False, 'false', 'False', 'no', 'No'
             ) else False
+    if course_meta.get('points-goal-enabled'):
+        index['points_goal_enabled'] = course_meta.get('points-goal-enabled')
+    else:
+        index['points_goal_enabled'] = True
     head_urls = course_meta.get('course-head-urls', app.config.course_head_urls)
     if head_urls is not None:
         # If the value is None, it is not set to the index.yaml nor aplus-json at all.
