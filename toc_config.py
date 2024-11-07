@@ -441,7 +441,6 @@ def make_index(app, root, language=''):
         'configures': app.config.course_configures,
     }
     index['lang'] = language if language else app.config.language
-
     course_enrollment_start = course_meta.get('enrollment-start')
     course_enrollment_end = course_meta.get('enrollment-end')
     course_lifesupport_time = course_meta.get('lifesupport-time')
@@ -478,6 +477,10 @@ def make_index(app, root, language=''):
             True if course_meta.get('numerate-ignoring-modules', False) not in (
                 False, 'false', 'False', 'no', 'No'
             ) else False
+    if course_meta.get('points-goal-enabled'):
+        index['points_goal_enabled'] = course_meta.get('points-goal-enabled')
+    else:
+        index['points_goal_enabled'] = True
     head_urls = course_meta.get('course-head-urls', app.config.course_head_urls)
     if head_urls is not None:
         # If the value is None, it is not set to the index.yaml nor aplus-json at all.

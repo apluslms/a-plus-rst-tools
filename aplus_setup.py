@@ -56,6 +56,7 @@ def setup(app):
     app.add_config_value('default_exercise_url', None, 'html')
     app.add_config_value('default_configure_url', None, 'html')
     app.add_config_value('course_configures', [], 'html')
+    app.add_config_value('points_goal_enabled', True, 'html')
 
     # Connect configuration generation to events.
     app.connect('builder-inited', toc_config.prepare)
