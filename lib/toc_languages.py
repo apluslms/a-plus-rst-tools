@@ -1,3 +1,5 @@
+import re
+
 from sphinx.errors import SphinxError
 from sphinx.util import logging
 
@@ -6,6 +8,7 @@ import lib.yaml_writer as yaml_writer
 
 logger = logging.getLogger(__name__)
 
+print("toc_languages.py: __name__ = {}".format(__name__))
 
 # Following keys may be given a default in base (first) language
 # and other language versions are allowed to omit them.
@@ -123,7 +126,7 @@ class IndexJoiner:
             self.require_identical_dict_keys(m_path, lang1, m1, lang2, m2, ACCEPTED_MODULE_DEFAULT_KEYS)
             for k,v in m1.items():
                 if k == 'key':
-                    m[k] = join_keys(lang1, v, lang2, m2.get(k, v))
+                    m[k] = self.join_keys(lang1, v, lang2, m2.get(k, v), m_path)
                 elif k in ('name', 'title'):
                     m[k] = join_values(lang1, v, lang2, m2.get(k, v))
                 elif k == 'children':
@@ -144,7 +147,8 @@ class IndexJoiner:
             c_path = path + [str(i + 1)]
             c = {}
             self.require_identical_dict_keys(c_path, lang1, c1, lang2, c2, ACCEPTED_CHILDREN_DEFAULT_KEYS)
-            key = join_keys(lang1, c1.get('key', ''), lang2, c2.get('key', ''))
+            key = self.join_keys(lang1, c1.get('key', ''), lang2,
+                                 c2.get('key', ''), c_path)
             for k,v in c1.items():
                 if k == 'key':
                     c[k] = key
@@ -235,6 +239,76 @@ class IndexJoiner:
                 else:
                     d[k + '|i18n'] = join_values(lang1, v1, lang2, v2)
 
+    def key_without_language(self, lang, key):
+        '''
+        Strips language identifiers (ids) from a key string.
+
+        Parameters:
+        lang (string): language identifier, e.g. "en" or "fi"
+        key (string): key string of an identifier in a document,
+                      e.g. "sorting_en_mergesort_mergesort_ex"
+
+        The language identifiers are separated with dash '-' or underscore '_'
+        in the key string.
+
+        Returns:
+        There are three cases of language id occurrence in a key string.
+        (a) Language id in the beginning of a key string:
+            "id_restofstring" -> return "restofstring"
+
+        (b) Language id in the middle of a key string:
+            "something_id_restofstring" -> return "something_restofstring"
+
+        (c) Language id in the end of a key string:
+            "something_id" -> return "something"
+
+        This function looks for all cases, replacing all occurrences of the
+        language identifiers.
+        '''
+
+        beginning_or_end = "(^{0}(-|_))|((-|_){0}$)".format(lang)
+        middle = "(-|_){0}(-|_)".format(lang)
+        result = re.sub(beginning_or_end, "", key)
+        result = re.sub(middle, "_", result)
+        return result
+
+
+    def join_keys(self, lang1, key1, lang2, key2, path):
+        '''
+        Joins two similar keys having different language identifiers.
+
+        Parameters:
+        lang1: one language identifier, e.g. "en"
+        lang2: another language identifier, e.g. "fi"
+        key1: key string of an identifier in a document,
+              e.g. "sorting_en_mergesort_mergesort_ex"
+        key2: key string of another identifier in a document,
+              e.g. "sorting_fi_mergesort_mergesort_ex""
+        path: list of strings depicting the location of the keys in the
+              documentation.
+              e.g. ['modules', '1', '5', '1']
+
+        Returns: unified key without language identifiers.
+        e.g. "sorting_mergesort_mergesort_ex"
+        '''
+        if key1 == key2 or key2 == '':
+            return key1
+
+        # Store keys stripped from language identifiers separately, because
+        # we want to generate a user-friendly error message having the original
+        # keys if the keys do not match.
+        key1_stripped = self.key_without_language(lang1, key1)
+        key2_stripped = self.key_without_language(lang2, key2)
+
+        if key1_stripped != key2_stripped:
+            self.raise_error(
+                ("Mismatching keys at {}:\n"
+                "Language: {} Key: {}\n"
+                "Language: {} Key: {}"
+                ).format(path_names(path), lang1, key1, lang2, key2))
+
+        return key1_stripped
+
     def require_identical_dict_keys(self, path, lang1, d1, lang2, d2, defaults=None):
         d1d2 = set(d1.keys()) - set(d2.keys()) - set(defaults or [])
         if len(d1d2) > 0:
@@ -296,41 +370,6 @@ def path_names(path, fields=None):
 def key_names(elements):
     return ', '.join(str(e.get('key', '[missing key]')) for e in elements)
 
-
-def key_without_language(lang, key):
-    separators = ('_', '-')
-    result = ""
-    i = 0
-
-    # Find segments where the language id is surrounded by separators (or end of string).
-    # Exclude them and return the remaining string.
-    while i < len(key):
-        if key[i] in separators:
-            end_index = i + len(lang) + 1
-            if key[i+1:end_index] == lang:
-                if end_index >= len(key):
-                    break
-                if key[end_index] in separators:
-                    i = end_index
-                    continue
-        result += key[i]
-        i += 1
-    return result
-
-
-def join_keys(lang1, key1, lang2, key2):
-    if key1 == key2 or key2 == '':
-        return key1
-
-    key1 = key_without_language(lang1, key1)
-    key2 = key_without_language(lang2, key2)
-
-    if key1 != key2:
-        raise SphinxError(
-            "Corresponding RST file names must match in multilingual courses:\n"
-            + key1 + "\n" + key2)
-
-    return key1
 
 
 def join_values(lang1, val1, lang2, val2):
