@@ -32,7 +32,7 @@ class HiddenBlock(Directive):
         # TODO: maybe use sphinx/docutils node instead of aplus_node for the link
         link = aplus_nodes.html('a', {
             'href':'#' + name, 
-            'data-toggle':'collapse'})
+            'data-bs-toggle':'collapse'})
         label = 'Show/Hide'
         if 'label' in self.options:
             label = self.options['label']

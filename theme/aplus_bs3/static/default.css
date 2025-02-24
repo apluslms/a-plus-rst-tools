@@ -6,17 +6,17 @@ special components. Generic and body-level rules come from the A+ system. */
 
 .admonition {
   min-height: 42px;
-  padding: 1rem;
-  margin-bottom: 1.5rem;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
   border: 1px solid transparent;
   border-radius: 4px;
   margin-left: 0;
   margin-right: 0;
-  margin-top: 1rem;
+  margin-top: 1.5rem;
   /* default colors */
-  color: var(--bs-secondary-color, #606060);
-  background-color: var(--bs-secondary-bg, #e8e8e8);
-  border-color: var(--bs-border-color, #d7d7d7);
+  color: #606060;
+  background-color: #e8e8e8;
+  border-color: #d7d7d7;
 }
 
 .admonition button {
@@ -28,7 +28,7 @@ special components. Generic and body-level rules come from the A+ system. */
   margin: 0px 0px 0.5rem;
 }
 
-.admonition .last, .admonition p:last-child {
+.admonition .last {
   margin-bottom: 0;
 }
 
@@ -45,33 +45,33 @@ special components. Generic and body-level rules come from the A+ system. */
 .admonition.meta,
 .admonition.tip,
 .admonition.hint {
-  color: var(--bs-success-text-emphasis, #3c763d);
-  background-color: var(--bs-success-bg-subtle, #dff0d8);
-  border-color: var(--bs-success-border-subtle, #d6e9c6);
+  color: #3c763d;
+  background-color: #dff0d8;
+  border-color: #d6e9c6;
 }
 
 .admonition.info,
 .admonition.note,
 .admonition.seealso {
-  color: var(--bs-info-text-emphasis, #31708f);
-  background-color: var(--bs-info-bg-subtle, #d9edf7);
-  border-color: var(--bs-info-border-subtle, #bce8f1);
+  color: #31708f;
+  background-color: #d9edf7;
+  border-color: #bce8f1;
 }
 
 .admonition.warning,
 .admonition.caution,
 .admonition.attention,
 .admonition.admonition-todo {
-  color: var(--bs-warning-text-emphasis, #8a6d3b);
-  background-color: var(--bs-warning-bg-subtle, #fcf8e3);
-  border-color: var(--bs-warning-border-subtle, #faebcc);
+  color: #8a6d3b;
+  background-color: #fcf8e3;
+  border-color: #faebcc;
 }
 
 .admonition.danger,
 .admonition.error {
-  color: var(--bs-danger-text-emphasis, #a94442);
-  background-color: var(--bs-danger-bg-subtle, #f2dede);
-  border-color: var(--bs-danger-border-subtle, #ebccd1);
+  color: #a94442;
+  background-color: #f2dede;
+  border-color: #ebccd1;
 }
 
 .admonition.aside {
@@ -173,9 +173,9 @@ object.align-center {
 
 div.sidebar {
   margin: 0 0 0.5em 1em;
-  border: 1px solid var(--bs-border-color, #ddb);
+  border: 1px solid #ddb;
   padding: 7px 7px 0 7px;
-  background-color: var(--bs-secondary-bg, #ffe);
+  background-color: #ffe;
   width: 40%;
   float: right;
 }
@@ -187,13 +187,13 @@ p.sidebar-title {
 /* -- topics ---------------------------------------------------------------- */
 
 div.topic {
-  border: 1px solid var(--bs-primary-border-subtle, #ccc);
+  border: 1px solid #ccc;
   padding: 7px 7px 0 7px;
   margin: 10px 0 10px 0;
-  background-color: var(--bs-primary-bg-subtle, #ddf1fb);
+  background-color: #ddf1fb;
 }
 
-.topic {
+.admonition, .topic {
   min-height: 42px;
   padding: 15px;
   margin-bottom: 20px;
@@ -202,9 +202,9 @@ div.topic {
   margin-left: 0em;
   margin-right: 0em;
   margin-top: 15px;
-  background-color: var(--bs-secondary-bg, #d9edf7);
-  border-color: var(--bs-border-color, #bce8f1);
-  color: var(--bs-body-color, #31708f);
+  background-color: #d9edf7;
+  border-color: #bce8f1;
+  color: #31708f;
 }
 
 p.topic-title {
@@ -434,11 +434,6 @@ dl.glossary dt {
   font-style: oblique;
 }
 
-/* Add semicolon between classifiers as Sphinx does not seem to */
-.classifier:before {
-  content: " : ";
-}
-
 abbr,
 acronym {
   border-bottom: dotted 1px;
@@ -465,7 +460,7 @@ td.linenos pre {
   padding: 5px 0px;
   border: 0;
   background-color: transparent;
-  color: var(--bs-gray-500,#aaa);
+  color: #aaa;
 }
 
 table.highlighttable {
@@ -609,7 +604,6 @@ div.math:hover a.headerlink {
   margin: 20px 0;
   padding: 0;
   width: inherit;
-  min-height: 35px;
 }
 
 .no-poi-box {
@@ -633,7 +627,7 @@ div.math:hover a.headerlink {
 .poi-title {
   width: 80%;
   float: left;
-  min-height: 20px;
+  height: 20px;
   font-weight: bold;
   font-size: 1.2em;
   padding-left: 0;
@@ -649,7 +643,8 @@ div.math:hover a.headerlink {
 
 .poi-icon {
   margin: 0 10px;
-  font-size: 1.5rem;
+  vertical-align: baseline;
+  height: 20px;
 }
 
 .borderless .poi-content {

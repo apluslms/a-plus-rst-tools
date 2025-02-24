@@ -168,14 +168,13 @@ class PointOfInterest(Directive):
         # Create a relative path to the _build/html/_static/poi.png file
         # from the built HTML file of the current RST document.
         dir_depth = len(os.path.dirname(env.doc2path(env.docname, None)).split(os.path.sep))
-        icon = aplus_nodes.html('img', {
-            'src': ('../' * dir_depth) + '_static/poi.png',
+        icon = aplus_nodes.html('i', {
             'alt': 'Point of interest icon',
-            'class': 'poi-icon',
+            'class': 'bi bi-pin-angle-fill poi-icon',
         })
         hidelink = aplus_nodes.html('a', {
             'href':'#' + content_name,
-            'data-toggle':'collapse'})
+            'data-bs-toggle':'collapse'})
         hidelink.append(icon)
 
         if ":math:" in title_text:

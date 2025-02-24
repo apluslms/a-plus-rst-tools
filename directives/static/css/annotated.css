@@ -10,9 +10,10 @@
   width: 80%;
   padding: 10px 15px 10px 15px;
   margin: 0px 12px 12px 95px;
-  background: #d9eecf;
-  box-shadow: 2px 2px 2px 0px #bfc2a1;
-  border-color: #bfc2a1;
+  background: var(--bs-success-bg-subtle, #d9eecf);
+  color: var(--bs-success-text-emphasis, #0f5132);
+  box-shadow: 2px 2px 2px 0px var(--bs-success, #bfc2a1);
+  border-color: var(--bs-success, #bfc2a1);
   font-size: 0.9em;
   line-height: 1.5;
 }
@@ -25,9 +26,10 @@
   border-width: 1px 0px 1px 0px;
   margin: 0px 1px 0px 1pxs;
   padding: 0px 2px 1px 2px;
-  background: #d9eecf;
-  box-shadow: 1px 1px 1px 0px #bfc2a1;
-  border-color: #bfc2a1;
+  background: var(--bs-success-bg-subtle, #d9eecf);
+  color: var(--bs-success-text-emphasis, #0f5132);
+  box-shadow: 1px 1px 1px 0px var(--bs-success-bg, #bfc2a1);
+  border-color: var(--bs-success, #bfc2a1);
   white-space: nowrap;
 }
 .content div.admonition.aside div.codecomment {
@@ -73,12 +75,14 @@
   color: white !important;
 }
 .content div.codecomment.comment-now-locked {
-  box-shadow: 0px 0px 3px 3px #3e9770;
-  background: #c9debf;
+  box-shadow: 0px 0px 3px 3px var(--bs-success, #3e9770);
+  background: var(--bs-success, #c9debf);
+  color: var(--bs-body-bg, #0f5132);
 }
 .content span.codecomment.comment-now-locked {
-  box-shadow: 0px 0px 2px 2px #3e9770;
-  background: #c9debf;
+  box-shadow: 0px 0px 2px 2px var(--bs-success, #3e9770);
+  background: var(--bs-success, #c9debf);
+  color: var(--bs-body-bg, #0f5132);
 }
 .content div.highlight pre span.loc-now-locked,
 .content pre.repl span.loc-now-locked,

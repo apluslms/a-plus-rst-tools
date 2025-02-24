@@ -71,7 +71,7 @@ class TabContentDirective(Directive):
         text = '\n'.join(self.content)
         node = nodes.container(text)
         node['ids'].append('tab-%s' % self.arguments[0])
-        node['classes'].append('tab-content')
+        node['classes'].append('tab-pane')
 
         par = nodes.paragraph(text=self.options["title"])
         par['classes'].append('tab-title')
@@ -98,12 +98,12 @@ def copy_asset_files(app, exception):
 
         
     # The files are added to the _build/html/_static/css folder.
-    if app.config.include_tab_css:
-        logger.info('Copying CSS files from the rst-tabs directive to the _static folder... ')
-        html_static_path_css = os.path.join(assets_path, CSS_FILE)
-        local_path_css = os.path.join(os.path.dirname(__file__), html_static_path_css)
-        copy_asset(local_path_css, os.path.join(app.outdir, '_static', 'css'))
-        logger.info('done')
+    # if app.config.include_tab_css:
+    #     logger.info('Copying CSS files from the rst-tabs directive to the _static folder... ')
+    #     html_static_path_css = os.path.join(assets_path, CSS_FILE)
+    #     local_path_css = os.path.join(os.path.dirname(__file__), html_static_path_css)
+    #     copy_asset(local_path_css, os.path.join(app.outdir, '_static', 'css'))
+    #     logger.info('done')
 
     # The files are added to the _build/html/_static/js folder.
     if app.config.include_tab_js:

@@ -9,22 +9,31 @@ jQuery(function ($) {
 
     //Create a <ul> to arrange all the tab elements
     let tablistSelector = $("<ul />", {
-      class: "tab-nav-aplus",
+      class: "nav nav-tabs",
       role: "tablist",
     });
 
-    // Create all the tab elements to handle the visualisation of the different tab-content elements
-    $(".tab-content", this).each(function () {
+    // Create all the tab elements to handle the visualisation of the different tab-pane elements
+    $(".tab-pane", this).each(function () {
       // Set role to tabpanel
       $(this)[0].setAttribute("role", "tabpanel");
 
       // Create tab elements
       var tab = $("<li />", {
-        class: $(this).attr("id"),
-        text: $(this).find(".tab-title").text(),
+        class: "nav-item " + $(this).attr("id"),
+        text: '',//$(this).find(".tab-title").text(),
         tabindex: 0,
         role: "tab",
         "aria-controls": $(this).attr("id"),
+      });
+
+      // Create title button elements
+      var tabButton = $("<button />", {
+        class: "nav-link",
+        text: $(this).find(".tab-title").text(),
+        tabindex: 0,
+        role: "tab",
+        "data-bs-target": "#" + $(this).attr("id"),
       });
 
       tab[0].addEventListener("click", clickEventListener);
@@ -33,6 +42,9 @@ jQuery(function ($) {
 
       // Build an array with all tabs (<li>s) in it
       tab[0].index = index;
+
+      // Add button elements inside the tab elements
+      tab.append(tabButton);
 
       if (index++) {
         // The tabs that are not selected must have a tabindex="-1" and must be marked with aria-selected="false"
@@ -43,18 +55,21 @@ jQuery(function ($) {
         $(this)[0].setAttribute("hidden", "hidden");
       } else {
         // The tab that is selected by default must be marked with aria-selected="true"
-        tab[0].setAttribute("aria-selected", "true");
-        tab.addClass("selected");
+        tab[0].childNodes[0].setAttribute("aria-selected", "true");
+        tab[0].childNodes[0].classList.add("active");
       }
 
       tablistSelector.append(tab);
-      $(this).addClass("tab-content-aplus");
+      $(this).removeClass("container").addClass("tab-content-aplus");
 
       // Remove title added in the Python code
       $(this).find(".tab-title").remove();
+
+      // Remove container class added in the Python code to avoid extra padding on sides
+      $(this).parent().removeClass("container");
     });
 
-    $(".tab-content", this).eq(0).before(tablistSelector);
+    $(".tab-pane", this).eq(0).before(tablistSelector);
 
     tablistSelector = null;
     i = 0;
@@ -101,7 +116,7 @@ jQuery(function ($) {
   function clickEventListener(event) {
     tablist = this.parentElement;
     tabs = this.parentElement.childNodes;
-    panels = this.parentElement.parentNode.querySelectorAll(".tab-content");
+    panels = this.parentElement.parentNode.querySelectorAll(".tab-pane");
 
     var tab = event.target;
     activateTab(tab, false);
@@ -111,7 +126,7 @@ jQuery(function ($) {
   function keydownEventListener(event) {
     tablist = this.parentElement;
     tabs = this.parentElement.childNodes;
-    panels = this.parentElement.parentNode.querySelectorAll(".tab-content");
+    panels = this.parentElement.parentNode.querySelectorAll(".tab-pane");
 
     var key = event.keyCode;
 
@@ -140,7 +155,7 @@ jQuery(function ($) {
   function keyupEventListener(event) {
     tablist = this.parentElement;
     tabs = this.parentElement.childNodes;
-    panels = this.parentElement.parentNode.querySelectorAll(".tab-content");
+    panels = this.parentElement.parentNode.querySelectorAll(".tab-pane");
 
     var key = event.keyCode;
 
@@ -210,13 +225,14 @@ jQuery(function ($) {
 
     // Set the tab as selected
     tab.setAttribute("aria-selected", "true");
-    tab.classList.add("selected");
+    tab.classList.add("active");
 
     // Get the value of aria-controls (which is an ID)
-    var controls = tab.getAttribute("aria-controls");
+    var controls = tab.getAttribute("data-bs-target");
 
     // Remove hidden attribute from tab panel to make it visible
-    document.getElementById(controls).removeAttribute("hidden");
+    document.querySelector(controls).removeAttribute("hidden");
+    document.querySelector(controls).classList.add("active")
 
     // Set focus when required
     if (setFocus) {
@@ -229,12 +245,13 @@ jQuery(function ($) {
     for (t = 0; t < tabs.length; t++) {
       tabs[t].setAttribute("tabindex", "-1");
       tabs[t].setAttribute("aria-selected", "false");
-      tabs[t].classList.remove("selected");
+      tabs[t].childNodes[0].classList.remove("active");
       tabs[t].removeEventListener("focus", focusEventHandler);
     }
 
     for (p = 0; p < panels.length; p++) {
       panels[p].setAttribute("hidden", "hidden");
+      panels[p].classList.remove("active");
     }
   }
 

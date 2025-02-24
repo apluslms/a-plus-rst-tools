@@ -37,8 +37,8 @@
     {%- endif %}
 
     <!-- The A+ main.css includes Bootstrap v3.4.1 CSS styles since A+ v1.8. -->
-    <!--<link rel="stylesheet" href="https://plus.cs.aalto.fi/static/css/main.css">
-    <script src="https://plus.cs.aalto.fi/static/js/bootstrap3.min.js"></script>-->
+    <link rel="stylesheet" href="https://plus.cs.aalto.fi/static/css/main.css">
+    <script src="https://plus.cs.aalto.fi/static/js/bootstrap3.min.js"></script>
 
     {%- if style %}
     {# This is either the stylesheet defined in theme.conf (default.css) or
@@ -47,7 +47,7 @@
        include the stylesheet from the theme. #}
     <link rel="stylesheet" href="{{ pathto('_static/' + style, 1) }}" type="text/css" data-aplus="yes" />
     {%- endif %}
-    <!--<link rel="stylesheet" href="{{ pathto('_static/pygments.css', 1) }}" type="text/css" data-aplus="yes" />-->
+    <link rel="stylesheet" href="{{ pathto('_static/pygments.css', 1) }}" type="text/css" data-aplus="yes" />
 
     {#- script_files and css_files contain some built-in files from Sphinx that
        we do not want to include. Only include tags that have the data-aplus

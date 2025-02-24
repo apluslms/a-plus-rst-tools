@@ -29,9 +29,9 @@ SOFTWARE.
   width: 100%;
   margin-bottom: 5pt;
   margin-top: 5pt;
-  background-color: #dff0d8;
+  background-color: var(--bs-secondary-bg,#dff0d8);
   border-style: solid;
-  border-color: #aaa;
+  border-color: var(--bs-border-color, #aaa);
   border-radius: 5pt;
 }
 
@@ -41,7 +41,7 @@ SOFTWARE.
 }
 
 .thebe-status-waiting.thebe-info {
-  background-color: lightgray;
+  background-color: var(--bs-secondary-bg,#dff0d8);
 }
 
 .thebe-status-launching.thebe-info,
