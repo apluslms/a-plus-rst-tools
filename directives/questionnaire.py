@@ -45,6 +45,7 @@ class Questionnaire(ConfigurableExercise):
         'allow-assistant-grading': choice_truefalse,
         'reveal-submission-feedback': directives.unchanged,
         'show-zero-points-immediately': choice_truefalse,
+        'hide-correctness': choice_truefalse,
         'reveal-model-solutions': directives.unchanged,
         'grading-mode': directives.unchanged,
         'autosave': directives.flag,
@@ -210,6 +211,9 @@ class Questionnaire(ConfigurableExercise):
         source, line = self.state_machine.get_source_and_line(self.lineno)
 
         apply_reveal_rules(self.options, data, source, line)
+
+        if 'hide-correctness' in self.options:
+            data['hide_correctness'] = str_to_bool(self.options['hide-correctness'])
 
         if 'grading-mode' in self.options:
             data['grading_mode'] = self.options['grading-mode']

@@ -409,6 +409,7 @@ even if the max points aren't defined in the argument. The questionnaire directi
   Can be set to true or false. Overrides any options set in the conf.py or config.yaml files.
 * `reveal-submission-feedback`: rule for revealing submission feedback. See [instructions](#defining-reveal-rules).
 * `reveal-model-solutions`: rule for revealing model solutions. See [instructions](#defining-reveal-rules).
+* `hide-correctness`: Show total points earned, but hide which questions were correct/incorrect.
 * `grading-mode`: which submission determines the final score for this exercise ("best" or "last"). Defaults to "best".
   If delayed feedback is used (`reveal-submission-feedback` is set to something other than "immediate"), defaults to
   "last".
