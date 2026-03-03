@@ -12,8 +12,49 @@ though it also supports other markup languages such as markdown via extensions.
 Sphinx itself extends the Docutils RST parser and compiler.
 A-plus RST tools support the following Sphinx versions:
 
-* a-plus-rst-tools v1.4 support Sphinx v4.1.
+* a-plus-rst-tools v2.2 and later support Sphinx v7.4.
+* a-plus-rst-tools v1.4 until v2.1 support Sphinx v4.1 to v4.3.
 * a-plus-rst-tools v1.3 and earlier support Sphinx v1.6.
+
+## Migrating an existing course to RST tools 2.2
+
+If you are upgrading from RST tools v1.4 or later to v2.2, three changes are
+required:
+
+1. First, the Sphinx setting `master_doc` was renamed
+  to `root_doc`. Open `conf.py` and replace the following line
+
+        master_doc = 'index'
+
+    with
+
+        root_doc = 'index'
+
+2. Add a comment at the end of the `rst_prolog` setting if you are using it, e.g.:
+
+    ```rst
+    rst_prolog += '''
+    .. role:: raw-html(raw)
+      :format: html
+    .. role:: important
+      :class: important
+
+    .. This comment prevents the last role directive above from consuming
+      the first indented content of RST source files as directive content
+      (a Sphinx 7 stricter parsing behaviour).
+    '''
+    ```
+
+3. Update Sphinx version in `docker-compile.sh` to v7.4:
+
+    ```bash
+    apluslms/compile-rst:7.4
+    ```
+
+Note also that v2.2 (with Sphinx v7.4) changes how custom stylesheets are passed to the
+theme. If your course uses a custom CSS file via `html_style` in `conf.py`,
+you should verify that the stylesheet still loads correctly after the upgrade.
+The a-plus theme templates have been updated accordingly.
 
 ## Creating a new course
 
@@ -27,12 +68,11 @@ the course using Docker containers (recommended). If you do not use containers,
 you need Python modules Sphinx and yaml in order to compile the RST source into
 HTML and YAML course configuration files.
 
-    pip install sphinx~=4.1.2 PyYAML~=5.4.1
+    pip install "sphinx>=7.0,<8" PyYAML~=6.0
 
 The course is compiled with make (when no containers are used).
 
     make html
-
 
 ## Adding tools to an existing course
 
@@ -53,7 +93,7 @@ In order to build the course without any Docker containers, you install the
 Python modules Sphinx and yaml as well as create the Sphinx configuration file
 conf.py.
 
-    pip install sphinx~=4.1.2 PyYAML~=5.4.1
+    pip install "sphinx>=7.0,<8" PyYAML~=6.0
     sphinx-quickstart
     cp a-plus-rst-tools/conf.py .  # a similar conf.py is available in course-templates as well
 
@@ -79,7 +119,6 @@ the following commands:
     git add a-plus-rst-tools
     git commit -m 'Update a-plus-rst-tools'
     git push
-
 
 ## Special Sphinx configurations (conf.py)
 
@@ -294,7 +333,6 @@ html_theme_options = {
 }
 html_theme_path = ['a-plus-rst-tools/theme']
 ```
-
 
 ## A+ course settings
 
@@ -872,7 +910,6 @@ strings in the `aplusmeta_substitutions` dictionary. The substitutions can be
 named freely as long as they are not RST markup (e.g. '|open01|' will not
 work). The substitutions can be used with any option of the meta directive.
 
-
 ### 7. Active element input
 
 This creates an input field for active element.
@@ -903,7 +940,6 @@ Tools for making clickable active element inputs: https://version.aalto.fi/gitla
              format: "dropdown:option1,option2,option3"
       :file: (only for type clickable) path to the html file that contains
              the default clickable input
-
 
 ### 8. Active element output
 
@@ -995,7 +1031,6 @@ More information about [Columns and rows](#18-columns-and-rows).
        Column content 2. Here goes the content.
 
 ```
-
 
 ### 11. Annotated code blocks
 
@@ -1365,6 +1400,7 @@ interactive code blocks.
       }
     }
 ```
+
 The first three settings configure the kernel
 - `"binderUrl"`. A url to a BinderHub server. `mybinder.org` should only be used for testing, and should be replaced by a BinderHub server provided by your instution when running a course. (_For Aalto Users:_ you can use the BinderHub server at `https://csej4404-binderhub.aalto.fi`)
 - `"repository_url"`. A valid [binderhub repository](https://mybinder.readthedocs.io/en/latest/examples/sample_repos.html) to base the code environment on. Should be a public GitHub repository. Defaults to [`jupyter-stacks-datascience`](https://github.com/binder-examples/jupyter-stacks-datascience). (_For Aalto users:_ if you want this repository to be private, please contact `aplusguru@cs.aalto.fi` and ask for a `version.aalto.fi` gitlab repository in the group `binderhub-code`).
@@ -1468,15 +1504,18 @@ mode name. The reveal modes are:
 * immediate: Always revealed. **This is the default setting for revealing submission feedback.**
 * time: Revealed at a specific time. The reveal date and time must be provided as an argument, in the format
 `YYYY-MM-DD [hh[:mm[:ss]]]` or `DD.MM.YYYY [hh[:mm[:ss]]]`. Examples:
+
 ```
 :reveal-submission-feedback: time 2020-01-16
 :reveal-submission-feedback: time 2020-01-16 16
 :reveal-submission-feedback: time 16.01.2020 16:00
 :reveal-submission-feedback: time 16.01.2020 16:00:00
 ```
+
 * deadline: Revealed after the exercise deadline, and the possible deadline extension granted to the student. **This is
 the default setting for revealing model solutions.** An additional delay can optionally be provided as an argument, in
 the format `+<number><unit>`, where `unit` is 'd' (days), 'h' (hours) or 'm'/'min' (minutes). Examples:
+
 ```
 :reveal-submission-feedback: deadline
 :reveal-submission-feedback: deadline +1d
@@ -1484,6 +1523,7 @@ the format `+<number><unit>`, where `unit` is 'd' (days), 'h' (hours) or 'm'/'mi
 :reveal-submission-feedback: deadline +30m
 :reveal-submission-feedback: deadline +30min
 ```
+
 * deadline_all: Revealed after the exercise deadline, and all deadline extensions granted to any student on the course.
 An additional delay can optionally be provided as an argument. See instructions above.
 * deadline_or_full_points: Same as deadline, but also revealed after the student has achieved full points from the
