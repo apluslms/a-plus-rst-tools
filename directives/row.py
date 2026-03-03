@@ -71,7 +71,7 @@ class Column(Directive):
     has_content = True
 
     def run(self):
-        self.assert_has_content()
+        # Content is optional: columns may be empty (e.g. used as spacers).
         node = ColumnNode()
         if 'width' in self.options:
             # Bootstrap 3 does not support automatic widths in columns.

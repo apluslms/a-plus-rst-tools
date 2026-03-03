@@ -137,14 +137,14 @@ class Questionnaire(ConfigurableExercise):
             '_rst_srcpath': env.doc2path(env.docname, None).replace('\\', '/'),
         }
 
-        meta_data = env.metadata[env.app.config.master_doc]
+        meta_data = env.metadata[env.app.config.root_doc]
         # Show the model answer after the last submission.
         if 'reveal-model-at-max-submissions' in self.options:
             data['reveal_model_at_max_submissions'] = str_to_bool(self.options['reveal-model-at-max-submissions'])
         else:
             default_reveal = str_to_bool(meta_data.get(
                 'questionnaire-default-reveal-model-at-max-submissions', 'false'),
-                error_msg_prefix=env.app.config.master_doc + " questionnaire-default-reveal-model-at-max-submissions: ")
+                error_msg_prefix=env.app.config.root_doc + " questionnaire-default-reveal-model-at-max-submissions: ")
             if default_reveal:
                 data['reveal_model_at_max_submissions'] = default_reveal
         # Show the model answer after the module deadline.
@@ -153,7 +153,7 @@ class Questionnaire(ConfigurableExercise):
         else:
             show_default = str_to_bool(meta_data.get(
                 'questionnaire-default-show-model', 'true'),
-                error_msg_prefix=env.app.config.master_doc + " questionnaire-default-show-model: ")
+                error_msg_prefix=env.app.config.root_doc + " questionnaire-default-show-model: ")
             if not show_default:
                 data['show_model_answer'] = show_default
 
