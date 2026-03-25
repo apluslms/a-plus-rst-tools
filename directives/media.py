@@ -83,7 +83,7 @@ class YouTubeVideo(Directive):
         return [node]
 
 def visit_youtube_node(self, node):
-    self.body.append('<iframe class="youtube-video" width="%s" height="%s" src="https://www.youtube-nocookie.com/embed/%s?rel=0" frameborder="0" allowfullscreen>' % (node['video-width'],node['video-height'],node['id']))
+    self.body.append('<iframe class="youtube-video" width="%s" height="%s" src="https://www.youtube-nocookie.com/embed/%s?rel=0" frameborder="0" allowfullscreen referrerPolicy="strict-origin-when-cross-origin">' % (node['video-width'],node['video-height'],node['id']))
 
 def depart_youtube_node(self, node):
     self.body.append("</iframe>\n")
