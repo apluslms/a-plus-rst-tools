@@ -34,7 +34,7 @@ class AplusMeta(Directive):
     # 2. 'DD.MM.YYYY [hh[:mm[:ss]]]'
     date_format = re.compile(
         r"^(\d\d\d\d-\d\d-\d\d|\d\d.\d\d.\d\d\d\d)" # YYYY-MM-DD or DD.MM.YYYY
-        "( \d\d(:\d\d(:\d\d)?)?)?$")                # [hh[:mm[:ss]]]
+        r"( \d\d(:\d\d(:\d\d)?)?)?$")               # [hh[:mm[:ss]]]
 
     # Keys in option_spec which require a date format
     date_format_required = {

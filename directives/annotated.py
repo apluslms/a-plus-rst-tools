@@ -82,7 +82,7 @@ class AnnotatedSection(Directive):
         return [node]
 
     def assert_sanity(self, content):
-        annotation_numbers_present = set(map(lambda matching: int(matching[0]), re.findall("\d«", content)))
+        annotation_numbers_present = set(map(lambda matching: int(matching[0]), re.findall(r"\d«", content)))
         highest_present = max(annotation_numbers_present)
         all_until_highest = set(range(1, highest_present + 1))
         if annotation_numbers_present != all_until_highest:
@@ -127,7 +127,7 @@ def postprocess_annotation_tags(html, annotation_id):
     openstack   = []
     selfclosing = []
 
-    for part in re.split('(\d«» |\d«|»|\n)', html):
+    for part in re.split(r'(\d«» |\d«|»|\n)', html):
         if '«» ' in part:
             if (len(part) != 4) or (not part[0].isdigit()) or (part[3] != ' '):
                 raise AnnotationError("Encountered illegal self-closing annotation tag in %s." % (annotation_id))
@@ -215,7 +215,7 @@ class AlteredCodeBlock(CodeBlock):
         for line in slicer(self.content):
             processed   = []
 
-            for part in re.split('(\d«» |\d«|»)', line[0]):
+            for part in re.split(r'(\d«» |\d«|»)', line[0]):
                 if '«» ' in part:
                     openstack.append((part[0], line_num, loc))
                     selfclosing.append(part[0])
@@ -269,7 +269,7 @@ def create_close_tag(number, section_name):
     return '</span>'
 
 def turn_to_close_tag(tag):
-    return '</%s>' % re.findall('<(\w+).*?>', tag)[0]
+    return '</%s>' % re.findall(r'<(\w+).*?>', tag)[0]
 
 def annotate(html, section_name, annotations):
     # sorting the annotations by their ending points correctly orders the starting points
@@ -330,7 +330,7 @@ def annotate(html, section_name, annotations):
             result.append(item)
         elif item:
 
-            chars = re.findall('(&#?\w+;?|.)', item)
+            chars = re.findall(r'(&#?\w+;?|.)', item)
 
             # text element
             start_loc = loc

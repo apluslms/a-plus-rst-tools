@@ -45,7 +45,7 @@ def visit_repl_node(self, node):
         else:
             def clean_output(line):
                 line = escape(line)
-                resStart = re.compile("^res((\d+)|X):")
+                resStart = re.compile(r"^res((\d+)|X):")
                 if re.match(resStart, line):
                     env = self.builder.env
                     line = resStart.sub("res" + str(env.repl_page_res_count) + ":", line)

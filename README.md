@@ -12,8 +12,26 @@ though it also supports other markup languages such as markdown via extensions.
 Sphinx itself extends the Docutils RST parser and compiler.
 A-plus RST tools support the following Sphinx versions:
 
-* a-plus-rst-tools v1.4 support Sphinx v4.1.
+* a-plus-rst-tools v1.5 and later support Sphinx v7.x (up to v7.4).
+* a-plus-rst-tools v1.4 supports Sphinx v4.1.
 * a-plus-rst-tools v1.3 and earlier support Sphinx v1.6.
+
+### Migrating an existing course to RST tools 1.5
+
+If you are upgrading from RST tools v1.4 or earlier to v1.5, one change is
+required in your course `conf.py`: the Sphinx setting `master_doc` was renamed
+to `root_doc`. Open `conf.py` and replace the line
+
+    master_doc = 'index'
+
+with
+
+    root_doc = 'index'
+
+Note also that v1.5 (with Sphinx v7) changes how custom stylesheets are passed to the
+theme. If your course uses a custom CSS file via `html_style` in `conf.py`,
+you should verify that the stylesheet still loads correctly after the upgrade.
+The a-plus theme templates have been updated accordingly.
 
 ## Creating a new course
 
@@ -27,7 +45,7 @@ the course using Docker containers (recommended). If you do not use containers,
 you need Python modules Sphinx and yaml in order to compile the RST source into
 HTML and YAML course configuration files.
 
-    pip install sphinx~=4.1.2 PyYAML~=5.4.1
+    pip install "sphinx>=7.0,<8" PyYAML~=6.0
 
 The course is compiled with make (when no containers are used).
 
@@ -53,7 +71,7 @@ In order to build the course without any Docker containers, you install the
 Python modules Sphinx and yaml as well as create the Sphinx configuration file
 conf.py.
 
-    pip install sphinx~=4.1.2 PyYAML~=5.4.1
+    pip install "sphinx>=7.0,<8" PyYAML~=6.0
     sphinx-quickstart
     cp a-plus-rst-tools/conf.py .  # a similar conf.py is available in course-templates as well
 

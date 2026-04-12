@@ -40,13 +40,12 @@
     <link rel="stylesheet" href="https://plus.cs.aalto.fi/static/css/main.css">
     <script src="https://plus.cs.aalto.fi/static/js/bootstrap3.min.js"></script>
 
-    {%- if style %}
-    {# This is either the stylesheet defined in theme.conf (default.css) or
-       a custom CSS file defined in the course conf.py file (variable html_style).
-       The custom stylesheet may use `@import url("default.css");` in order to
-       include the stylesheet from the theme. #}
-    <link rel="stylesheet" href="{{ pathto('_static/' + style, 1) }}" type="text/css" data-aplus="yes" />
-    {%- endif %}
+    {%- for stylesheet in styles %}
+    {# styles is a list of stylesheets from theme.conf and/or html_style in conf.py.
+       A custom stylesheet may use `@import url("default.css");` in order to
+       include the default stylesheet from the theme. #}
+    <link rel="stylesheet" href="{{ pathto('_static/' + stylesheet, 1) }}" type="text/css" data-aplus="yes" />
+    {%- endfor %}
     <link rel="stylesheet" href="{{ pathto('_static/pygments.css', 1) }}" type="text/css" data-aplus="yes" />
 
     {#- script_files and css_files contain some built-in files from Sphinx that
@@ -94,8 +93,7 @@
                 </a>
                 <ul class="dropdown-menu">
                   <li role="presentation">
-                    <a href="{{ pathto(master_doc) }}">
-                      Index
+                    <a href="{{ pathto(root_doc) }}">
                     </a>
                   </li>
                 </ul>
@@ -117,14 +115,14 @@
             </ul>
             <ul class="nav navbar-nav visible-xs">
               <li role="presentation">
-                <a href="{{ pathto(master_doc) }}">
+                <a href="{{ pathto(root_doc) }}">
                   {{ title }}
                 </a>
               </li>
               <li role="presentation" class="header">
                 <h4>Course</h4></li>
               <li role="presentation" class="menu-home">
-                <a href="{{ pathto(master_doc) }}">
+                <a href="{{ pathto(root_doc) }}">
                   <span class="glyphicon glyphicon-book" aria-hidden="true"></span>
                   Index
                 </a>
@@ -195,7 +193,7 @@
                   <h4>Course</h4>
                 </li>
                 <li role="presentation" class="menu-home">
-                  <a href="{{ pathto(master_doc) }}">
+                  <a href="{{ pathto(root_doc) }}">
                     <span class="glyphicon glyphicon-book" aria-hidden="true"></span>
                     Index
                   </a>

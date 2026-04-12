@@ -10,7 +10,7 @@ from sphinx.errors import SphinxError
 # 2. 'DD.MM.YYYY [hh[:mm[:ss]]]'
 date_format = re.compile(
     r"^(\d\d\d\d-\d\d-\d\d|\d\d.\d\d.\d\d\d\d)" # YYYY-MM-DD or DD.MM.YYYY
-    "( \d\d(:\d\d(:\d\d)?)?)?$")                # [hh[:mm[:ss]]]
+    r"( \d\d(:\d\d(:\d\d)?)?)?$")               # [hh[:mm[:ss]]]
 
 
 # A delay string consists of 3 parts:

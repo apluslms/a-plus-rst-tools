@@ -51,7 +51,7 @@ def set_config_language_for_doc(app, docname, source):
 
 
 def _is_multilingual_course(app):
-    root = app.env.get_doctree(app.config.master_doc)
+    root = app.env.get_doctree(app.config.root_doc)
     tocs = list(root.traverse(addnodes.toctree))
     return tocs and tocs[0].get('rawcaption') == 'Select language'
 
@@ -135,7 +135,7 @@ def write(app, exception):
     if exception:
         return
 
-    root = app.env.get_doctree(app.config.master_doc)
+    root = app.env.get_doctree(app.config.root_doc)
 
     # Check for language tree.
     keys = set()
@@ -168,16 +168,16 @@ def write(app, exception):
 
     # Rewrite links for remote inclusion.
     keys |= {'toc', 'user', 'account'}
-    html_tools.rewrite_outdir(app.outdir, keys, app.config.static_host)
+    html_tools.rewrite_outdir(str(app.outdir), keys, app.config.static_host)
 
 
 def make_index(app, root, language=''):
 
     # metadata is defined in the field list of the RST document before any section
-    # and other content. The master_doc is the main index.rst file of the course.
+    # and other content. The root_doc is the main index.rst file of the course.
     # The syntax for field lists in RST is like this:
     # :course-start: 2019-09-16 12:00
-    course_meta = app.env.metadata[app.config.master_doc]
+    course_meta = app.env.metadata[app.config.root_doc]
 
     course_title = app.config.course_title
     course_open = course_meta.get('course-start', app.config.course_open_date)
@@ -204,13 +204,7 @@ def make_index(app, root, language=''):
     category_keys = []
 
     def get_static_dir(app):
-        i = 0
-        while i < len(app.outdir) and i < len(app.confdir) and app.outdir[i] == app.confdir[i]:
-            i += 1
-        outdir = app.outdir.replace("\\", "/")
-        if outdir[i] == '/':
-            i += 1
-        return outdir[i:]
+        return os.path.relpath(str(app.outdir), str(app.confdir)).replace("\\", "/")
 
     def first_title(doc):
         titles = list(doc.traverse(nodes.title))
