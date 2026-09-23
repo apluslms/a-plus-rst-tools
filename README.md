@@ -675,7 +675,6 @@ override = {
 
   .. freetext::
     :required:
-    :length: 100
     :height: 4
     :class: my-input-class
 
