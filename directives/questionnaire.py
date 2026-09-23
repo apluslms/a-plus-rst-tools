@@ -751,6 +751,16 @@ class FreeText(QuestionMixin, Directive):
         node.append(element)
 
         # Add configuration.
+        # Save the size of the input element into the grader configuration
+        # using the corresponding HTML attributes (size for a text input and
+        # cols and rows for a textarea) so that MOOC-Grader can render them.
+        if self.height > 1:
+            data['rows'] = self.height
+            if self.length:
+                data['cols'] = self.length
+        elif self.length:
+            data['size'] = self.length
+
         if len(self.arguments) > 1:
             self._validate_compare_method(self.arguments[1])
             data['compare_method'] = self.arguments[1]
