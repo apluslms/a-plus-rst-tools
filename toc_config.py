@@ -457,6 +457,10 @@ def make_index(app, root, language=''):
         # 2) user does not define any value and no value should be set in YAML
         index['enrollment_start'] = parse_date(course_enrollment_start, True)
     if course_enrollment_end is not None:
+        if course_enrollment_end < course_open:
+            raise SphinxError('Course enrollment cannot be set to end before the course starts')
+        if course_enrollment_end < course_enrollment_start:
+            raise SphinxError('Course enrollment cannot be set to end before the enrollment starts')
         index['enrollment_end'] = parse_date(course_enrollment_end, True)
     if course_lifesupport_time is not None:
         index['lifesupport_time'] = parse_date(course_lifesupport_time, True)
