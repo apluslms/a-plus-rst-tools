@@ -812,6 +812,10 @@ The aplusmeta directive does not have any content and it accepts the following o
 * `close-time`: module close time
 * `late-time`: module late submission time
 * `late-penalty`: module late penalty between 0-1, e.g., 0.5 (50%)
+* `early-time`: cutoff for earning the module's bonus. It must be after the module opening time and before its closing time. Submissions must be made strictly before this timestamp.
+* `early-bonus`: bonus fraction between 0-1. For example, `0.1` adds 10% to the points earned.
+* `early-bonus-in-use`: valueless flag that activates the configured bonus. Without this flag, no bonus is applied.
+* `bonus-time-step-hours`: nonnegative integer number of hours per early-bonus step (defaults to `0`). With a positive value, the bonus decreases in equal fractions after the early deadline every configured number of hours. The final complete interval and any shorter remainder both receive no bonus.
 * `read-open-time`: module read open time. The reading materials can be opened for reading before the exercises are opened for submissions.
   The exercise descriptions are hidden and submissions are disabled between the read open time and open time.
 * `audience`: chapter audience (internal, external, or registered. Defaults to the course audience)
@@ -827,6 +831,28 @@ The aplusmeta directive does not have any content and it accepts the following o
   - If you view the chapter in A+, you can see the correct keys in the URL of the A+ chapter page.
 * `reveal-module-model-solution`: rule for revealing the module model solution. See [instructions](#defining-reveal-rules).
 
+Early-bonus settings apply to every assignment in the module. Add all three
+options to the module's `aplusmeta` directive to activate the bonus. For
+example, the A+ Manual has a shared module deadline of `2030-12-31 12:00`; its
+mock early-bonus module uses that as the early cutoff and closes the following
+day:
+
+```rst
+.. aplusmeta::
+  :close-time: 2031-01-01 12:00
+  :early-time: 2030-12-31 12:00
+  :early-bonus: 0.1
+  :early-bonus-in-use:
+```
+
+The early deadline must precede the module's normal closing time. In the
+example, submissions before noon on December 31 earn 10% extra points; later
+submissions do not receive the bonus. The flag can be removed to disable the
+bonus while retaining its configured deadline and amount. Setting
+`:bonus-time-step-hours: 24` divides the time from the early deadline to the
+module deadline into one-day steps; a three-day interval gives 66% of the bonus
+during the first day, 33% during the second, and no bonus during the third.
+
 Example module index.rst file:
 
 ```rst
@@ -841,6 +867,9 @@ Module 1 - Introduction
 .. aplusmeta::
   :open-time: 2020-09-01 10:00
   :close-time: 2020-09-30 14:00
+  :early-time: 2020-09-10 10:00
+  :early-bonus: 0.1
+  :early-bonus-in-use:
 ```
 
 Alternatively, one can also define these options in the conf.py file of the
