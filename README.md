@@ -18,10 +18,10 @@ A-plus RST tools support the following Sphinx versions:
 
 ## Migrating an existing course to RST tools 2.2
 
-If you are upgrading from RST tools v1.4 or later to v2.2, three changes are
+If you are upgrading from RST tools v1.4 or later to v2.2, four changes are
 required:
 
-1. First, the Sphinx setting `master_doc` was renamed
+1. The Sphinx setting `master_doc` was renamed
   to `root_doc`. Open `conf.py` and replace the following line
 
         master_doc = 'index'
@@ -30,7 +30,7 @@ required:
 
         root_doc = 'index'
 
-2. Add a comment at the end of the `rst_prolog` setting if you are using it, e.g.:
+2. Add a comment at the end of the `rst_prolog` setting in `conf.py` if you are using it, e.g.:
 
     ```rst
     rst_prolog += '''
@@ -45,7 +45,13 @@ required:
     '''
     ```
 
-3. Update Sphinx version in `docker-compile.sh` to v7.4:
+3. Update Sphinx version in `apps.meta` to v7.4:
+
+    ```
+    build_image = apluslms/compile-rst:7.4
+    ```
+
+4. Update Sphinx version in `docker-compile.sh` to v7.4:
 
     ```bash
     apluslms/compile-rst:7.4
