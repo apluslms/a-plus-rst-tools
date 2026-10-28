@@ -21,6 +21,8 @@ ACCEPTED_CATEGORY_DEFAULT_KEYS = [
 ACCEPTED_MODULE_DEFAULT_KEYS = [
     'status', 'type', 'points_to_pass',
     'open', 'close', 'duration', 'late_close', 'late_duration', 'late_penalty',
+    'early_close', 'early_bonus', 'early_bonus_in_use',
+    'bonus_time_step_hours',
 ]
 ACCEPTED_CHILDREN_DEFAULT_KEYS = [
     'status', 'type', 'category', 'config', 'static_content',

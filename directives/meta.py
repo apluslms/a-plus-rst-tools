@@ -18,6 +18,10 @@ class AplusMeta(Directive):
         'close-time': directives.unchanged,
         'late-time': directives.unchanged,
         'late-penalty': directives.unchanged,
+        'early-time': directives.unchanged,
+        'early-bonus': directives.unchanged,
+        'early-bonus-in-use': directives.flag,
+        'bonus-time-step-hours': directives.nonnegative_int,
         'audience': directives.unchanged,
         'hidden': directives.flag,
         'points-to-pass': directives.nonnegative_int, # set points to pass for modules
@@ -42,6 +46,7 @@ class AplusMeta(Directive):
         'read-open-time',
         'close-time',
         'late-time',
+        'early-time',
     }
 
     chapter_format = re.compile(r"^\w[\w\-\.]*/\w[\w\-\.]*$")

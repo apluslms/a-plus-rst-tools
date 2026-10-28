@@ -360,6 +360,7 @@ def make_index(app, root, language=''):
         open_src = meta.get('open-time', course_open)
         close_src = meta.get('close-time', title_date_match.group(1) if title_date_match else course_close)
         late_src = meta.get('late-time', course_late)
+        early_src = meta.get('early-time')
         introduction = meta.get('introduction', None)
         model_answer = meta.get('model-answer', None)
         reveal_module_model_solution = meta.get('reveal-module-model-solution', None)
@@ -384,6 +385,14 @@ def make_index(app, root, language=''):
         if late_src:
             module['late_close'] = parse_date(late_src)
             module['late_penalty'] = parse_float(meta.get('late-penalty', course_penalty), 0.0)
+        if early_src:
+            module['early_close'] = parse_date(early_src)
+        if 'early-bonus' in meta:
+            module['early_bonus'] = parse_float(meta['early-bonus'], 0.0)
+        if 'early-bonus-in-use' in meta:
+            module['early_bonus_in_use'] = True
+        if 'bonus-time-step-hours' in meta:
+            module['bonus_time_step_hours'] = meta['bonus-time-step-hours']
         if introduction is not None:
             module['introduction'] = introduction
         if model_answer is not None:
