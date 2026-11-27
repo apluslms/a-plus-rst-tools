@@ -815,7 +815,7 @@ The aplusmeta directive does not have any content and it accepts the following o
 * `early-time`: cutoff for earning the module's bonus. It must be after the module opening time and before its closing time. Submissions must be made strictly before this timestamp.
 * `early-bonus`: bonus fraction between 0-1. For example, `0.1` adds 10% to the points earned.
 * `early-bonus-in-use`: valueless flag that activates the configured bonus. Without this flag, no bonus is applied.
-* `bonus-time-step-hours`: nonnegative integer number of hours per early-bonus step (defaults to `0`). With a positive value, the bonus decreases in equal fractions after the early deadline every configured number of hours. The final complete interval and any shorter remainder both receive no bonus.
+* `bonus-decay-steps`: nonnegative integer number of equal bonus reductions between the early deadline and the module deadline (defaults to `1`). One step removes the full bonus at the early deadline; values greater than one reduce the bonus in equal amounts at each step boundary. Set to `0` for linear decay.
 * `read-open-time`: module read open time. The reading materials can be opened for reading before the exercises are opened for submissions.
   The exercise descriptions are hidden and submissions are disabled between the read open time and open time.
 * `audience`: chapter audience (internal, external, or registered. Defaults to the course audience)
@@ -849,9 +849,10 @@ The early deadline must precede the module's normal closing time. In the
 example, submissions before noon on December 31 earn 10% extra points; later
 submissions do not receive the bonus. The flag can be removed to disable the
 bonus while retaining its configured deadline and amount. Setting
-`:bonus-time-step-hours: 24` divides the time from the early deadline to the
-module deadline into one-day steps; a three-day interval gives 66% of the bonus
-during the first day, 33% during the second, and no bonus during the third.
+`:bonus-decay-steps: 3` divides the bonus reduction into three equal steps
+between the early deadline and the module deadline. The bonus drops by one
+third at the early deadline, by another third after each following interval,
+and reaches zero at the module deadline.
 
 Example module index.rst file:
 

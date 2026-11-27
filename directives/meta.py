@@ -21,7 +21,7 @@ class AplusMeta(Directive):
         'early-time': directives.unchanged,
         'early-bonus': directives.unchanged,
         'early-bonus-in-use': directives.flag,
-        'bonus-time-step-hours': directives.nonnegative_int,
+        'bonus-decay-steps': directives.nonnegative_int,
         'audience': directives.unchanged,
         'hidden': directives.flag,
         'points-to-pass': directives.nonnegative_int, # set points to pass for modules

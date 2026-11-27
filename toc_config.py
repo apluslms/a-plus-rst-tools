@@ -397,8 +397,8 @@ def make_index(app, root, language=''):
             module['early_bonus'] = parse_float(meta['early-bonus'], 0.0)
         if 'early-bonus-in-use' in meta:
             module['early_bonus_in_use'] = True
-        if 'bonus-time-step-hours' in meta:
-            module['bonus_time_step_hours'] = meta['bonus-time-step-hours']
+        if 'bonus-decay-steps' in meta:
+            module['bonus_decay_steps'] = meta['bonus-decay-steps']
         if introduction is not None:
             module['introduction'] = introduction
         if model_answer is not None:
